@@ -9,7 +9,7 @@ public partial class QuestionVersion
 
     public int QuestionId { get; set; }
 
-    public int? QuestionBankEntryId { get; set; }
+    public int QuestionBankEntryId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -17,7 +17,9 @@ public partial class QuestionVersion
 
     public string Status { get; set; } = null!;
 
+    public int Version { get; set; }
+
     public virtual Question Question { get; set; } = null!;
 
-    public virtual QuestionBankEntry? QuestionBankEntry { get; set; }
+    public virtual QuestionBankEntry QuestionBankEntry { get; set; } = null!;
 }

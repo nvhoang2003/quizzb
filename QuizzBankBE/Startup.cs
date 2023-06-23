@@ -15,6 +15,7 @@ using QuizzBankBE.Services.AuthServices;
 using QuizzBankBE.Services.UserServices;
 using QuizzBankBE.JWT;
 using AutoMapper;
+using QuizzBankBE.Services.QuestionServices;
 
 namespace QuizzBankBE
 {
@@ -42,7 +43,7 @@ namespace QuizzBankBE
             services.AddControllers();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthServices, AuthServices>();
-              //services.AddScoped<IMenuServices, MenuServicesImpl>();
+            services.AddScoped<IQuestionServices, QuestionServicesIpml>();
                 //services.AddScoped<IRoleServices, RoleServicesImpl>();
                 //services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             services.AddScoped<IUserServices, UserServices>();
