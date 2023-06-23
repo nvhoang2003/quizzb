@@ -15,6 +15,16 @@
             }
         }
 
+        public ServiceResponse(bool status, string message)
+        {
+            if (!status)
+            {
+                Status = false;
+                StatusCode = 400;
+                Message = message;
+            }
+        }
+
         public T? Data { get; set; }
         public int StatusCode { get; set; }
 

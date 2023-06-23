@@ -284,6 +284,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
+                entity.Property(e => e.Version).HasColumnName("version");
 
                 entity.HasOne(d => d.QuestionBankEntry).WithMany(p => p.QuestionVersions)
                     .HasForeignKey(d => d.QuestionBankEntryId)
@@ -570,7 +571,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
-        public override async Task<int> SaveChangesAsync(
+     /*   public override async Task<int> SaveChangesAsync(
        CancellationToken cancellationToken = default(CancellationToken))
         {
             var entries = ChangeTracker
@@ -579,7 +580,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
             e.State == EntityState.Added
             || e.State == EntityState.Modified));
 
-           /* var modifiedOrCreatedBy = int.Parse(_httpContextAccessor?.HttpContext?.User?.Claims
+           *//* var modifiedOrCreatedBy = int.Parse(_httpContextAccessor?.HttpContext?.User?.Claims
             .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             foreach (var entityEntry in entries)
             {
@@ -596,9 +597,9 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
                 ((IAuditedEntityBase)entityEntry.Entity).UpdateDate = DateTime.Now;
                 ((IAuditedEntityBase)entityEntry.Entity).UpdateBy = modifiedOrCreatedBy;
-            }*/
+            }*//*
 
             return await base.SaveChangesAsync(cancellationToken);
-        }
+        }*/
     }
 }

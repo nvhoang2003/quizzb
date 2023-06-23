@@ -6,6 +6,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Services.AuthServices;
+using QuizzBankBE.Services.QuestionServices;
 using System.Security.Claims;
 
 namespace QuizzBankBE.Controllers
@@ -15,44 +16,34 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class Auth : ControllerBase
+    public class QuestionController : ControllerBase
     {
-        private readonly IAuthServices _authenServices;
+        private readonly IQuestionServices _questionServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public Auth(IAuthServices authenServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public QuestionController(IQuestionServices questionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
-            _authenServices = authenServices;
+            _questionServices = questionServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
         }
 
-        [HttpPost("registerSingleUser")]
-        [AllowAnonymous]
-        public async Task<ActionResult<ServiceResponse<UserDTO>>> registerSingleUser(
-        [FromBody] CreateUserDTO createUserDTO)
+        [HttpPost("CreateNewQuestion")]
+        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> logiCreateNewQuestionn(
+        [FromBody] CreateQuestionDTO createQuestionDTO)
         {
-            var response = await _authenServices.createUsers(createUserDTO);
-            if (response.Status == false){
-                return BadRequest(new ProblemDetails
-                {
-                    Status = response.StatusCode,
-                    Title = response.Message
-                });
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            if (userIdLogin == null)
+            {
+                return new StatusCodeResult(401);
             }
 
-            return Ok(response);
-        }
-
-        [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<ActionResult<LoginResponse>> login(
-        [FromBody] LoginForm loginForm)
-        {
-            var response = await _authenServices.login(loginForm);
+            createQuestionDTO.SetUserMutation(userIdLogin, userIdLogin);
+            
+            var response = await _questionServices.createNewQuestion(createQuestionDTO);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

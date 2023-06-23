@@ -279,9 +279,11 @@ public partial class QuizzbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
+            entity.Property(e => e.Version).HasColumnName("version");
 
             entity.HasOne(d => d.QuestionBankEntry).WithMany(p => p.QuestionVersions)
                 .HasForeignKey(d => d.QuestionBankEntryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_bank_entry_version");
 
             entity.HasOne(d => d.Question).WithMany(p => p.QuestionVersions)
