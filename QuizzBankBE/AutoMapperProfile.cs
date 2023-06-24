@@ -16,6 +16,10 @@ namespace QuizzBankBE
             CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
             CreateMap<QuestionAnswerDTO, Answer>();
             CreateMap<QuestionVersionDTO, QuestionVersion>();
+            CreateMap<QuestionBankEntry, QuestionBankEntryResponseDTO>();
+            CreateMap<QuestionVersion, QuestionVersionDTO>();
+            CreateMap<Question, QuestionDTO>();
+            CreateMap<Answer, QuestionAnswerDTO>();
         }
     }
 }

@@ -252,11 +252,6 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasMaxLength(255)
                     .HasColumnName("name");
                 entity.Property(e => e.Parent).HasColumnName("parent");
-
-                entity.HasOne(d => d.ParentNavigation).WithMany(p => p.InverseParentNavigation)
-                    .HasForeignKey(d => d.Parent)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_parent ");
             });
 
             modelBuilder.Entity<QuestionVersion>(entity =>

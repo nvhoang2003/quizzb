@@ -29,6 +29,8 @@ public partial class User
 
     public string Email { get; set; } = null!;
 
+    public virtual ICollection<QuestionCategory> QuestionCategories { get; set; } = new List<QuestionCategory>();
+
     public virtual ICollection<Question> QuestionCreatedbyNavigations { get; set; } = new List<Question>();
 
     public virtual ICollection<Question> QuestionUpdatedbyNavigations { get; set; } = new List<Question>();

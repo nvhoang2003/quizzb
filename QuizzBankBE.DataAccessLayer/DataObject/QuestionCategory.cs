@@ -11,9 +11,7 @@ public partial class QuestionCategory
 
     public int Parent { get; set; }
 
-    public virtual ICollection<QuestionCategory> InverseParentNavigation { get; set; } = new List<QuestionCategory>();
-
-    public virtual QuestionCategory ParentNavigation { get; set; } = null!;
+    public virtual User ParentNavigation { get; set; } = null!;
 
     public virtual ICollection<QuestionBankEntry> QuestionBankEntries { get; set; } = new List<QuestionBankEntry>();
 
