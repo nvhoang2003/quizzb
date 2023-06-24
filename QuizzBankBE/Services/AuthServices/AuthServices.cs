@@ -82,7 +82,7 @@ namespace QuizzBankBE.Services.AuthServices
                 serviceResponse.StatusCode = 200;
                 IPrincipal userlogin = await createPrincipal(user);
                 var token = _jwtProvider.CreateToken(userlogin);
-                serviceResponse.Message = "Đăng nhập thành công!" + user.Iduser;
+                serviceResponse.Message = "Đăng nhập thành công!";
                 serviceResponse.accessToken = token;
                 return serviceResponse;
             }

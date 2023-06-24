@@ -75,6 +75,11 @@ namespace QuizzBankBE.DTOs
             Status = status;
             Version = version;
         }
+
+        public QuestionVersionDTO()
+        {
+
+        }
     }
 
     public class QuestionBankEntryDTO

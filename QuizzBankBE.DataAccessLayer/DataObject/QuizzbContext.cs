@@ -248,10 +248,10 @@ public partial class QuizzbContext : DbContext
                 .HasColumnName("name");
             entity.Property(e => e.Parent).HasColumnName("parent");
 
-            entity.HasOne(d => d.ParentNavigation).WithMany(p => p.InverseParentNavigation)
+            entity.HasOne(d => d.ParentNavigation).WithMany(p => p.QuestionCategories)
                 .HasForeignKey(d => d.Parent)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_parent ");
+                .HasConstraintName("fk_use_questioncategories");
         });
 
         modelBuilder.Entity<QuestionVersion>(entity =>

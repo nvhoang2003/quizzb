@@ -5,6 +5,8 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using QuizzBankBE.Model.Pagination;
+using System.Linq;
 
 namespace QuizzBankBE.Services.QuestionServices
 {
@@ -46,6 +48,53 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<PageList<QuestionBankEntryResponseDTO>>> getListQuestion(OwnerParameter ownerParameters, int questionCategoryId)
+        {
+            var serviceResponse = new ServiceResponse<PageList<QuestionBankEntryResponseDTO>>();
+
+            var dbQuestion = await _dataContext.QuestionBankEntries.ToListAsync();
+            var questionBankEntriesDTO = dbQuestion.Select(u => _mapper.Map<QuestionBankEntryResponseDTO>(u)).
+                Where(q => q.QuestionCategoryId == questionCategoryId).ToList();
+
+            foreach (var item in questionBankEntriesDTO)
+            {
+                await getQuestionAndAnswerMaxVersion(item);
+            }
+
+            serviceResponse.Data = PageList<QuestionBankEntryResponseDTO>.ToPageList(
+            questionBankEntriesDTO.AsEnumerable<QuestionBankEntryResponseDTO>(),
+            ownerParameters.pageIndex,
+            ownerParameters.pageSize);
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<QuestionBankEntryResponseDTO>> getQuestionById(int questionbankEntryId)
+        {
+            var serviceResponse = new ServiceResponse<QuestionBankEntryResponseDTO>();
+
+            var questionBankEntryDataContext = await _dataContext.QuestionBankEntries.ToListAsync();
+            var questionBankEntryDTO = questionBankEntryDataContext.
+                Where(q => q.IdquestionBankEntry == questionbankEntryId).
+                Select(u => _mapper.Map<QuestionBankEntryResponseDTO>(u)).
+                FirstOrDefault();
+
+            if (questionBankEntryDTO == null)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.StatusCode = 400;
+                serviceResponse.Message = "Câu hỏi không tồn tại !";
+                return serviceResponse;
+            }
+
+            await getQuestionAndAnswerMaxVersion(questionBankEntryDTO);
+
+            serviceResponse.Data = questionBankEntryDTO;
+            serviceResponse.Status = true;
+            serviceResponse.StatusCode = 200;
+            return serviceResponse;
+        }
+
         public async Task<QuestionBankEntry> createNewQuestionBankEntry(int id)
         {
             QuestionBankEntryDTO quesBankEntry = new QuestionBankEntryDTO(id);
@@ -69,6 +118,28 @@ namespace QuizzBankBE.Services.QuestionServices
 
             await _dataContext.SaveChangesAsync();
             return questionVersion;
+        }
+
+        public async Task<bool> getQuestionAndAnswerMaxVersion(QuestionBankEntryResponseDTO questionBankEntry)
+        {
+            int questionId = (from qbe in _dataContext.QuestionBankEntries
+                              join qv in _dataContext.QuestionVersions on qbe.IdquestionBankEntry equals qv.QuestionBankEntryId
+                              join q in _dataContext.Questions on qv.QuestionId equals q.Idquestions
+                              where qbe.IdquestionBankEntry == questionBankEntry.IdquestionBankEntry
+                              orderby qv.Version descending
+                              select q.Idquestions).FirstOrDefault();
+
+            var dbQuestionItem = await _dataContext.Questions.ToListAsync();
+            questionBankEntry.Question = dbQuestionItem.Select(u => _mapper.Map<QuestionDTO>(u)).
+                Where(q => q.Idquestions == questionId).
+                FirstOrDefault();
+
+            var dbAnswer = await _dataContext.Answers.ToListAsync();
+            questionBankEntry.Answers = dbAnswer.Select(u => _mapper.Map<QuestionAnswerDTO>(u)).
+                Where(q => q.Questionid == questionId).
+                ToList();
+
+            return true;
         }
     }
 }
