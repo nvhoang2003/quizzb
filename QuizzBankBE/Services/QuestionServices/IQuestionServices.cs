@@ -13,5 +13,7 @@ namespace QuizzBankBE.Services.QuestionServices
         Task<ServiceResponse<PageList<QuestionBankEntryResponseDTO>>> getListQuestion(OwnerParameter ownerParameters, int questionCategoryId);
 
         Task<ServiceResponse<QuestionBankEntryResponseDTO>> getQuestionById(int questionbankEntryId);
+
+        Task<ServiceResponse<QuestionResponseDTO>> updateQuestion(CreateQuestionDTO createQuestionDTO, int id);
     }
 }
