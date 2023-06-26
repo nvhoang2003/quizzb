@@ -1,20 +1,13 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
 {
-    public class QuestionDTO
+    public class QuestionDTO : BaseQuestionDTO
     {
         public int Idquestions { get; set; }
-        public string Name { get; set; }
-        public string Content { get; set; }
-        public string Questionstype { get; set; }
-        public string? Generalfeedback { get; set; }
-        public int Createdby { get; set; }
-        public int Updatedby { get; set; }
-        public float DefaultMark { get; set; }
-        public virtual ICollection<Answer> Answers { get; set; }
     }
 
     public class QuestionResponseDTO
@@ -31,7 +24,7 @@ namespace QuizzBankBE.DTOs
     {
         public int IdquestionBankEntry { get; set; }
         public int QuestionCategoryId { get; set; }
-        //public virtual QuestionResponseDTO Question { get; set; }
+        //public virtual QuestionCategoryDTO QuestionCategory { get; set; }
         public virtual QuestionDTO Question { get; set; }
         public virtual List<QuestionAnswerDTO> Answers { get; set; }
     }

@@ -2,27 +2,30 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MySqlX.XDevAPI.Common;
 using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
+using QuizzBankBE.FormValidator;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.AuthServices;
 using QuizzBankBE.Services.QuestionServices;
+using System.Data;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace QuizzBankBE.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-
+ 
     // Lam Phan Quyen Sau khi Xu li hoan tat QuestionCategories
     public class QuestionController : ControllerBase
     {
@@ -50,16 +53,7 @@ namespace QuizzBankBE.Controllers
             }
 
             createQuestionDTO.SetUserMutation(userIdLogin, userIdLogin);
-            
             var response = await _questionServices.createNewQuestion(createQuestionDTO);
-            if (response.Status == false)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Status = response.StatusCode,
-                    Title = response.Message
-                });
-            }
 
             return Ok(response);
         }
@@ -87,15 +81,21 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<PageList<QuestionBankEntryResponseDTO>>> getQuestionById(int id)
         {
             var response = await _questionServices.getQuestionById(id);
+            return Ok(response);
+        }
 
-            if (response.Status == false)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Status = response.StatusCode,
-                    Title = response.Message
-                });
-            }
+        [HttpPut("updateQuestion/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> updateQuestion(
+        [FromBody] CreateQuestionDTO createQuestionDTO, int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            //if (userId == null)
+            //{
+            //    return new StatusCodeResult(401);
+            //}
+            var response = await _questionServices.updateQuestion(createQuestionDTO, id);
+
             return Ok(response);
         }
     }
