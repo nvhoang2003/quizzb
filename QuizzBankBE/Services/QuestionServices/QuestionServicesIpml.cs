@@ -95,6 +95,24 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<QuestionResponseDTO>> updateQuestion(CreateQuestionDTO updateQuestionDTO,int id)
+        {
+            // Do làm tính năng backup nên khi sửa sẽ Tạo nội dung câu hỏi mới(bao gồm đáp án) và question version mới)
+            var serviceResponse = new ServiceResponse<QuestionResponseDTO>();
+
+            Question quesSaved = _mapper.Map<Question>(updateQuestionDTO);
+            _dataContext.Questions.Add(quesSaved);
+            await _dataContext.SaveChangesAsync();
+
+            await createNewQuestionVersion(quesSaved.Idquestions, id);
+
+            serviceResponse.Status = true;
+            serviceResponse.StatusCode = 200;
+            serviceResponse.Message = "Sửa thành công !";
+            return serviceResponse;
+        }
+
+
         public async Task<QuestionBankEntry> createNewQuestionBankEntry(int id)
         {
             QuestionBankEntryDTO quesBankEntry = new QuestionBankEntryDTO(id);
