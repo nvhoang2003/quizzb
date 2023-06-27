@@ -8,9 +8,9 @@ namespace QuizzBankBE.DataAccessLayer.Entity
     public abstract class AuditedEntityBase : IAuditedEntityBase
     {
         public int? CreateBy { get; set; }
-        public DateTime? CreateDate { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public int? UpdateBy { get; set; }
-        public DateTime? UpdateDate { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public int IsDeleted { get; set; } = 0;
 
     }

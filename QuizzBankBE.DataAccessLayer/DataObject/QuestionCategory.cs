@@ -11,6 +11,12 @@ public partial class QuestionCategory
 
     public int Parent { get; set; }
 
+    public int? IsDeleted { get; set; }
+
+    public DateTime? Createdat { get; set; }
+
+    public DateTime? Updatedat { get; set; }
+
     public virtual User ParentNavigation { get; set; } = null!;
 
     public virtual ICollection<QuestionBankEntry> QuestionBankEntries { get; set; } = new List<QuestionBankEntry>();

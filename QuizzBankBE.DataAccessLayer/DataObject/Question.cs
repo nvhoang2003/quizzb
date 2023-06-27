@@ -19,11 +19,13 @@ public partial class Question
 
     public int Updatedby { get; set; }
 
-    public DateTime Createdat { get; set; }
+    public DateTime? Createdat { get; set; }
 
-    public DateTime Updatedat { get; set; }
+    public DateTime? Updatedat { get; set; }
 
     public float DefaultMark { get; set; }
+
+    public int? IsDeleted { get; set; }
 
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
@@ -31,9 +33,9 @@ public partial class Question
 
     public virtual ICollection<QuestionVersion> QuestionVersions { get; set; } = new List<QuestionVersion>();
 
+    public virtual ICollection<Questionkeyword> Questionkeywords { get; set; } = new List<Questionkeyword>();
+
     public virtual ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
 
     public virtual User UpdatedbyNavigation { get; set; } = null!;
-
-    public virtual ICollection<Keyword> Keywords { get; set; } = new List<Keyword>();
 }

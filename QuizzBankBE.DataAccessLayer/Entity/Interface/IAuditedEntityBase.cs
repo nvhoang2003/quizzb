@@ -9,9 +9,9 @@ namespace QuizzBankBE.DataAccessLayer.Entity.Interface
     internal interface IAuditedEntityBase
     {
         int? CreateBy { get; set; }
-        DateTime? CreateDate { get; set; }
+        DateTime? CreatedAt { get; set; }
         int? UpdateBy { get; set; }
-        DateTime? UpdateDate { get; set; }
+        DateTime? UpdatedAt { get; set; }
         int IsDeleted { get; set; }
     }
 }

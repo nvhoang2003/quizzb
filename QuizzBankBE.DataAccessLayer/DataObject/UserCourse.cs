@@ -13,9 +13,11 @@ public partial class UserCourse
 
     public string Role { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; }
+    public int? IsDeleted { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? Createdat { get; set; }
+
+    public DateTime? Updatedat { get; set; }
 
     public virtual Course Courses { get; set; } = null!;
 

@@ -3,23 +3,19 @@ using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class Answer
+public partial class Questionkeyword
 {
-    public int Idanswers { get; set; }
-
     public int Questionid { get; set; }
 
-    public string Content { get; set; } = null!;
+    public int Keywordid { get; set; }
 
-    public float Fraction { get; set; }
+    public int? IsDeleted { get; set; }
 
     public DateTime? Createdat { get; set; }
 
     public DateTime? Updatedat { get; set; }
 
-    public int? IsDeleted { get; set; }
+    public virtual Keyword Keyword { get; set; } = null!;
 
     public virtual Question Question { get; set; } = null!;
-
-    public virtual ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
 }

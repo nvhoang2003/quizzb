@@ -13,6 +13,7 @@ namespace QuizzBankBE.DTOs.BaseDTO
         public string? Address { get; set; }
 
         [Phone] public string? Phone { get; set; }
+        public int? IsDeleted { get; set; }
 
         public int? Gender { get; set; }
 

@@ -11,9 +11,11 @@ public partial class Keyword
 
     public int CourseId { get; set; }
 
-    public DateTime Createdat { get; set; }
+    public DateTime? Createdat { get; set; }
 
-    public DateTime Updatedat { get; set; }
+    public DateTime? Updatedat { get; set; }
 
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+    public int? IsDeleted { get; set; }
+
+    public virtual ICollection<Questionkeyword> Questionkeywords { get; set; } = new List<Questionkeyword>();
 }

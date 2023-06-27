@@ -42,9 +42,7 @@ namespace QuizzBankBE.Services.QuestionServices
 
             await createNewQuestionVersion(quesSaved.Idquestions, quesBankEntry.IdquestionBankEntry);
 
-            serviceResponse.Status = true;
-            serviceResponse.StatusCode = 200;
-            serviceResponse.Message = "Tạo thành công !";
+            serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
             return serviceResponse;
         }
 
@@ -84,14 +82,14 @@ namespace QuizzBankBE.Services.QuestionServices
                 serviceResponse.Status = false;
                 serviceResponse.StatusCode = 400;
                 serviceResponse.Message = "Câu hỏi không tồn tại !";
+                serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
                 return serviceResponse;
             }
 
             await getQuestionAndAnswerMaxVersion(questionBankEntryDTO);
 
             serviceResponse.Data = questionBankEntryDTO;
-            serviceResponse.Status = true;
-            serviceResponse.StatusCode = 200;
+            serviceResponse.updateResponse(200, "");
             return serviceResponse;
         }
 
@@ -106,12 +104,46 @@ namespace QuizzBankBE.Services.QuestionServices
 
             await createNewQuestionVersion(quesSaved.Idquestions, id);
 
-            serviceResponse.Status = true;
-            serviceResponse.StatusCode = 200;
-            serviceResponse.Message = "Sửa thành công !";
+            serviceResponse.updateResponse(200, "Sửa thành công");
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<QuestionResponseDTO>> deleteQuestion(int id)
+        {
+            var serviceResponse = new ServiceResponse<QuestionResponseDTO>();
+
+            var dbQuestionBankEntry = await _dataContext.QuestionBankEntries.FirstOrDefaultAsync(q => q.IdquestionBankEntry == id);
+
+            var dbQuestionVersion = await getLatesVersion(id);
+            int? questionId = dbQuestionVersion?.QuestionId;
+            var dbQuestion = await _dataContext.Questions.FirstOrDefaultAsync(q => q.Idquestions == questionId);
+
+            if (dbQuestion == null || dbQuestionVersion == null)
+            {
+                serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
+                return serviceResponse;
+            }
+
+            dbQuestionVersion.IsDeleted = 1;
+            _dataContext.QuestionVersions.Update(dbQuestionVersion);
+
+            dbQuestion.IsDeleted = 1;
+            _dataContext.Questions.Update(dbQuestion);
+
+            await _dataContext.SaveChangesAsync();
+
+            var checkVersion = await getLatesVersion(id);
+            if (checkVersion == null)
+            {
+                dbQuestionBankEntry.IsDeleted = 1;
+                _dataContext.QuestionBankEntries.Update(dbQuestionBankEntry);
+                await _dataContext.SaveChangesAsync();
+            }
+
+            serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
+
+            return serviceResponse;
+        }
 
         public async Task<QuestionBankEntry> createNewQuestionBankEntry(int id)
         {
@@ -138,14 +170,21 @@ namespace QuizzBankBE.Services.QuestionServices
             return questionVersion;
         }
 
-        public async Task<bool> getQuestionAndAnswerMaxVersion(QuestionBankEntryResponseDTO questionBankEntry)
+        public async Task<QuestionVersion> getLatesVersion(int id)
         {
-            int questionId = (from qbe in _dataContext.QuestionBankEntries
+           var questionVersion = await (from qbe in _dataContext.QuestionBankEntries
                               join qv in _dataContext.QuestionVersions on qbe.IdquestionBankEntry equals qv.QuestionBankEntryId
                               join q in _dataContext.Questions on qv.QuestionId equals q.Idquestions
-                              where qbe.IdquestionBankEntry == questionBankEntry.IdquestionBankEntry
+                              where qbe.IdquestionBankEntry == id && qv.IsDeleted == 0
                               orderby qv.Version descending
-                              select q.Idquestions).FirstOrDefault();
+                              select qv).FirstOrDefaultAsync();
+            return questionVersion;
+        }
+
+        public async Task<bool> getQuestionAndAnswerMaxVersion(QuestionBankEntryResponseDTO questionBankEntry)
+        {
+            var questionVersion = await getLatesVersion(questionBankEntry.IdquestionBankEntry);
+            int questionId = questionVersion.QuestionId;
 
             var dbQuestionItem = await _dataContext.Questions.ToListAsync();
             questionBankEntry.Question = dbQuestionItem.Select(u => _mapper.Map<QuestionDTO>(u)).
