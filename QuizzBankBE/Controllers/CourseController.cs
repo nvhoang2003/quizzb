@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.Model;
+using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.CourseServices;
 using QuizzBankBE.Services.QuestionServices;
 using System.Security.Claims;
@@ -30,6 +32,49 @@ namespace QuizzBankBE.Controllers
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
+        }
+
+        [HttpGet("GetAllCourse")]
+        public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourse(
+            [FromQuery] OwnerParameter ownerParameters)
+        {
+            var course = await _courseServices.getAllCourse(ownerParameters);
+            var metadata = new
+            {
+                course.Data.TotalCount,
+                course.Data.PageSize,
+                course.Data.CurrentPage,
+                course.Data.TotalPages,
+                course.Data.HasNext,
+                course.Data.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return Ok(course);
+        }
+
+        [HttpGet("GetAllCourseByUser")]
+        public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourseByUser(
+            [FromQuery] OwnerParameter ownerParameters)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            if (userIdLogin == null)
+            {
+                return new StatusCodeResult(401);
+            }
+
+            var course = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
+            var metadata = new
+            {
+                course.Data.TotalCount,
+                course.Data.PageSize,
+                course.Data.CurrentPage,
+                course.Data.TotalPages,
+                course.Data.HasNext,
+                course.Data.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return Ok(course);
         }
 
         [HttpPost("CreateCourse")]
