@@ -15,9 +15,11 @@ public partial class QuizUserAccess
 
     public DateTime? AddAt { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public int? IsDeleted { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? Createdat { get; set; }
+
+    public DateTime? Updatedat { get; set; }
 
     public virtual UserCourse AddByNavigation { get; set; } = null!;
 

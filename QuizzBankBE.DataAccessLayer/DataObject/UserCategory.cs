@@ -13,9 +13,11 @@ public partial class UserCategory
 
     public int AddBy { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public int? IsDeleted { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? Createdat { get; set; }
+
+    public DateTime? Updatedat { get; set; }
 
     public virtual User AddByNavigation { get; set; } = null!;
 

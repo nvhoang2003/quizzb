@@ -10,7 +10,7 @@ namespace QuizzBankBE.DTOs
         [Required]
         [Range(0, 1, ErrorMessage = "Fraction must be between 0% and 100%.")]
         public float Fraction { get; set; }
-
+        public int? IsDeleted { get; set; }
         public int Questionid { get; set; }
     }
 }

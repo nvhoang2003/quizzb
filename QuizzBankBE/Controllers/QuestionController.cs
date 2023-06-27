@@ -98,5 +98,23 @@ namespace QuizzBankBE.Controllers
 
             return Ok(response);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> deleteQuestion( int id)
+        {
+            //var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            var response = await _questionServices.deleteQuestion(id);
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
+
+            return Ok(response);
+        }
     }
 }

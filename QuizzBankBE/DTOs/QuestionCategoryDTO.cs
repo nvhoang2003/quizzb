@@ -5,7 +5,7 @@
         public int IdquestionCategories { get; set; }
 
         public string Name { get; set; }
-
+        public int? IsDeleted { get; set; }
         public int Parent { get; set; }
     }
 }

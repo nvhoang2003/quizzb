@@ -18,6 +18,7 @@ namespace QuizzBankBE.DTOs
         public string Status { get; set; }
         public int QuestionBankEntryId { get; set; }
         public int Version { get; set; }
+        public int? IsDeleted { get; set; }
     }
 
     public class QuestionBankEntryResponseDTO
@@ -27,5 +28,6 @@ namespace QuizzBankBE.DTOs
         //public virtual QuestionCategoryDTO QuestionCategory { get; set; }
         public virtual QuestionDTO Question { get; set; }
         public virtual List<QuestionAnswerDTO> Answers { get; set; }
+        public int? IsDeleted { get; set; }
     }
 }

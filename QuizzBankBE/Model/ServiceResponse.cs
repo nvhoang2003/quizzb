@@ -15,14 +15,11 @@
             }
         }
 
-        public ServiceResponse(bool status, string message)
+        public void updateResponse(int statusCode, string message)
         {
-            if (!status)
-            {
-                Status = false;
-                StatusCode = 400;
+                Status = statusCode == 200 ? true : false;
+                StatusCode = statusCode;
                 Message = message;
-            }
         }
 
         public T? Data { get; set; }

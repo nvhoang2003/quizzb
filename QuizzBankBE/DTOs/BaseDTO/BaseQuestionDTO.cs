@@ -21,6 +21,8 @@ namespace QuizzBankBE.DTOs.BaseDTO
         public float DefaultMark { get; set; }
         [AnswerValidation]
         public virtual ICollection<QuestionAnswerDTO> Answers { get; set; }
+
+        public int? IsDeleted { get; set; }
         public enum QuestionType
         {
             MultipleChoice,
