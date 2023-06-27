@@ -23,9 +23,9 @@
         }
 
         public T? Data { get; set; }
-        public int StatusCode { get; set; }
+        public int StatusCode { get; set; } = 200;
 
-        public bool Status { get; set; }
+        public bool Status { get; set; } = true;
 
         public string Message { get; set; }
 
