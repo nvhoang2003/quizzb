@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Model;
+using QuizzBankBE.DataAccessLayer.DataObject;
 
 namespace QuizzBankBE.Services.UserServices
 {
@@ -29,6 +30,24 @@ namespace QuizzBankBE.Services.UserServices
             userDTOs.AsEnumerable<UserDTO>().OrderBy(on => on.Email),
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<UserDTO>> getUserByUserID(int userID)
+        {
+            var serviceResponse = new ServiceResponse<UserDTO>();
+            var dbUser = await _dataContext.Users.FirstOrDefaultAsync(u => u.Iduser == userID);
+
+            if (dbUser == null)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.StatusCode = 400;
+                serviceResponse.Message = "user.notFoundwithID";
+                return serviceResponse;
+            }
+
+            serviceResponse.Data = _mapper.Map<UserDTO>(dbUser);
+
             return serviceResponse;
         }
     }

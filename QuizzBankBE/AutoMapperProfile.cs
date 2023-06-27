@@ -2,6 +2,7 @@
 using QuizzBankBE.DTOs;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using System.Data;
+using QuizzBankBE.DTOs.BaseDTO;
 
 namespace QuizzBankBE
 {
@@ -20,6 +21,14 @@ namespace QuizzBankBE
             CreateMap<QuestionVersion, QuestionVersionDTO>();
             CreateMap<Question, QuestionDTO>();
             CreateMap<Answer, QuestionAnswerDTO>();
+            CreateMap<Course, CourseDTO>();
+            CreateMap<Course, BaseCourseDTO>();
+            CreateMap<CourseDTO, Course>();
+            CreateMap<CourseDTO, BaseCourseDTO>();
+            CreateMap<BaseCourseDTO, Course>();
+            CreateMap<BaseCourseDTO, CourseDTO>();
+            CreateMap<UserCourseDTO, UserCourse>();
+            CreateMap<UserCourse, UserCourseDTO>();
         }
     }
 }
