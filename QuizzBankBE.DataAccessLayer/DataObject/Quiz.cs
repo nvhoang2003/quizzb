@@ -31,15 +31,17 @@ public partial class Quiz
 
     public sbyte IsPublic { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public int? IsDeleted { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? Createdat { get; set; }
+
+    public DateTime? Updatedat { get; set; }
 
     public virtual Course Course { get; set; } = null!;
+
+    public virtual ICollection<QuestionQuiz> QuestionQuizzes { get; set; } = new List<QuestionQuiz>();
 
     public virtual ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
 
     public virtual ICollection<QuizUserAccess> QuizUserAccesses { get; set; } = new List<QuizUserAccess>();
-
-    public virtual ICollection<QuestionBankEntry> Questions { get; set; } = new List<QuestionBankEntry>();
 }

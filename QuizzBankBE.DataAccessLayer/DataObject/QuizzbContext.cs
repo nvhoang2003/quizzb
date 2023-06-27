@@ -27,7 +27,11 @@ public partial class QuizzbContext : DbContext
 
     public virtual DbSet<QuestionCategory> QuestionCategories { get; set; }
 
+    public virtual DbSet<QuestionQuiz> QuestionQuizzes { get; set; }
+
     public virtual DbSet<QuestionVersion> QuestionVersions { get; set; }
+
+    public virtual DbSet<Questionkeyword> Questionkeywords { get; set; }
 
     public virtual DbSet<Quiz> Quizzes { get; set; }
 
@@ -60,14 +64,12 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("mediumtext")
                 .HasColumnName("content");
             entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("createdat");
             entity.Property(e => e.Fraction).HasColumnName("fraction");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Questionid).HasColumnName("questionid");
             entity.Property(e => e.Updatedat)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updatedat");
 
@@ -85,7 +87,6 @@ public partial class QuizzbContext : DbContext
 
             entity.Property(e => e.Courseid).HasColumnName("courseid");
             entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("createdat");
             entity.Property(e => e.Enddate)
@@ -94,6 +95,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.Fullname)
                 .HasMaxLength(255)
                 .HasColumnName("fullname");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Shortname)
                 .HasMaxLength(255)
                 .HasColumnName("shortname");
@@ -101,8 +103,6 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("startdate");
             entity.Property(e => e.Updatedat)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updatedat");
         });
@@ -119,12 +119,10 @@ public partial class QuizzbContext : DbContext
                 .HasColumnName("content");
             entity.Property(e => e.CourseId).HasColumnName("course_id");
             entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Updatedat)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updatedat");
         });
@@ -144,7 +142,6 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("mediumtext")
                 .HasColumnName("content");
             entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("createdat");
             entity.Property(e => e.Createdby).HasColumnName("createdby");
@@ -152,6 +149,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.Generalfeedback)
                 .HasColumnType("mediumtext")
                 .HasColumnName("generalfeedback");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Name)
                 .HasMaxLength(45)
                 .HasColumnName("name");
@@ -159,8 +157,6 @@ public partial class QuizzbContext : DbContext
                 .HasMaxLength(45)
                 .HasColumnName("questionstype");
             entity.Property(e => e.Updatedat)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updatedat");
             entity.Property(e => e.Updatedby).HasColumnName("updatedby");
@@ -174,26 +170,6 @@ public partial class QuizzbContext : DbContext
                 .HasForeignKey(d => d.Updatedby)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_update");
-
-            entity.HasMany(d => d.Keywords).WithMany(p => p.Questions)
-                .UsingEntity<Dictionary<string, object>>(
-                    "Questionkeyword",
-                    r => r.HasOne<Keyword>().WithMany()
-                        .HasForeignKey("Keywordid")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("fk_keywords"),
-                    l => l.HasOne<Question>().WithMany()
-                        .HasForeignKey("Questionid")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("fk_questions"),
-                    j =>
-                    {
-                        j.HasKey("Questionid", "Keywordid").HasName("PRIMARY");
-                        j.ToTable("questionkeywords");
-                        j.HasIndex(new[] { "Keywordid" }, "fk_keywords_idx");
-                        j.IndexerProperty<int>("Questionid").HasColumnName("questionid");
-                        j.IndexerProperty<int>("Keywordid").HasColumnName("keywordid");
-                    });
         });
 
         modelBuilder.Entity<QuestionBankEntry>(entity =>
@@ -205,33 +181,19 @@ public partial class QuizzbContext : DbContext
             entity.HasIndex(e => e.QuestionCategoryId, "fk_question_category_idx");
 
             entity.Property(e => e.IdquestionBankEntry).HasColumnName("idquestion_bank_entry");
+            entity.Property(e => e.Createdat)
+                .HasColumnType("datetime")
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.QuestionCategoryId).HasColumnName("question_category_id");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("datetime")
+                .HasColumnName("updatedat");
 
             entity.HasOne(d => d.QuestionCategory).WithMany(p => p.QuestionBankEntries)
                 .HasForeignKey(d => d.QuestionCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_question_category");
-
-            entity.HasMany(d => d.Quizzs).WithMany(p => p.Questions)
-                .UsingEntity<Dictionary<string, object>>(
-                    "QuestionQuiz",
-                    r => r.HasOne<Quiz>().WithMany()
-                        .HasForeignKey("QuizzId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("fk_quiz_question"),
-                    l => l.HasOne<QuestionBankEntry>().WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("fk_question_quiz"),
-                    j =>
-                    {
-                        j.HasKey("QuestionId", "QuizzId").HasName("PRIMARY");
-                        j.ToTable("question_quiz");
-                        j.HasIndex(new[] { "QuestionId" }, "fk_question_quiz_idx");
-                        j.HasIndex(new[] { "QuizzId" }, "fk_quiz_idx");
-                        j.IndexerProperty<int>("QuestionId").HasColumnName("question_id");
-                        j.IndexerProperty<int>("QuizzId").HasColumnName("quizz_id");
-                    });
         });
 
         modelBuilder.Entity<QuestionCategory>(entity =>
@@ -243,15 +205,53 @@ public partial class QuizzbContext : DbContext
             entity.HasIndex(e => e.Parent, "fk_parent _idx");
 
             entity.Property(e => e.IdquestionCategories).HasColumnName("idquestion_categories");
+            entity.Property(e => e.Createdat)
+                .HasColumnType("datetime")
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Parent).HasColumnName("parent");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("datetime")
+                .HasColumnName("updatedat");
 
             entity.HasOne(d => d.ParentNavigation).WithMany(p => p.QuestionCategories)
                 .HasForeignKey(d => d.Parent)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_use_questioncategories");
+        });
+
+        modelBuilder.Entity<QuestionQuiz>(entity =>
+        {
+            entity.HasKey(e => new { e.QuestionId, e.QuizzId }).HasName("PRIMARY");
+
+            entity.ToTable("question_quiz");
+
+            entity.HasIndex(e => e.QuestionId, "fk_question_quiz_idx");
+
+            entity.HasIndex(e => e.QuizzId, "fk_quiz_idx");
+
+            entity.Property(e => e.QuestionId).HasColumnName("question_id");
+            entity.Property(e => e.QuizzId).HasColumnName("quizz_id");
+            entity.Property(e => e.Createdat)
+                .HasColumnType("datetime")
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("datetime")
+                .HasColumnName("updatedat");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.QuestionQuizzes)
+                .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_question_quiz");
+
+            entity.HasOne(d => d.Quizz).WithMany(p => p.QuestionQuizzes)
+                .HasForeignKey(d => d.QuizzId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_quiz_question");
         });
 
         modelBuilder.Entity<QuestionVersion>(entity =>
@@ -265,20 +265,18 @@ public partial class QuizzbContext : DbContext
             entity.HasIndex(e => e.QuestionId, "fk_question_idx");
 
             entity.Property(e => e.IdquestionVersions).HasColumnName("idquestion_versions");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Createdat)
                 .HasColumnType("datetime")
-                .HasColumnName("created_at");
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.QuestionBankEntryId).HasColumnName("question_bank_entry_id");
             entity.Property(e => e.QuestionId).HasColumnName("question_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(45)
                 .HasColumnName("status");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Updatedat)
                 .HasColumnType("datetime")
-                .HasColumnName("updated_at");
+                .HasColumnName("updatedat");
             entity.Property(e => e.Version).HasColumnName("version");
 
             entity.HasOne(d => d.QuestionBankEntry).WithMany(p => p.QuestionVersions)
@@ -292,6 +290,35 @@ public partial class QuizzbContext : DbContext
                 .HasConstraintName("fk_question_version");
         });
 
+        modelBuilder.Entity<Questionkeyword>(entity =>
+        {
+            entity.HasKey(e => new { e.Questionid, e.Keywordid }).HasName("PRIMARY");
+
+            entity.ToTable("questionkeywords");
+
+            entity.HasIndex(e => e.Keywordid, "fk_keywords_idx");
+
+            entity.Property(e => e.Questionid).HasColumnName("questionid");
+            entity.Property(e => e.Keywordid).HasColumnName("keywordid");
+            entity.Property(e => e.Createdat)
+                .HasColumnType("datetime")
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("datetime")
+                .HasColumnName("updatedat");
+
+            entity.HasOne(d => d.Keyword).WithMany(p => p.Questionkeywords)
+                .HasForeignKey(d => d.Keywordid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_keywords");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.Questionkeywords)
+                .HasForeignKey(d => d.Questionid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_questions");
+        });
+
         modelBuilder.Entity<Quiz>(entity =>
         {
             entity.HasKey(e => e.Idquiz).HasName("PRIMARY");
@@ -302,13 +329,13 @@ public partial class QuizzbContext : DbContext
 
             entity.Property(e => e.Idquiz).HasColumnName("idquiz");
             entity.Property(e => e.Courseid).HasColumnName("courseid");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Createdat)
                 .HasColumnType("datetime")
-                .HasColumnName("created_at");
+                .HasColumnName("createdat");
             entity.Property(e => e.Intro)
                 .HasColumnType("mediumtext")
                 .HasColumnName("intro");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.IsPublic)
                 .HasDefaultValueSql("'1'")
                 .HasColumnName("is_public");
@@ -335,11 +362,9 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.TimeOpen)
                 .HasColumnType("datetime")
                 .HasColumnName("time_open");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Updatedat)
                 .HasColumnType("datetime")
-                .HasColumnName("updated_at");
+                .HasColumnName("updatedat");
 
             entity.HasOne(d => d.Course).WithMany(p => p.Quizzes)
                 .HasForeignKey(d => d.Courseid)
@@ -362,18 +387,16 @@ public partial class QuizzbContext : DbContext
             entity.HasIndex(e => e.UserId, "fk_quizrespones_users_idx");
 
             entity.Property(e => e.IdquizResponses).HasColumnName("idquiz_responses");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Createdat)
                 .HasColumnType("datetime")
-                .HasColumnName("created_at");
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.QuestionId).HasColumnName("question_id");
             entity.Property(e => e.QuizId).HasColumnName("quiz_id");
             entity.Property(e => e.ResponsesId).HasColumnName("responses_id");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Updatedat)
                 .HasColumnType("datetime")
-                .HasColumnName("updated_at");
+                .HasColumnName("updatedat");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Question).WithMany(p => p.QuizResponses)
@@ -414,16 +437,14 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("add_at");
             entity.Property(e => e.AddBy).HasColumnName("add_by");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Createdat)
                 .HasColumnType("datetime")
-                .HasColumnName("created_at");
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.QuizId).HasColumnName("quiz_id");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Updatedat)
                 .HasColumnType("datetime")
-                .HasColumnName("updated_at");
+                .HasColumnName("updatedat");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.AddByNavigation).WithMany(p => p.QuizUserAccessAddByNavigations)
@@ -453,7 +474,6 @@ public partial class QuizzbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("address");
             entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("createdat");
             entity.Property(e => e.Dob)
@@ -466,6 +486,7 @@ public partial class QuizzbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("firstname");
             entity.Property(e => e.Gender).HasColumnName("gender");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Lastname)
                 .HasMaxLength(255)
                 .HasColumnName("lastname");
@@ -476,8 +497,6 @@ public partial class QuizzbContext : DbContext
                 .HasMaxLength(10)
                 .HasColumnName("phone");
             entity.Property(e => e.Updatedat)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updatedat");
             entity.Property(e => e.Username)
@@ -498,16 +517,14 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.AddBy).HasColumnName("add_by");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Createdat)
                 .HasColumnType("datetime")
-                .HasColumnName("created_at");
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Permission).HasColumnName("permission");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Updatedat)
                 .HasColumnType("datetime")
-                .HasColumnName("updated_at");
+                .HasColumnName("updatedat");
 
             entity.HasOne(d => d.AddByNavigation).WithMany(p => p.UserCategoryAddByNavigations)
                 .HasForeignKey(d => d.AddBy)
@@ -537,18 +554,16 @@ public partial class QuizzbContext : DbContext
 
             entity.Property(e => e.UserCoursesId).HasColumnName("user_courses_id");
             entity.Property(e => e.CoursesId).HasColumnName("courses_id");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Createdat)
                 .HasColumnType("datetime")
-                .HasColumnName("created_at");
+                .HasColumnName("createdat");
+            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
             entity.Property(e => e.Role)
                 .HasMaxLength(45)
                 .HasColumnName("role");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            entity.Property(e => e.Updatedat)
                 .HasColumnType("datetime")
-                .HasColumnName("updated_at");
+                .HasColumnName("updatedat");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Courses).WithMany(p => p.UserCourses)

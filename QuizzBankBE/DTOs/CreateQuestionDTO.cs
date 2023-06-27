@@ -27,6 +27,8 @@ namespace QuizzBankBE.DTOs
 
         public int Version { get; set; }
 
+        public int? IsDeleted { get; set; }
+
         public enum QuestionVersionStatus
         {
             Ready,
@@ -58,5 +60,7 @@ namespace QuizzBankBE.DTOs
         [Required]
         [IdExistValidation("question_categories", "idquestion_categories")]
         public int QuestionCategoryId { get; set; }
+
+        public int? IsDeleted { get; set; }
     }
 }

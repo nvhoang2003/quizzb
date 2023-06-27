@@ -15,5 +15,7 @@ namespace QuizzBankBE.Services.QuestionServices
         Task<ServiceResponse<QuestionBankEntryResponseDTO>> getQuestionById(int questionbankEntryId);
 
         Task<ServiceResponse<QuestionResponseDTO>> updateQuestion(CreateQuestionDTO createQuestionDTO, int id);
+
+        Task<ServiceResponse<QuestionResponseDTO>> deleteQuestion(int id);
     }
 }
