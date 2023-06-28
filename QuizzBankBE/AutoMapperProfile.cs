@@ -29,6 +29,9 @@ namespace QuizzBankBE
             CreateMap<BaseCourseDTO, CourseDTO>();
             CreateMap<UserCourseDTO, UserCourse>();
             CreateMap<UserCourse, UserCourseDTO>();
+            CreateMap<QuestionCategoryDTO, QuestionCategory>();
+            CreateMap<CreateQuestionCategoryDTO, QuestionCategory>();
+            CreateMap<QuestionCategory, QuestionCategoryDTO>();
         }
     }
 }

@@ -17,5 +17,7 @@ namespace QuizzBankBE.Services.QuestionServices
         Task<ServiceResponse<QuestionResponseDTO>> updateQuestion(CreateQuestionDTO createQuestionDTO, int id);
 
         Task<ServiceResponse<QuestionResponseDTO>> deleteQuestion(int id);
+
+        Task<bool> getQuestionAndAnswerMaxVersion(QuestionBankEntryResponseDTO questionBankEntry);
     }
 }

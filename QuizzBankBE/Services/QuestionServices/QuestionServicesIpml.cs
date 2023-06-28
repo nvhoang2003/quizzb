@@ -79,9 +79,6 @@ namespace QuizzBankBE.Services.QuestionServices
 
             if (questionBankEntryDTO == null)
             {
-                serviceResponse.Status = false;
-                serviceResponse.StatusCode = 400;
-                serviceResponse.Message = "Câu hỏi không tồn tại !";
                 serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
                 return serviceResponse;
             }
