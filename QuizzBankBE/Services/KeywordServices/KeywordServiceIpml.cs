@@ -37,9 +37,7 @@ namespace QuizzBankBE.Services.KeywordServices
 
             _dataContext.Keywords.Add(keywordSaved);
             await _dataContext.SaveChangesAsync();
-            serviceResponse.Status = true;
-            serviceResponse.StatusCode = 200;
-            serviceResponse.Message = "Tạo thành công !";
+           serviceResponse.updateResponse(200, "Tạo thành công");
             return serviceResponse;
         }
 

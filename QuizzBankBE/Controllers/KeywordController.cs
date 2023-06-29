@@ -34,7 +34,7 @@ namespace QuizzBankBE.Controllers
 
 
         [HttpPost("CreateNewKeyword")]
-        public async Task<ActionResult<ServiceResponse<KeywordDTO>>> createNewQuestionn(
+        public async Task<ActionResult<ServiceResponse<KeywordDTO>>> createNewKeyword(
         [FromBody] CreateKeywordDTO createKeywordDTO)
         {
             var response = await _keywordServices.CreateNewKeyword(createKeywordDTO);
@@ -43,7 +43,7 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpGet("getListAllKeyword")]
-        public async Task<ActionResult<ServiceResponse<PageList<QuestionBankEntryResponseDTO>>>> getListQuestions(
+        public async Task<ActionResult<ServiceResponse<PageList<QuestionBankEntryResponseDTO>>>> getListKeyword(
         [FromQuery] OwnerParameter ownerParameters)
         {
             var response = await _keywordServices.getAllKeyword(ownerParameters);
@@ -90,7 +90,7 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ServiceResponse<KeywordDTO>>> deleteQuestion(int id)
+        public async Task<ActionResult<ServiceResponse<KeywordDTO>>> deleteKeyword(int id)
         {
             //var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
