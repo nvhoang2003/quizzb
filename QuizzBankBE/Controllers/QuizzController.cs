@@ -6,10 +6,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
-using QuizzBankBE.Services.KeywordServices;
-using QuizzBankBE.Services.QuestionServices;
 using QuizzBankBE.Services.QuizService;
-using System.Security.Claims;
 
 namespace QuizzBankBE.Controllers
 {
@@ -39,7 +36,7 @@ namespace QuizzBankBE.Controllers
 
 
         [HttpPost("CreateNewQuizz")]
-        public async Task<ActionResult<ServiceResponse<QuizResponseDTO>>> createNewQuestionn(
+        public async Task<ActionResult<ServiceResponse<QuizResponseDTO>>> createNewQizz(
         [FromBody] CreateQuizDTO createQuizDTO)
         {
             var response = await _quizServices.createNewQuiz(createQuizDTO);
@@ -70,7 +67,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpPut("updateQuiz/{id}")]
         public async Task<ActionResult<ServiceResponse<QuizDTO>>> updateQuiz(
-        [FromBody] UpdateQuizDTO updateQuizDTO, int id)
+        [FromBody] CreateQuizDTO updateQuizDTO, int id)
         {
 
             var response = await _quizServices.updateQuizz(updateQuizDTO, id);

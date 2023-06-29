@@ -32,7 +32,7 @@ namespace QuizzBankBE.Services.QuizService
         }
 
 
-        public async Task<ServiceResponse<QuizResponseDTO>> createNewQuiz(BaseQuizDTO createQuizDTO)
+        public async Task<ServiceResponse<QuizResponseDTO>> createNewQuiz(CreateQuizDTO createQuizDTO)
         {
             var serviceResponse = new ServiceResponse<QuizResponseDTO>();
             Quiz quizSaved = _mapper.Map<Quiz>(createQuizDTO);

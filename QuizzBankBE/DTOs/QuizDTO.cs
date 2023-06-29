@@ -24,5 +24,11 @@ namespace QuizzBankBE.DTOs
     }
 
 
+    public class CreateQuizDTO : BaseQuizDTO
+    {
+
+    }
+
+   
 
 }
