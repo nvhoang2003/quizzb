@@ -50,7 +50,7 @@ namespace QuizzBankBE.Services.CourseServices
 
             courseDTOs = dbCourse.Select(u => _mapper.Map<CourseDTO>(u)).ToList();
             serviceResponse.Data = PageList<CourseDTO>.ToPageList(
-            courseDTOs.AsEnumerable<CourseDTO>().OrderBy(on => on.Fullname),
+            courseDTOs.AsEnumerable<CourseDTO>()/*.OrderBy(on => on.Courseid)*/,
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
 
@@ -70,7 +70,7 @@ namespace QuizzBankBE.Services.CourseServices
             courseDTOs = dbCourseByUserID.Result.Select(c => _mapper.Map<CourseDTO>(c)).ToList();
 
             serviceResponse.Data = PageList<CourseDTO>.ToPageList(
-            courseDTOs.AsEnumerable<CourseDTO>().OrderBy(on => on.Fullname),
+            courseDTOs.AsEnumerable<CourseDTO>()/*.OrderBy(on => on.Courseid)*/,
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
 
@@ -84,9 +84,8 @@ namespace QuizzBankBE.Services.CourseServices
 
             if (dbCourse == null)
             {
-                serviceResponse.Status = false;
-                serviceResponse.StatusCode = 400;
-                serviceResponse.Message = "course.notFoundwithID";
+                serviceResponse.updateResponse(404, "Không tồn tại!");
+
                 return serviceResponse;
             }
 
@@ -95,9 +94,59 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CourseDTO>> updateCourse(BaseCourseDTO updateCourseDto, int userIdLogin)
+        public async Task<ServiceResponse<CourseDTO>> updateCourse(BaseCourseDTO updateCourseDto,int courseID)
         {
-            return new ServiceResponse<CourseDTO>();
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+
+            var courseRespone = await getCourseByCourseID(courseID);
+
+            if (courseRespone.Status == false)
+            {
+                serviceResponse.updateResponse(courseRespone.StatusCode, courseRespone.Message);
+
+                return serviceResponse;
+            }
+
+            var course = courseRespone.Data;
+
+            course.Fullname = updateCourseDto.Fullname;
+            course.Shortname = updateCourseDto.Shortname;
+            course.Startdate = updateCourseDto.Startdate;
+            course.Enddate = updateCourseDto.Enddate;
+
+            _dataContext.Courses.Update(course);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Message = "Sửa thành công!";
+            serviceResponse.Data = _mapper.Map<CourseDTO>(course);
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID)
+        {
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+
+            var courseRespone = await getCourseByCourseID(courseID);
+
+            if (courseRespone.Status == false)
+            {
+                serviceResponse.updateResponse(courseRespone.StatusCode, courseRespone.Message);
+
+                return serviceResponse;
+            }
+
+            var course = courseRespone.Data;
+
+            await deleteRelationshipCourse(course.Courseid);
+
+            course.IsDeleted = 1;
+            _dataContext.Courses.Update(course);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Message = "Xóa thành công!";
+
+            return serviceResponse;
         }
 
         public async Task<UserCourse> createUserCourse(int userID, int courseID)
@@ -111,5 +160,16 @@ namespace QuizzBankBE.Services.CourseServices
             return userCourseSaved;
         }
 
+        private async Task deleteRelationshipCourse(int courseID)
+        {
+            var userCourseByCourse = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID).ToListAsync();
+
+            if (userCourseByCourse.Any())
+            {
+                userCourseByCourse.ForEach(uc => uc.IsDeleted = 1);
+                _dataContext.UserCourses.UpdateRange(userCourseByCourse);
+                await _dataContext.SaveChangesAsync();
+            }
+        }
     }
 }

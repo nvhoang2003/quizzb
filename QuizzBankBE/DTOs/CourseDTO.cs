@@ -26,6 +26,7 @@ namespace QuizzBankBE.DTOs
         }
 
         [Required]
+        [IdExistValidation("user_courses", "user_id")]
         public int UserId { get; set; }
 
         [Required]
@@ -53,12 +54,9 @@ namespace QuizzBankBE.DTOs
         {
             string[] powerfullUserCourseRoles = Enum.GetNames(typeof(PowerfullUserCourseRole));
 
-            for (int i = 0; i < powerfullUserCourseRoles.Length; i++)
+            if (powerfullUserCourseRoles.Contains(role))
             {
-                if (role.Equals(powerfullUserCourseRoles[i], StringComparison.Ordinal))
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;
