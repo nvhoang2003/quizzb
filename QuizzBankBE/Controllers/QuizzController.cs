@@ -7,10 +7,6 @@ using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.QuizService;
-using QuizzBankBE.Services.KeywordServices;
-using QuizzBankBE.Services.QuestionServices;
-using QuizzBankBE.Services.QuizService;
-using System.Security.Claims;
 
 namespace QuizzBankBE.Controllers
 {
