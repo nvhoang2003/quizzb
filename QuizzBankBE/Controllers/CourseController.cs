@@ -58,11 +58,6 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-            if (userIdLogin == null)
-            {
-                return new StatusCodeResult(401);
-            }
-
             var course = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
             var metadata = new
             {
@@ -77,17 +72,67 @@ namespace QuizzBankBE.Controllers
             return Ok(course);
         }
 
-        [HttpPost("CreateCourse")]
+        [HttpGet()]
+        public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int courseID)
+        {
+            var response = await _courseServices.getCourseByCourseID(courseID);
+
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPost()]
         public async Task<ActionResult<ServiceResponse<CourseDTO>>> createCourse([FromBody] BaseCourseDTO createCourseDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-            if (userIdLogin == null)
+            var response = await _courseServices.createCourse(createCourseDTO, userIdLogin);
+
+            if (response.Status == false)
             {
-                return new StatusCodeResult(401);
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
             }
 
-            var response = await _courseServices.createCourse(createCourseDTO, userIdLogin);
+            return Ok(response);
+        }
+
+        [HttpPut()]
+        public async Task<ActionResult<ServiceResponse<CourseDTO>>> updateCourse([FromBody] BaseCourseDTO updateCourseDTO, int courseID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            var response = await _courseServices.updateCourse(updateCourseDTO, courseID, userIdLogin);
+
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpDelete()]
+        public async Task<ActionResult<ServiceResponse<CourseDTO>>> deleteCourse(int courseID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            var response = await _courseServices.deleteCourse(courseID, userIdLogin);
 
             if (response.Status == false)
             {

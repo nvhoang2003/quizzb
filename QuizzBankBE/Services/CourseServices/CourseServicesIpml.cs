@@ -8,6 +8,8 @@ using AutoMapper;
 using QuizzBankBE.JWT;
 using Microsoft.EntityFrameworkCore;
 using static QuizzBankBE.DTOs.UserCourseDTO;
+using Microsoft.AspNetCore.Mvc;
+using MySqlX.XDevAPI;
 
 namespace QuizzBankBE.Services.CourseServices
 {
@@ -50,7 +52,7 @@ namespace QuizzBankBE.Services.CourseServices
 
             courseDTOs = dbCourse.Select(u => _mapper.Map<CourseDTO>(u)).ToList();
             serviceResponse.Data = PageList<CourseDTO>.ToPageList(
-            courseDTOs.AsEnumerable<CourseDTO>().OrderBy(on => on.Fullname),
+            courseDTOs.AsEnumerable<CourseDTO>().OrderBy(on => on.Courseid),
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
 
@@ -84,9 +86,8 @@ namespace QuizzBankBE.Services.CourseServices
 
             if (dbCourse == null)
             {
-                serviceResponse.Status = false;
-                serviceResponse.StatusCode = 400;
-                serviceResponse.Message = "course.notFoundwithID";
+                serviceResponse.updateResponse(404, "Không tồn tại!");
+
                 return serviceResponse;
             }
 
@@ -95,9 +96,75 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CourseDTO>> updateCourse(BaseCourseDTO updateCourseDto, int userIdLogin)
+        public async Task<ServiceResponse<CourseDTO>> updateCourse(BaseCourseDTO updateCourseDto,int courseID, int userIdLogin)
         {
-            return new ServiceResponse<CourseDTO>();
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+            var accessRoleResponse = await accessRole(courseID, userIdLogin);
+
+            if (accessRoleResponse.Status == false)
+            {
+                serviceResponse.updateResponse(accessRoleResponse.StatusCode, accessRoleResponse.Message);
+
+                return serviceResponse;
+            }
+
+            var courseRespone = await getCourseByCourseID(courseID);
+
+            if (courseRespone.Status == false)
+            {
+                serviceResponse.updateResponse(courseRespone.StatusCode, courseRespone.Message);
+
+                return serviceResponse;
+            }
+
+            var course = courseRespone.Data;
+
+            course.Fullname = updateCourseDto.Fullname;
+            course.Shortname = updateCourseDto.Shortname;
+            course.Startdate = updateCourseDto.Startdate;
+            course.Enddate = updateCourseDto.Enddate;
+
+            _dataContext.Courses.Update(course);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Message = "Sửa thành công!";
+            serviceResponse.Data = _mapper.Map<CourseDTO>(course);
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID, int userIdLogin)
+        {
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+            var accessRoleResponse = await accessRole(courseID, userIdLogin);
+
+            if (accessRoleResponse.Status == false)
+            {
+                serviceResponse.updateResponse(accessRoleResponse.StatusCode, accessRoleResponse.Message);
+
+                return serviceResponse;
+            }
+
+            var courseRespone = await getCourseByCourseID(courseID);
+
+            if (courseRespone.Status == false)
+            {
+                serviceResponse.updateResponse(courseRespone.StatusCode, courseRespone.Message);
+
+                return serviceResponse;
+            }
+
+            var course = courseRespone.Data;
+
+            await deleteUserCourseByCourse(course.Courseid);
+
+            course.IsDeleted = 1;
+            _dataContext.Courses.Update(course);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Message = "Xóa thành công!";
+
+            return serviceResponse;
         }
 
         public async Task<UserCourse> createUserCourse(int userID, int courseID)
@@ -111,5 +178,45 @@ namespace QuizzBankBE.Services.CourseServices
             return userCourseSaved;
         }
 
+        public async Task<UserCourse> getUserCourseByUserAndCourse(int courseID, int userID)
+        {
+            var dbUserCourse = await _dataContext.UserCourses.FirstOrDefaultAsync(c => c.UserId == userID && c.CoursesId == courseID);
+
+            return dbUserCourse;
+        }
+
+        public async Task<ServiceResponse<CourseDTO>> accessRole (int courseID, int userID)
+        {
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+            var userInCourse = await getUserCourseByUserAndCourse(courseID, userID);
+
+            if (userInCourse == null)
+            {
+                serviceResponse.updateResponse(404, "Không tồn tại!");
+
+                return serviceResponse;
+            }
+
+            if (UserCourseDTO.checkPowerfullUserCourseRole(userInCourse.Role) == false)
+            {
+                serviceResponse.updateResponse(403, "Không có quyền!");
+
+                return serviceResponse;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task deleteUserCourseByCourse (int courseID)
+        {
+            var userCourseByCourse = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID).ToListAsync();
+
+            if (userCourseByCourse.Any())
+            {
+                userCourseByCourse.ForEach(uc => uc.IsDeleted = 1);
+                _dataContext.UserCourses.UpdateRange(userCourseByCourse);
+                await _dataContext.SaveChangesAsync();
+            }
+        }
     }
 }
