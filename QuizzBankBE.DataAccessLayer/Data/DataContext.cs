@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DataAccessLayer.DataObject;
-using QuizzBankBE.DataAccessLayer.Entity.Interface;
 using System.Security.Claims;
 
 namespace QuizzBankBE.DataAccessLayer.Data
@@ -590,29 +589,18 @@ namespace QuizzBankBE.DataAccessLayer.Data
         public override async Task<int> SaveChangesAsync(
        CancellationToken cancellationToken = default(CancellationToken))
         {
-            var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.Entity is IAuditedEntityBase && (
-            e.State == EntityState.Added
-            || e.State == EntityState.Modified));
+            var entries = ChangeTracker.Entries()
+                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
 
             var modifiedOrCreatedBy = int.Parse(_httpContextAccessor?.HttpContext?.User?.Claims
             .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            foreach (var entityEntry in entries)
+            foreach (var entity in entries)
             {
-                if (entityEntry.State == EntityState.Added)
+                if (entity.State == EntityState.Added)
                 {
-                    ((IAuditedEntityBase)entityEntry.Entity).CreatedAt = DateTime.Now;
-                    ((IAuditedEntityBase)entityEntry.Entity).CreateBy = modifiedOrCreatedBy;
+                    entity.Property("Createdat").CurrentValue = DateTime.Now;
                 }
-                else
-                {
-                    Entry((IAuditedEntityBase)entityEntry.Entity).Property(p => p.CreatedAt).IsModified = false;
-                    Entry((IAuditedEntityBase)entityEntry.Entity).Property(p => p.CreateBy).IsModified = false;
-                }
-
-                ((IAuditedEntityBase)entityEntry.Entity).UpdatedAt = DateTime.Now;
-                ((IAuditedEntityBase)entityEntry.Entity).UpdateBy = modifiedOrCreatedBy;
+                entity.Property("Updatedat").CurrentValue = DateTime.Now;
             }
 
             return await base.SaveChangesAsync(cancellationToken);

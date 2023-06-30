@@ -46,23 +46,33 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<QuestionBankEntryResponseDTO>>> getListQuestion(OwnerParameter ownerParameters, int questionCategoryId)
+        public async Task<ServiceResponse<QuestionCategoryDTO>> getListQuestion(OwnerParameter ownerParameters, int questionCategoryId)
         {
-            var serviceResponse = new ServiceResponse<PageList<QuestionBankEntryResponseDTO>>();
+            var serviceResponse = new ServiceResponse<QuestionCategoryDTO>();
 
-            var dbQuestion = await _dataContext.QuestionBankEntries.ToListAsync();
-            var questionBankEntriesDTO = dbQuestion.Select(u => _mapper.Map<QuestionBankEntryResponseDTO>(u)).
-                Where(q => q.QuestionCategoryId == questionCategoryId).ToList();
+            var categoryDb = await _dataContext.QuestionCategories.FirstOrDefaultAsync(q => q.IdquestionCategories == questionCategoryId);
 
-            foreach (var item in questionBankEntriesDTO)
+            if (categoryDb == null)
             {
-                await getQuestionAndAnswerMaxVersion(item);
+                serviceResponse.updateResponse(404, "Không tồn tại");
             }
+            else
+            {
+                var catDTO = _mapper.Map<QuestionCategoryDTO>(categoryDb);
 
-            serviceResponse.Data = PageList<QuestionBankEntryResponseDTO>.ToPageList(
-            questionBankEntriesDTO.AsEnumerable<QuestionBankEntryResponseDTO>(),
-            ownerParameters.pageIndex,
-            ownerParameters.pageSize);
+                var dbQuestion = await _dataContext.QuestionBankEntries.ToListAsync();
+                var questionBankEntriesDTO = dbQuestion.Select(u => _mapper.Map<QuestionBankEntryResponseDTO>(u)).
+                    Where(q => q.QuestionCategoryId == questionCategoryId).ToList();
+
+                foreach (var item in questionBankEntriesDTO)
+                {
+                    await getQuestionAndAnswerMaxVersion(item);
+                    catDTO.QuestionBankEntries.Add(item);
+                }
+
+                serviceResponse.updateResponse(200, "Ok");
+                serviceResponse.Data = catDTO;
+            }
 
             return serviceResponse;
         }

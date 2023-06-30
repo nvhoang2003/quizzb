@@ -20,7 +20,7 @@ using System.Text.Json.Serialization;
 
 namespace QuizzBankBE.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowAll")]
@@ -59,11 +59,11 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpGet("getListQuestions")]
-        public async Task<ActionResult<ServiceResponse<PageList<QuestionBankEntryResponseDTO>>>> getListQuestions(
+        public async Task<ActionResult<ServiceResponse<QuestionCategoryDTO>>> getListQuestions(
         [FromQuery] OwnerParameter ownerParameters, int categoryId)
         {
             var response = await _questionServices.getListQuestion(ownerParameters, categoryId);
-            var metadata = new
+           /* var metadata = new
             {
                 response.Data.TotalCount,
                 response.Data.PageSize,
@@ -71,8 +71,8 @@ namespace QuizzBankBE.Controllers
                 response.Data.TotalPages,
                 response.Data.HasNext,
                 response.Data.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            };*/
+            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
             return Ok(response);
         }
