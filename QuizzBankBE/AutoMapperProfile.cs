@@ -41,7 +41,8 @@ namespace QuizzBankBE
             CreateMap<CreateQuizDTO, QuizDTO>();
             CreateMap<Quiz, CreateQuizDTO>();
             CreateMap<CreateQuizDTO, Quiz>();
-
+            CreateMap<QuestionCategory, QuestionCategoryDTO>();
+            CreateMap<QuestionCategoryDTO, QuestionCategory>();
         }
     }
 }

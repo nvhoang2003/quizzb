@@ -1,4 +1,6 @@
-﻿namespace QuizzBankBE.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace QuizzBankBE.DTOs
 {
     public class QuestionCategoryDTO
     {
