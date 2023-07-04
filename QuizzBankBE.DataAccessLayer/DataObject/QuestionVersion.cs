@@ -1,9 +1,10 @@
-﻿using System;
+﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class QuestionVersion
+public partial class QuestionVersion : IAuditedEntityBase
 {
     public int IdquestionVersions { get; set; }
 
