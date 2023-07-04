@@ -1,9 +1,10 @@
-﻿using System;
+﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class UserCategory
+public partial class UserCategory : IAuditedEntityBase
 {
     public int UserId { get; set; }
 

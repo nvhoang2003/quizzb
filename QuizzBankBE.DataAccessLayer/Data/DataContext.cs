@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DataAccessLayer.Entity.Interface;
 using System.Security.Claims;
 
 namespace QuizzBankBE.DataAccessLayer.Data
@@ -81,6 +82,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.Questionid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_question");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Course>(entity =>
@@ -109,6 +112,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.Updatedat)
                     .HasColumnType("datetime")
                     .HasColumnName("updatedat");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Keyword>(entity =>
@@ -129,6 +134,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.Updatedat)
                     .HasColumnType("datetime")
                     .HasColumnName("updatedat");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Question>(entity =>
@@ -174,6 +181,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.Updatedby)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_user_update");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuestionBankEntry>(entity =>
@@ -198,6 +207,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.QuestionCategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_question_category");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuestionCategory>(entity =>
@@ -225,6 +236,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.Parent)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_use_questioncategories");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuestionQuiz>(entity =>
@@ -256,6 +269,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.QuizzId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_quiz_question");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuestionVersion>(entity =>
@@ -292,6 +307,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.QuestionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_question_version");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Questionkeyword>(entity =>
@@ -321,6 +338,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.Questionid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_questions");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Quiz>(entity =>
@@ -374,6 +393,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.Courseid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_course_quiz");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuizResponse>(entity =>
@@ -422,6 +443,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_quizrespones_users");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuizUserAccess>(entity =>
@@ -465,6 +488,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_quizuseraccess_user");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -506,6 +531,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.Username)
                     .HasMaxLength(255)
                     .HasColumnName("username");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<UserCategory>(entity =>
@@ -544,6 +571,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_user_categories");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             modelBuilder.Entity<UserCourse>(entity =>
@@ -579,6 +608,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_user");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
             OnModelCreatingPartial(modelBuilder);
@@ -587,20 +618,28 @@ namespace QuizzBankBE.DataAccessLayer.Data
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
         public override async Task<int> SaveChangesAsync(
-       CancellationToken cancellationToken = default(CancellationToken))
+      CancellationToken cancellationToken = default(CancellationToken))
         {
-            var entries = ChangeTracker.Entries()
-                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+            var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is IAuditedEntityBase && (
+            e.State == EntityState.Added
+            || e.State == EntityState.Modified));
 
             var modifiedOrCreatedBy = int.Parse(_httpContextAccessor?.HttpContext?.User?.Claims
             .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            foreach (var entity in entries)
+            foreach (var entityEntry in entries)
             {
-                if (entity.State == EntityState.Added)
+                if (entityEntry.State == EntityState.Added)
                 {
-                    entity.Property("Createdat").CurrentValue = DateTime.Now;
+                    ((IAuditedEntityBase)entityEntry.Entity).Createdat = DateTime.Now;
                 }
-                entity.Property("Updatedat").CurrentValue = DateTime.Now;
+                else
+                {
+                    Entry((IAuditedEntityBase)entityEntry.Entity).Property(p => p.Createdat).IsModified = false;
+                }
+
+                ((IAuditedEntityBase)entityEntry.Entity).Updatedat = DateTime.Now;
             }
 
             return await base.SaveChangesAsync(cancellationToken);
