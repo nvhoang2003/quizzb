@@ -11,14 +11,14 @@ using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DataAccessLayer.Data;
-using QuizzBankBE.Services.AuthServices;
-using QuizzBankBE.Services.UserServices;
+//using QuizzBankBE.Services.AuthServices;
+//using QuizzBankBE.Services.UserServices;
 using QuizzBankBE.JWT;
 using AutoMapper;
-using QuizzBankBE.Services.QuestionServices;
-using QuizzBankBE.Services.CourseServices;
-using QuizzBankBE.Services.KeywordServices;
-using QuizzBankBE.Services.QuizService;
+//using QuizzBankBE.Services.QuestionServices;
+//using QuizzBankBE.Services.CourseServices;
+//using QuizzBankBE.Services.KeywordServices;
+//using QuizzBankBE.Services.QuizService;
 
 namespace QuizzBankBE
 {
@@ -45,17 +45,17 @@ namespace QuizzBankBE
         {
             services.AddControllers();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IAuthServices, AuthServices>();
-            services.AddScoped<IQuestionServices, QuestionServicesIpml>();
-            services.AddScoped<ICourseServices, CourseServicesIpml>();
+            //services.AddScoped<IAuthServices, AuthServices>();
+            //services.AddScoped<IQuestionServices, QuestionServicesIpml>();
+            //services.AddScoped<ICourseServices, CourseServicesIpml>();
             
-            services.AddScoped<IQuizService, QuizServiceIpml>();
-            //services.AddScoped<IPermissionServices, PermissionServicesImpl>();
-            services.AddScoped<IKeywordService, KeywordServiceIpml>();
+            //services.AddScoped<IQuizService, QuizServiceIpml>();
+            ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
+            //services.AddScoped<IKeywordService, KeywordServiceIpml>();
 
-            //services.AddScoped<IRoleServices, RoleServicesImpl>();
-            //services.AddScoped<IPermissionServices, PermissionServicesImpl>();
-            services.AddScoped<IUserServices, UserServices>();
+            ////services.AddScoped<IRoleServices, RoleServicesImpl>();
+            ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
+            //services.AddScoped<IUserServices, UserServices>();
                 //services.AddScoped<IGmcServices, GmcServicesImpl>();
                 //services.AddScoped<ISaleServices, SaleServicesImpl>();
                 //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();

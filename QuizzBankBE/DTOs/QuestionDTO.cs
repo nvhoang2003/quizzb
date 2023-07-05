@@ -14,7 +14,7 @@ namespace QuizzBankBE.DTOs
     {
         public int IdquestionVersions { get; set; }
         public virtual QuestionDTO question { get; set; }
-        public virtual QuestionBankEntry questionBankEntry { get; set; }
+        //public virtual QuestionBankEntry questionBankEntry { get; set; }
         public string Status { get; set; }
         public int QuestionBankEntryId { get; set; }
         public int Version { get; set; }
