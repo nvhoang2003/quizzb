@@ -1,14 +1,13 @@
-﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
 public partial class Quiz : IAuditedEntityBase
 {
-    public int Idquiz { get; set; }
+    public int Id { get; set; }
 
-    public int Courseid { get; set; }
+    public int? CourseId { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -32,17 +31,25 @@ public partial class Quiz : IAuditedEntityBase
 
     public sbyte IsPublic { get; set; }
 
-    public int? IsDeleted { get; set; }
+    public int? AuthorId { get; set; }
 
-    public DateTime? Createdat { get; set; }
+    public string? Description { get; set; }
 
-    public DateTime? Updatedat { get; set; }
+    public int? CreateBy { get; set; }
 
-    public virtual Course Course { get; set; } = null!;
+    public int? UpdateBy { get; set; }
 
-    public virtual ICollection<QuestionQuiz> QuestionQuizzes { get; set; } = new List<QuestionQuiz>();
+    public DateTime? CreateDate { get; set; }
 
-    public virtual ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
+    public DateTime? UpdateDate { get; set; }
 
-    public virtual ICollection<QuizUserAccess> QuizUserAccesses { get; set; } = new List<QuizUserAccess>();
+    public int IsDeleted { get; set; }
+
+    public virtual User? Author { get; set; }
+
+    public virtual Course? Course { get; set; }
+
+    public virtual ICollection<QuizAccess> QuizAccesses { get; set; } = new List<QuizAccess>();
+
+    public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
 }

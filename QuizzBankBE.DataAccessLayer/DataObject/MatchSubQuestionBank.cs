@@ -1,17 +1,14 @@
-﻿using System;
+﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class UserCourse : IAuditedEntityBase
+public partial class MatchSubQuestionBank : IAuditedEntityBase
 {
     public int Id { get; set; }
 
-    public int? UserId { get; set; }
-
-    public int? CoursesId { get; set; }
-
-    public string Role { get; set; } = null!;
+    public int? QuestionBankId { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -23,7 +20,9 @@ public partial class UserCourse : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
-    public virtual Course? Courses { get; set; }
+    public string? QuestionText { get; set; }
 
-    public virtual User? User { get; set; }
+    public string? AnswerText { get; set; }
+
+    public virtual QuizBank? QuestionBank { get; set; }
 }

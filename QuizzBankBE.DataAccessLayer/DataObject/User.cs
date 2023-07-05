@@ -1,20 +1,19 @@
-﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
 public partial class User : IAuditedEntityBase
 {
-    public int Iduser { get; set; }
+    public int Id { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string UserName { get; set; } = null!;
 
     public string Password { get; set; } = null!;
 
-    public string? Firstname { get; set; }
+    public string? FirstName { get; set; }
 
-    public string? Lastname { get; set; }
+    public string? LastName { get; set; }
 
     public DateTime? Dob { get; set; }
 
@@ -24,25 +23,23 @@ public partial class User : IAuditedEntityBase
 
     public int? Gender { get; set; }
 
-    public DateTime? Createdat { get; set; }
+    public int? CreateBy { get; set; }
 
-    public DateTime? Updatedat { get; set; }
+    public int? UpdateBy { get; set; }
 
-    public string Email { get; set; } = null!;
+    public DateTime? CreateDate { get; set; }
 
-    public int? IsDeleted { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
-    public virtual ICollection<QuestionCategory> QuestionCategories { get; set; } = new List<QuestionCategory>();
+    public int IsDeleted { get; set; }
 
-    public virtual ICollection<Question> QuestionCreatedbyNavigations { get; set; } = new List<Question>();
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 
-    public virtual ICollection<Question> QuestionUpdatedbyNavigations { get; set; } = new List<Question>();
+    public virtual ICollection<QuizAccess> QuizAccessAddByNavigations { get; set; } = new List<QuizAccess>();
 
-    public virtual ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
+    public virtual ICollection<QuizAccess> QuizAccessUsers { get; set; } = new List<QuizAccess>();
 
-    public virtual ICollection<UserCategory> UserCategoryAddByNavigations { get; set; } = new List<UserCategory>();
-
-    public virtual ICollection<UserCategory> UserCategoryUsers { get; set; } = new List<UserCategory>();
+    public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
     public virtual ICollection<UserCourse> UserCourses { get; set; } = new List<UserCourse>();
 }

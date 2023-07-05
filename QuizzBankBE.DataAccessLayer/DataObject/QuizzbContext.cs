@@ -15,33 +15,35 @@ public partial class QuizzbContext : DbContext
     {
     }
 
-    public virtual DbSet<Answer> Answers { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Course> Courses { get; set; }
 
-    public virtual DbSet<Keyword> Keywords { get; set; }
+    public virtual DbSet<MatchSubQuestion> MatchSubQuestions { get; set; }
+
+    public virtual DbSet<MatchSubQuestionBank> MatchSubQuestionBanks { get; set; }
+
+    public virtual DbSet<QbTag> QbTags { get; set; }
 
     public virtual DbSet<Question> Questions { get; set; }
 
-    public virtual DbSet<QuestionBankEntry> QuestionBankEntries { get; set; }
-
-    public virtual DbSet<QuestionCategory> QuestionCategories { get; set; }
-
-    public virtual DbSet<QuestionQuiz> QuestionQuizzes { get; set; }
-
-    public virtual DbSet<QuestionVersion> QuestionVersions { get; set; }
-
-    public virtual DbSet<Questionkeyword> Questionkeywords { get; set; }
+    public virtual DbSet<QuestionAnswer> QuestionAnswers { get; set; }
 
     public virtual DbSet<Quiz> Quizzes { get; set; }
 
+    public virtual DbSet<QuizAccess> QuizAccesses { get; set; }
+
+    public virtual DbSet<QuizBank> QuizBanks { get; set; }
+
+    public virtual DbSet<QuizQuestion> QuizQuestions { get; set; }
+
     public virtual DbSet<QuizResponse> QuizResponses { get; set; }
 
-    public virtual DbSet<QuizUserAccess> QuizUserAccesses { get; set; }
+    public virtual DbSet<QuizbankAnswer> QuizbankAnswers { get; set; }
+
+    public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-
-    public virtual DbSet<UserCategory> UserCategories { get; set; }
 
     public virtual DbSet<UserCourse> UserCourses { get; set; }
 
@@ -51,530 +53,573 @@ public partial class QuizzbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Answer>(entity =>
+        modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Idanswers).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("answers");
+            entity.ToTable("category");
 
-            entity.HasIndex(e => e.Questionid, "fk_question_idx");
-
-            entity.Property(e => e.Idanswers).HasColumnName("idanswers");
-            entity.Property(e => e.Content)
-                .HasColumnType("mediumtext")
-                .HasColumnName("content");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Fraction).HasColumnName("fraction");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Questionid).HasColumnName("questionid");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.Answers)
-                .HasForeignKey(d => d.Questionid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_question");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
         });
 
         modelBuilder.Entity<Course>(entity =>
         {
-            entity.HasKey(e => e.Courseid).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("courses");
 
-            entity.Property(e => e.Courseid).HasColumnName("courseid");
-            entity.Property(e => e.Createdat)
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.EnddDate)
                 .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Enddate)
-                .HasColumnType("datetime")
-                .HasColumnName("enddate");
-            entity.Property(e => e.Fullname)
+                .HasColumnName("enddDate");
+            entity.Property(e => e.FullName)
                 .HasMaxLength(255)
-                .HasColumnName("fullname");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Shortname)
+                .HasColumnName("fullName");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.ShortName)
                 .HasMaxLength(255)
-                .HasColumnName("shortname");
-            entity.Property(e => e.Startdate)
+                .HasColumnName("shortName");
+            entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
-                .HasColumnName("startdate");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
+                .HasColumnName("startDate");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
         });
 
-        modelBuilder.Entity<Keyword>(entity =>
+        modelBuilder.Entity<MatchSubQuestion>(entity =>
         {
-            entity.HasKey(e => e.Idkeywords).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("keywords");
+            entity.ToTable("match_sub_questions");
 
-            entity.Property(e => e.Idkeywords).HasColumnName("idkeywords");
-            entity.Property(e => e.Content)
-                .HasMaxLength(45)
-                .HasColumnName("content");
-            entity.Property(e => e.CourseId).HasColumnName("course_id");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
+            entity.HasIndex(e => e.QuestionId, "fk_matchsub_question_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AnswerText)
+                .HasMaxLength(255)
+                .HasColumnName("answerText");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QuestionId).HasColumnName("questionId");
+            entity.Property(e => e.QuestionText)
+                .HasMaxLength(255)
+                .HasColumnName("questionText");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.MatchSubQuestions)
+                .HasForeignKey(d => d.QuestionId)
+                .HasConstraintName("fk_matchsub_question");
+        });
+
+        modelBuilder.Entity<MatchSubQuestionBank>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("match_sub_question_banks");
+
+            entity.HasIndex(e => e.QuestionBankId, "fk_matchsub_questionbank_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AnswerText)
+                .HasMaxLength(255)
+                .HasColumnName("answerText");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QuestionBankId).HasColumnName("questionBankId");
+            entity.Property(e => e.QuestionText)
+                .HasMaxLength(255)
+                .HasColumnName("questionText");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.QuestionBank).WithMany(p => p.MatchSubQuestionBanks)
+                .HasForeignKey(d => d.QuestionBankId)
+                .HasConstraintName("fk_matchsub_questionbank");
+        });
+
+        modelBuilder.Entity<QbTag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("qb_tags");
+
+            entity.HasIndex(e => e.QbId, "fk_qb_tags_idx");
+
+            entity.HasIndex(e => e.TagId, "fk_tag_qb_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QbId).HasColumnName("qbId");
+            entity.Property(e => e.TagId).HasColumnName("tagId");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.Qb).WithMany(p => p.QbTags)
+                .HasForeignKey(d => d.QbId)
+                .HasConstraintName("fk_qb_tags");
+
+            entity.HasOne(d => d.Tag).WithMany(p => p.QbTags)
+                .HasForeignKey(d => d.TagId)
+                .HasConstraintName("fk_tag_qb");
         });
 
         modelBuilder.Entity<Question>(entity =>
         {
-            entity.HasKey(e => e.Idquestions).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("questions");
 
-            entity.HasIndex(e => e.Createdby, "fk_user_1_idx");
+            entity.HasIndex(e => e.AuthorId, "fk_user_question_idx");
 
-            entity.HasIndex(e => e.Updatedby, "fk_user_update_idx");
-
-            entity.Property(e => e.Idquestions).HasColumnName("idquestions");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AuthorId).HasColumnName("authorId");
             entity.Property(e => e.Content)
                 .HasColumnType("mediumtext")
                 .HasColumnName("content");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Createdby).HasColumnName("createdby");
-            entity.Property(e => e.DefaultMark).HasColumnName("default_mark");
-            entity.Property(e => e.Generalfeedback)
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.GeneralFeedback)
                 .HasColumnType("mediumtext")
-                .HasColumnName("generalfeedback");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
+                .HasColumnName("generalFeedback");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.IsShuffle).HasColumnName("isShuffle");
             entity.Property(e => e.Name)
                 .HasMaxLength(45)
                 .HasColumnName("name");
-            entity.Property(e => e.Questionstype)
+            entity.Property(e => e.QuestionsType)
                 .HasMaxLength(45)
-                .HasColumnName("questionstype");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-            entity.Property(e => e.Updatedby).HasColumnName("updatedby");
+                .HasColumnName("questionsType");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
 
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.QuestionCreatedbyNavigations)
-                .HasForeignKey(d => d.Createdby)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user_create");
-
-            entity.HasOne(d => d.UpdatedbyNavigation).WithMany(p => p.QuestionUpdatedbyNavigations)
-                .HasForeignKey(d => d.Updatedby)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user_update");
+            entity.HasOne(d => d.Author).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.AuthorId)
+                .HasConstraintName("fk_user_question");
         });
 
-        modelBuilder.Entity<QuestionBankEntry>(entity =>
+        modelBuilder.Entity<QuestionAnswer>(entity =>
         {
-            entity.HasKey(e => e.IdquestionBankEntry).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("question_bank_entry");
+            entity.ToTable("question_answer");
 
-            entity.HasIndex(e => e.QuestionCategoryId, "fk_question_category_idx");
+            entity.HasIndex(e => e.QuestionId, "fk_question_answer_idx");
 
-            entity.Property(e => e.IdquestionBankEntry).HasColumnName("idquestion_bank_entry");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.QuestionCategoryId).HasColumnName("question_category_id");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-
-            entity.HasOne(d => d.QuestionCategory).WithMany(p => p.QuestionBankEntries)
-                .HasForeignKey(d => d.QuestionCategoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_question_category");
-        });
-
-        modelBuilder.Entity<QuestionCategory>(entity =>
-        {
-            entity.HasKey(e => e.IdquestionCategories).HasName("PRIMARY");
-
-            entity.ToTable("question_categories");
-
-            entity.HasIndex(e => e.Parent, "fk_parent _idx");
-
-            entity.Property(e => e.IdquestionCategories).HasColumnName("idquestion_categories");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Name)
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Content)
+                .HasColumnType("mediumtext")
+                .HasColumnName("content");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.Feedback)
                 .HasMaxLength(255)
-                .HasColumnName("name");
-            entity.Property(e => e.Parent).HasColumnName("parent");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
+                .HasColumnName("feedback");
+            entity.Property(e => e.Fraction).HasColumnName("fraction");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QuestionId).HasColumnName("questionId");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
 
-            entity.HasOne(d => d.ParentNavigation).WithMany(p => p.QuestionCategories)
-                .HasForeignKey(d => d.Parent)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_use_questioncategories");
-        });
-
-        modelBuilder.Entity<QuestionQuiz>(entity =>
-        {
-            entity.HasKey(e => new { e.QuestionId, e.QuizzId }).HasName("PRIMARY");
-
-            entity.ToTable("question_quiz");
-
-            entity.HasIndex(e => e.QuestionId, "fk_question_quiz_idx");
-
-            entity.HasIndex(e => e.QuizzId, "fk_quiz_idx");
-
-            entity.Property(e => e.QuestionId).HasColumnName("question_id");
-            entity.Property(e => e.QuizzId).HasColumnName("quizz_id");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.QuestionQuizzes)
+            entity.HasOne(d => d.Question).WithMany(p => p.QuestionAnswers)
                 .HasForeignKey(d => d.QuestionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_question_quiz");
-
-            entity.HasOne(d => d.Quizz).WithMany(p => p.QuestionQuizzes)
-                .HasForeignKey(d => d.QuizzId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quiz_question");
-        });
-
-        modelBuilder.Entity<QuestionVersion>(entity =>
-        {
-            entity.HasKey(e => e.IdquestionVersions).HasName("PRIMARY");
-
-            entity.ToTable("question_versions");
-
-            entity.HasIndex(e => e.QuestionBankEntryId, "fk_bank_entry_idx");
-
-            entity.HasIndex(e => e.QuestionId, "fk_question_idx");
-
-            entity.Property(e => e.IdquestionVersions).HasColumnName("idquestion_versions");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.QuestionBankEntryId).HasColumnName("question_bank_entry_id");
-            entity.Property(e => e.QuestionId).HasColumnName("question_id");
-            entity.Property(e => e.Status)
-                .HasMaxLength(45)
-                .HasColumnName("status");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-            entity.Property(e => e.Version).HasColumnName("version");
-
-            entity.HasOne(d => d.QuestionBankEntry).WithMany(p => p.QuestionVersions)
-                .HasForeignKey(d => d.QuestionBankEntryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_bank_entry_version");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.QuestionVersions)
-                .HasForeignKey(d => d.QuestionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_question_version");
-        });
-
-        modelBuilder.Entity<Questionkeyword>(entity =>
-        {
-            entity.HasKey(e => new { e.Questionid, e.Keywordid }).HasName("PRIMARY");
-
-            entity.ToTable("questionkeywords");
-
-            entity.HasIndex(e => e.Keywordid, "fk_keywords_idx");
-
-            entity.Property(e => e.Questionid).HasColumnName("questionid");
-            entity.Property(e => e.Keywordid).HasColumnName("keywordid");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-
-            entity.HasOne(d => d.Keyword).WithMany(p => p.Questionkeywords)
-                .HasForeignKey(d => d.Keywordid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_keywords");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.Questionkeywords)
-                .HasForeignKey(d => d.Questionid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_questions");
+                .HasConstraintName("fk_question_answer");
         });
 
         modelBuilder.Entity<Quiz>(entity =>
         {
-            entity.HasKey(e => e.Idquiz).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("quiz");
 
-            entity.HasIndex(e => e.Courseid, "fk_course_idx");
+            entity.HasIndex(e => e.AuthorId, "fk_author_quiz_idx");
 
-            entity.Property(e => e.Idquiz).HasColumnName("idquiz");
-            entity.Property(e => e.Courseid).HasColumnName("courseid");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
+            entity.HasIndex(e => e.CourseId, "fk_quiz_course_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AuthorId).HasColumnName("authorId");
+            entity.Property(e => e.CourseId).HasColumnName("courseId");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.Description)
+                .HasColumnType("mediumtext")
+                .HasColumnName("description");
             entity.Property(e => e.Intro)
                 .HasColumnType("mediumtext")
                 .HasColumnName("intro");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.IsPublic)
                 .HasDefaultValueSql("'1'")
-                .HasColumnName("is_public");
-            entity.Property(e => e.MaxPoint).HasColumnName("max_point");
+                .HasColumnName("isPublic");
+            entity.Property(e => e.MaxPoint).HasColumnName("maxPoint");
             entity.Property(e => e.Name)
                 .HasMaxLength(45)
                 .HasColumnName("name");
             entity.Property(e => e.NaveMethod)
                 .HasMaxLength(45)
-                .HasColumnName("nave_method");
+                .HasColumnName("naveMethod");
             entity.Property(e => e.Overduehanding)
                 .HasMaxLength(45)
                 .HasColumnName("overduehanding");
-            entity.Property(e => e.PointToPass).HasColumnName("point_to_pass");
+            entity.Property(e => e.PointToPass).HasColumnName("pointToPass");
             entity.Property(e => e.PreferedBehavior)
                 .HasMaxLength(45)
                 .HasColumnName("prefered_behavior");
             entity.Property(e => e.TimeClose)
                 .HasColumnType("datetime")
-                .HasColumnName("time_close");
+                .HasColumnName("timeClose");
             entity.Property(e => e.TimeLimit)
                 .HasMaxLength(45)
-                .HasColumnName("time_limit");
+                .HasColumnName("timeLimit");
             entity.Property(e => e.TimeOpen)
                 .HasColumnType("datetime")
-                .HasColumnName("time_open");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
+                .HasColumnName("timeOpen");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.Author).WithMany(p => p.Quizzes)
+                .HasForeignKey(d => d.AuthorId)
+                .HasConstraintName("fk_author_quiz");
 
             entity.HasOne(d => d.Course).WithMany(p => p.Quizzes)
-                .HasForeignKey(d => d.Courseid)
+                .HasForeignKey(d => d.CourseId)
+                .HasConstraintName("fk_quiz_course");
+        });
+
+        modelBuilder.Entity<QuizAccess>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("quiz_accesses");
+
+            entity.HasIndex(e => e.QuizId, "fk_quiz_access_idx");
+
+            entity.HasIndex(e => e.UserId, "fk_user_access_idx");
+
+            entity.HasIndex(e => e.AddBy, "fk_user_add_access_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AddBy).HasColumnName("addBy");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QuizId).HasColumnName("quizId");
+            entity.Property(e => e.Status)
+                .HasMaxLength(45)
+                .HasDefaultValueSql("'wait'")
+                .HasColumnName("status");
+            entity.Property(e => e.TimeStartQuiz)
+                .HasColumnType("datetime")
+                .HasColumnName("timeStartQuiz");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+            entity.Property(e => e.UserId).HasColumnName("userId");
+
+            entity.HasOne(d => d.AddByNavigation).WithMany(p => p.QuizAccessAddByNavigations)
+                .HasForeignKey(d => d.AddBy)
+                .HasConstraintName("fk_user_add_access");
+
+            entity.HasOne(d => d.Quiz).WithMany(p => p.QuizAccesses)
+                .HasForeignKey(d => d.QuizId)
+                .HasConstraintName("fk_quiz_access");
+
+            entity.HasOne(d => d.User).WithMany(p => p.QuizAccessUsers)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("fk_user_access");
+        });
+
+        modelBuilder.Entity<QuizBank>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("quiz_banks");
+
+            entity.HasIndex(e => e.CategoryId, "fk_qb_category_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CategoryId).HasColumnName("categoryId");
+            entity.Property(e => e.Content)
+                .HasColumnType("mediumtext")
+                .HasColumnName("content");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.GeneralFeedback)
+                .HasColumnType("mediumtext")
+                .HasColumnName("generalFeedback");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.IsPublic)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("isPublic");
+            entity.Property(e => e.IsShuffle).HasColumnName("isShuffle");
+            entity.Property(e => e.Name)
+                .HasMaxLength(45)
+                .HasColumnName("name");
+            entity.Property(e => e.QuestionsType)
+                .HasMaxLength(45)
+                .HasColumnName("questionsType");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.QuizBanks)
+                .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_course_quiz");
+                .HasConstraintName("fk_qb_category");
+        });
+
+        modelBuilder.Entity<QuizQuestion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("quiz_questions");
+
+            entity.HasIndex(e => e.QuestionId, "fk_question_quiz_idx");
+
+            entity.HasIndex(e => e.QuizzId, "fk_quiz_question_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QuestionId).HasColumnName("question_id");
+            entity.Property(e => e.QuizzId).HasColumnName("quizz_id");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.QuizQuestions)
+                .HasForeignKey(d => d.QuestionId)
+                .HasConstraintName("fk_question_quiz");
+
+            entity.HasOne(d => d.Quizz).WithMany(p => p.QuizQuestions)
+                .HasForeignKey(d => d.QuizzId)
+                .HasConstraintName("fk_quiz_question");
         });
 
         modelBuilder.Entity<QuizResponse>(entity =>
         {
-            entity.HasKey(e => e.IdquizResponses).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("quiz_responses");
 
-            entity.HasIndex(e => e.QuestionId, "fk_quizrespones_questions_idx");
+            entity.HasIndex(e => e.AccessId, "fk_access_idx");
 
-            entity.HasIndex(e => e.QuizId, "fk_quizrespones_quiz_idx");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AccessId).HasColumnName("accessId");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.Mark).HasColumnName("mark");
+            entity.Property(e => e.Status)
+                .HasMaxLength(45)
+                .HasDefaultValueSql("'pass'")
+                .HasColumnName("status");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
 
-            entity.HasIndex(e => e.ResponsesId, "fk_quizrespones_responseanswers_idx");
-
-            entity.HasIndex(e => e.UserId, "fk_quizrespones_users_idx");
-
-            entity.Property(e => e.IdquizResponses).HasColumnName("idquiz_responses");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.QuestionId).HasColumnName("question_id");
-            entity.Property(e => e.QuizId).HasColumnName("quiz_id");
-            entity.Property(e => e.ResponsesId).HasColumnName("responses_id");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.QuizResponses)
-                .HasForeignKey(d => d.QuestionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizrespones_questions");
-
-            entity.HasOne(d => d.Quiz).WithMany(p => p.QuizResponses)
-                .HasForeignKey(d => d.QuizId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizrespones_quiz");
-
-            entity.HasOne(d => d.Responses).WithMany(p => p.QuizResponses)
-                .HasForeignKey(d => d.ResponsesId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizrespones_responseanswers");
-
-            entity.HasOne(d => d.User).WithMany(p => p.QuizResponses)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizrespones_users");
+            entity.HasOne(d => d.Access).WithMany(p => p.QuizResponses)
+                .HasForeignKey(d => d.AccessId)
+                .HasConstraintName("fk_access");
         });
 
-        modelBuilder.Entity<QuizUserAccess>(entity =>
+        modelBuilder.Entity<QuizbankAnswer>(entity =>
         {
-            entity.HasKey(e => e.IdquizUserAccess).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("quiz_user_access");
+            entity.ToTable("quizbank_answers");
 
-            entity.HasIndex(e => e.QuizId, "fk_quizuseraccess_quiz_idx");
+            entity.HasIndex(e => e.QuizBankId, "fk_quizbank_answer_idx");
 
-            entity.HasIndex(e => e.UserId, "fk_quizuseraccess_user_idx");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Content)
+                .HasColumnType("mediumtext")
+                .HasColumnName("content");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.Feedback)
+                .HasMaxLength(255)
+                .HasColumnName("feedback");
+            entity.Property(e => e.Fraction).HasColumnName("fraction");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.QuizBankId).HasColumnName("quizBankId");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
 
-            entity.HasIndex(e => e.AddBy, "fk_quizuseraccess_useradd_idx");
+            entity.HasOne(d => d.QuizBank).WithMany(p => p.QuizbankAnswers)
+                .HasForeignKey(d => d.QuizBankId)
+                .HasConstraintName("fk_quizbank_answer");
+        });
 
-            entity.Property(e => e.IdquizUserAccess).HasColumnName("idquiz_user_access");
-            entity.Property(e => e.AddAt)
-                .HasColumnType("datetime")
-                .HasColumnName("add_at");
-            entity.Property(e => e.AddBy).HasColumnName("add_by");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.QuizId).HasColumnName("quiz_id");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.HasOne(d => d.AddByNavigation).WithMany(p => p.QuizUserAccessAddByNavigations)
-                .HasForeignKey(d => d.AddBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizuseraccess_useradd");
+            entity.ToTable("tags");
 
-            entity.HasOne(d => d.Quiz).WithMany(p => p.QuizUserAccesses)
-                .HasForeignKey(d => d.QuizId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizuseraccess_quiz");
+            entity.HasIndex(e => e.CategoryId, "fk_tag_category_idx");
 
-            entity.HasOne(d => d.User).WithMany(p => p.QuizUserAccessUsers)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_quizuseraccess_user");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CategoryId).HasColumnName("categoryId");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.Description)
+                .HasColumnType("text")
+                .HasColumnName("description");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.Name)
+                .HasMaxLength(45)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Tags)
+                .HasForeignKey(d => d.CategoryId)
+                .HasConstraintName("fk_tag_category");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Iduser).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("users");
 
-            entity.Property(e => e.Iduser).HasColumnName("iduser");
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
             entity.Property(e => e.Dob)
                 .HasColumnType("datetime")
                 .HasColumnName("dob");
-            entity.Property(e => e.Email)
+            entity.Property(e => e.FirstName)
                 .HasMaxLength(255)
-                .HasColumnName("email");
-            entity.Property(e => e.Firstname)
-                .HasMaxLength(255)
-                .HasColumnName("firstname");
+                .HasColumnName("firstName");
             entity.Property(e => e.Gender).HasColumnName("gender");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Lastname)
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.LastName)
                 .HasMaxLength(255)
-                .HasColumnName("lastname");
+                .HasColumnName("lastName");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
             entity.Property(e => e.Phone)
                 .HasMaxLength(10)
                 .HasColumnName("phone");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-            entity.Property(e => e.Username)
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+            entity.Property(e => e.UserName)
                 .HasMaxLength(255)
-                .HasColumnName("username");
-        });
-
-        modelBuilder.Entity<UserCategory>(entity =>
-        {
-            entity.HasKey(e => new { e.UserId, e.CategoryId }).HasName("PRIMARY");
-
-            entity.ToTable("user_categories");
-
-            entity.HasIndex(e => e.AddBy, "fk_categories_user_add");
-
-            entity.HasIndex(e => e.CategoryId, "fk_categories_users_idx");
-
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-            entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.AddBy).HasColumnName("add_by");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
-            entity.Property(e => e.Permission).HasColumnName("permission");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-
-            entity.HasOne(d => d.AddByNavigation).WithMany(p => p.UserCategoryAddByNavigations)
-                .HasForeignKey(d => d.AddBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_categories_user_add");
-
-            entity.HasOne(d => d.Category).WithMany(p => p.UserCategories)
-                .HasForeignKey(d => d.CategoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_categories_users");
-
-            entity.HasOne(d => d.User).WithMany(p => p.UserCategoryUsers)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user_categories");
+                .HasColumnName("userName");
         });
 
         modelBuilder.Entity<UserCourse>(entity =>
         {
-            entity.HasKey(e => e.UserCoursesId).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("user_courses");
 
-            entity.HasIndex(e => e.CoursesId, "fk_course_idx");
+            entity.HasIndex(e => e.CoursesId, "fk_couse_user_idx");
 
-            entity.HasIndex(e => e.UserId, "fk_user");
+            entity.HasIndex(e => e.UserId, "fk_user_courses_idx");
 
-            entity.Property(e => e.UserCoursesId).HasColumnName("user_courses_id");
-            entity.Property(e => e.CoursesId).HasColumnName("courses_id");
-            entity.Property(e => e.Createdat)
-                .HasColumnType("datetime")
-                .HasColumnName("createdat");
-            entity.Property(e => e.IsDeleted).HasDefaultValueSql("'0'");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CoursesId).HasColumnName("coursesId");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.Role)
                 .HasMaxLength(45)
                 .HasColumnName("role");
-            entity.Property(e => e.Updatedat)
-                .HasColumnType("datetime")
-                .HasColumnName("updatedat");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+            entity.Property(e => e.UserId).HasColumnName("userId");
 
             entity.HasOne(d => d.Courses).WithMany(p => p.UserCourses)
                 .HasForeignKey(d => d.CoursesId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_course");
+                .HasConstraintName("fk_couse_user");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserCourses)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user");
+                .HasConstraintName("fk_user_course");
         });
 
         OnModelCreatingPartial(modelBuilder);

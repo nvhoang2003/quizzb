@@ -4,15 +4,17 @@ using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class QuizResponse : IAuditedEntityBase
+public partial class QuizbankAnswer : IAuditedEntityBase
 {
     public int Id { get; set; }
 
-    public int? AccessId { get; set; }
+    public int? QuizBankId { get; set; }
 
-    public int? Mark { get; set; }
+    public string Content { get; set; } = null!;
 
-    public string? Status { get; set; }
+    public float Fraction { get; set; }
+
+    public string? Feedback { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -24,5 +26,5 @@ public partial class QuizResponse : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
-    public virtual QuizAccess? Access { get; set; }
+    public virtual QuizBank? QuizBank { get; set; }
 }

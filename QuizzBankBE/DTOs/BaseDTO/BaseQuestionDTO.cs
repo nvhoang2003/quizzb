@@ -25,9 +25,9 @@ namespace QuizzBankBE.DTOs.BaseDTO
         public int? IsDeleted { get; set; }
         public enum QuestionType
         {
-            MultipleChoice,
-            TrueFalseQuestion,
-            Matching,
+            MultiChoice,
+            TrueFalse,
+            Match,
             ShortAnswer,
             Numerical,
             Essay,

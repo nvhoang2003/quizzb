@@ -3,15 +3,13 @@ using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class UserCourse : IAuditedEntityBase
+public partial class Category : IAuditedEntityBase
 {
     public int Id { get; set; }
 
-    public int? UserId { get; set; }
+    public string Name { get; set; } = null!;
 
-    public int? CoursesId { get; set; }
-
-    public string Role { get; set; } = null!;
+    public string? Description { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -23,7 +21,7 @@ public partial class UserCourse : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
-    public virtual Course? Courses { get; set; }
+    public virtual ICollection<QuizBank> QuizBanks { get; set; } = new List<QuizBank>();
 
-    public virtual User? User { get; set; }
+    public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }
