@@ -7,13 +7,15 @@ namespace QuizzBankBE.DTOs.BaseDTO
     public class BaseQuestionDTO
     {
         [Required]
+        [StringLength(100)]
         public string Name { get; set; }
         [Required]
+        [StringLength(5000)]
         public string Content { get; set; }
         [Required]
         [EnumDataType(typeof(QuestionType))]
         public string Questionstype { get; set; }
-        public string? Generalfeedback { get; set; }
+        public string? Generalfeedback { get; set; }//phan hoi chung
         public int Createdby { get; set; }
         public int Updatedby { get; set; }
         [Required]

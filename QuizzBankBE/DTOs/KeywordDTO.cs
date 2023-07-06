@@ -1,10 +1,12 @@
-﻿namespace QuizzBankBE.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace QuizzBankBE.DTOs
 {
     public class KeywordDTO
     {
 
         public int Idkeywords { get; set; }
-
+        [Required]
         public string Content { get; set; } = null!;
 
         public int CourseId { get; set; }
@@ -18,8 +20,8 @@
 
     public class CreateKeywordDTO
     {
-      
 
+        [Required]
         public string Content { get; set; } = null!;
     }
 

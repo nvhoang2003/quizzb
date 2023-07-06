@@ -5,7 +5,8 @@ namespace QuizzBankBE.DTOs
     public class QuestionCategoryDTO
     {
         public int IdquestionCategories { get; set; }
-
+        [Required]
+        [StringLength(100)]
         public string Name { get; set; }
         public int? IsDeleted { get; set; }
         public int Parent { get; set; }
