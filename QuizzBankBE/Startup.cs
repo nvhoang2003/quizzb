@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DataAccessLayer.Data;
-//using QuizzBankBE.Services.AuthServices;
+using QuizzBankBE.Services.AuthServices;
 //using QuizzBankBE.Services.UserServices;
 using QuizzBankBE.JWT;
 using AutoMapper;
@@ -45,10 +45,10 @@ namespace QuizzBankBE
         {
             services.AddControllers();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<IAuthServices, AuthServices>();
             //services.AddScoped<IQuestionServices, QuestionServicesIpml>();
             //services.AddScoped<ICourseServices, CourseServicesIpml>();
-            
+
             //services.AddScoped<IQuizService, QuizServiceIpml>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             //services.AddScoped<IKeywordService, KeywordServiceIpml>();
@@ -56,9 +56,9 @@ namespace QuizzBankBE
             ////services.AddScoped<IRoleServices, RoleServicesImpl>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             //services.AddScoped<IUserServices, UserServices>();
-                //services.AddScoped<IGmcServices, GmcServicesImpl>();
-                //services.AddScoped<ISaleServices, SaleServicesImpl>();
-                //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
+            //services.AddScoped<IGmcServices, GmcServicesImpl>();
+            //services.AddScoped<ISaleServices, SaleServicesImpl>();
+            //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IjwtProvider, JwtProvider>();
 

@@ -580,6 +580,9 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.Address)
                     .HasMaxLength(255)
                     .HasColumnName("address");
+                entity.Property(e => e.Email)
+                    .HasMaxLength(255)
+                    .HasColumnName("email");
                 entity.Property(e => e.CreateBy).HasColumnName("createBy");
                 entity.Property(e => e.CreateDate)
                     .HasColumnType("date")
@@ -661,12 +664,14 @@ namespace QuizzBankBE.DataAccessLayer.Data
             e.State == EntityState.Added
             || e.State == EntityState.Modified));
             ;
-            var check = _httpContextAccessor?.HttpContext?.User?.Claims
-            .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            var modifiedOrCreatedBy = int.Parse(_httpContextAccessor?.HttpContext?.User?.Claims
-            .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            //var modifiedOrCreatedBy = 20;
+            var check = _httpContextAccessor?.HttpContext?.User?.Claims
+    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var isUserLoggedIn = int.TryParse(check, out var userId);
+
+            var modifiedOrCreatedBy = !isUserLoggedIn ? 0 : int.Parse(check);
+
             foreach (var entityEntry in entries)
             {
                 if (entityEntry.State == EntityState.Added)

@@ -1,13 +1,13 @@
-﻿//using QuizzBankBE.DataAccessLayer.DataObject;
-//using QuizzBankBE.Model;
-//using QuizzBankBE.DTOs;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.Model;
+using QuizzBankBE.DTOs;
 
-//namespace QuizzBankBE.Services.AuthServices
-//{
-//    public interface IAuthServices
-//    {
-//        Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDto);
+namespace QuizzBankBE.Services.AuthServices
+{
+    public interface IAuthServices
+    {
+        Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDto);
 
-//        Task<LoginResponse> login(LoginForm loginFrom);
-//    }
-//}
+        Task<LoginResponse> login(LoginForm loginFrom);
+    }
+}

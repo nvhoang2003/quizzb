@@ -5,8 +5,7 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateUserDTO : BaseUserDTO
     {
-        [Required]
-        public string Username { get; set; }
+        [Required]public string UserName { get; set; }
 
         [Required]
         //[DataType(DataType.Password)]
@@ -17,6 +16,6 @@ namespace QuizzBankBE.DTOs
 
         public string Password { get; set; }
 
-     
+
     }
 }

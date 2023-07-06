@@ -5,11 +5,11 @@ namespace QuizzBankBE.DTOs.BaseDTO
     public class BaseUserDTO
     {
         [Required]
-        [StringLength(100)]
-        public string? Firstname { get; set; }
+        [StringLength(255)]
+        public string? FirstName { get; set; }
         [Required]
-        [StringLength(100)]
-        public string? Lastname { get; set; }
+        [StringLength(255)]
+        public string? LastName { get; set; }
         [Required]
         public DateTime? Dob { get; set; }//<
         [Required]

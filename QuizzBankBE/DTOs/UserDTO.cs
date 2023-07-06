@@ -5,8 +5,9 @@ namespace QuizzBankBE.DTOs
 {
     public class UserDTO : BaseUserDTO
     {
-        public int Iduser { get; set; }
-        [Required]
-        public string Username { get; set; }
+        public int Id { get; set; }
+
+        public string UserName { get; set; }
+
     }
 }

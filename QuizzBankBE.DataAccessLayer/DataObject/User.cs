@@ -34,6 +34,8 @@ public partial class User : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
+    public string? Email { get; set; }
+
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 
     public virtual ICollection<QuizAccess> QuizAccessAddByNavigations { get; set; } = new List<QuizAccess>();
