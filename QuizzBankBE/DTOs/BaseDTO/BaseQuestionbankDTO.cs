@@ -1,28 +1,28 @@
-﻿using static QuizzBankBE.DTOs.CreateQuestionDTO;
+﻿using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
-using QuizzBankBE.FormValidator;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public class BaseQuestionDTO
+    public class BaseQuestionbankDTO
     {
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
         [Required]
-        [StringLength(16 * 1024 *1024)] //mediumtext 16 mib
+        [StringLength(2 * 1024 * 1024)]
         public string Content { get; set; }
         [Required]
         [EnumDataType(typeof(QuestionType))]
-        public string Questionstype { get; set; }
-        public string? Generalfeedback { get; set; }//phan hoi chung
-        public int AuthorId { get; set; }
+        public string QuestionsType { get; set; }
 
+        public string? GeneralFeedback { get; set; }
         [Required]
-        [Range(0, 100, ErrorMessage = "Default Mark must be between 0 and 100.")]
-        public float DefaultMark { get; set; }
-        [AnswerValidation]
-        public virtual ICollection<QuestionAnswerDTO> Answers { get; set; }
+        [IdExistValidation("category", "ID")]
+        public int CategoryId { get; set; }
+        [Range(0,1)]
+        public sbyte? IsPublic { get; set; }
+        [Range(0, 1)]
+        public sbyte IsShuffle { get; set; }
 
         public enum QuestionType
         {
