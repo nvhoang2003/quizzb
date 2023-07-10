@@ -13,7 +13,7 @@ public partial class Course
 
     public DateTime? StartDate { get; set; }
 
-    public DateTime? EnddDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     public string? Description { get; set; }
 

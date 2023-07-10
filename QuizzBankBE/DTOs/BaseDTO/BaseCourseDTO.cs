@@ -9,22 +9,22 @@ namespace QuizzBankBE.DTOs.BaseDTO
     {
         [Required]
         [StringLength(255)]
-        public string Fullname { get; set; } = null!;
+        public string FullName { get; set; } = null!;
         [Required]
         [StringLength(20)]
-        public string Shortname { get; set; } = null!;
+        public string ShortName { get; set; } = null!;
         [Required]
-        public DateTime? Startdate { get; set; }
+        public DateTime? StartDate { get; set; }
         [Required]
-        public DateTime? Enddate { get; set; }
+        public DateTime? EndDate { get; set; }
+        [StringLength(16 * 1024 * 1024)]
+        public string? Description { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Startdate.Value <= Enddate.Value)
+            if (StartDate.Value <= EndDate.Value)
             {
                 yield return new ValidationResult("End Date must be greater than the Start Date.", new[] { "Enddate" });
             }
-
-          
         }
     }
 }

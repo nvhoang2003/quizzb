@@ -5,9 +5,22 @@ using System.Drawing;
 
 namespace QuizzBankBE.DTOs
 {
+    public class CreateCourseDTO : BaseCourseDTO
+    {
+    }
+
     public class CourseDTO : BaseCourseDTO
     {
-        public int Courseid { get; set; }
+        public int Id { get; set; }
+        public int? CreateBy { get; set; }
+
+        public int? UpdateBy { get; set; }
+
+        public DateTime? CreateDate { get; set; }
+
+        public DateTime? UpdateDate { get; set; }
+
+        public int IsDeleted { get; set; }
     }
 
     public class UserCourseDTO
@@ -26,11 +39,11 @@ namespace QuizzBankBE.DTOs
         }
 
         [Required]
-        [IdExistValidation("user_courses", "user_id")]
+        [IdExistValidation("user_courses", "userId")]
         public int UserId { get; set; }
 
         [Required]
-        [IdExistValidation("user_courses", "courses_id")]
+        [IdExistValidation("user_courses", "coursesId")]
         public int CoursesId { get; set; }
 
         [Required]

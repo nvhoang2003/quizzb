@@ -94,7 +94,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     .HasColumnType("date")
                     .HasColumnName("createDate");
                 entity.Property(e => e.Description).HasColumnName("description");
-                entity.Property(e => e.EnddDate)
+                entity.Property(e => e.EndDate)
                     .HasColumnType("datetime")
                     .HasColumnName("enddDate");
                 entity.Property(e => e.FullName)
