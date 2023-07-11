@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QuizzBankBE.FormValidator;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
 {
@@ -36,7 +37,8 @@ namespace QuizzBankBE.DTOs
         [Required]
         public string? Description { get; set; }
 
-        public int? CategoryId { get; set; }
+        [Required][IdExistValidation("category", "ID")] 
+        public int CategoryId { get; set; }
 
     }
 

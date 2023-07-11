@@ -35,11 +35,11 @@ namespace QuizzBankBE.Controllers
             var response = await _tagServices.createNewTag(createTagDTO);
             return Ok(response);
         }
-        [HttpGet("getListAllTag")]
-        public async Task<ActionResult<ServiceResponse<PageList<TagDTO>>>> GetListTag(
-        [FromQuery] OwnerParameter ownerParameters)
+        [HttpGet("getListAllTagByCategoryID")]
+        public async Task<ActionResult<ServiceResponse<PageList<TagDTO>>>> GetListTagByCategoryID(
+        [FromQuery] OwnerParameter ownerParameters, int categoryID)
         {
-            var response = await _tagServices.getAllTag(ownerParameters);
+            var response = await _tagServices.getAllTagByCategoryID(ownerParameters,categoryID);
             var metadata = new
             {
                 response.Data.TotalCount,
