@@ -1,7 +1,6 @@
 ﻿using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 
 namespace QuizzBankBE.DTOs
 {
@@ -39,11 +38,11 @@ namespace QuizzBankBE.DTOs
         }
 
         [Required]
-        [IdExistValidation("user_courses", "userId")]
+        [IdExistValidation("users", "userId")]
         public int UserId { get; set; }
 
         [Required]
-        [IdExistValidation("user_courses", "coursesId")]
+        [IdExistValidation("courses", "coursesId")]
         public int CoursesId { get; set; }
 
         [Required]

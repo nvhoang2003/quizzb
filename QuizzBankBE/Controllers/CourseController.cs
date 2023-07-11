@@ -38,18 +38,11 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourse(
             [FromQuery] OwnerParameter ownerParameters)
         {
-            var course = await _courseServices.getAllCourse(ownerParameters);
-            var metadata = new
-            {
-                course.Data.TotalCount,
-                course.Data.PageSize,
-                course.Data.CurrentPage,
-                course.Data.TotalPages,
-                course.Data.HasNext,
-                course.Data.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-            return Ok(course);
+            var courseResponse = await _courseServices.getAllCourse(ownerParameters);
+
+            var courseResponsePagedList = SettingsPagination(courseResponse);
+
+            return Ok(courseResponse);
         }
 
         [HttpGet("GetCoursesByUser")]
@@ -58,18 +51,11 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-            var course = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
-            var metadata = new
-            {
-                course.Data.TotalCount,
-                course.Data.PageSize,
-                course.Data.CurrentPage,
-                course.Data.TotalPages,
-                course.Data.HasNext,
-                course.Data.HasPrevious
-            };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-            return Ok(course);
+            var courseResponse = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
+
+            var courseResponsePagedList = SettingsPagination(courseResponse);
+
+            return Ok(courseResponsePagedList);
         }
 
         [HttpGet("GetCourses/{courseID}")]
@@ -173,6 +159,22 @@ namespace QuizzBankBE.Controllers
             }
 
             return serviceResponse;
+        }
+
+        private ServiceResponse<PageList<CourseDTO>> SettingsPagination (ServiceResponse<PageList<CourseDTO>> courseResponsePagedList)
+        {
+            var metadata = new
+            {
+                courseResponsePagedList.Data.TotalCount,
+                courseResponsePagedList.Data.PageSize,
+                courseResponsePagedList.Data.CurrentPage,
+                courseResponsePagedList.Data.TotalPages,
+                courseResponsePagedList.Data.HasNext,
+                courseResponsePagedList.Data.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return courseResponsePagedList;
         }
     }
 }
