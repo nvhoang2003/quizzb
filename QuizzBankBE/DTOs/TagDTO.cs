@@ -36,6 +36,8 @@ namespace QuizzBankBE.DTOs
         [Required]
         public string? Description { get; set; }
 
+        public int? CategoryId { get; set; }
+
     }
 
     public class TagResponseDTO
