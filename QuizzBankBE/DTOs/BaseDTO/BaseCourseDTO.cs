@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using System;
+using QuizzBankBE.DataAccessLayer.Data;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
@@ -23,7 +24,7 @@ namespace QuizzBankBE.DTOs.BaseDTO
         {
             if (StartDate.Value <= EndDate.Value)
             {
-                yield return new ValidationResult("End Date must be greater than the Start Date.", new[] { "Enddate" });
+                yield return new ValidationResult("End Date must be greater than the Start Date.", new[] { "EndDate" });
             }
         }
     }

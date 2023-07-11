@@ -113,6 +113,7 @@ namespace QuizzBankBE.Services.CourseServices
             course.ShortName = updateCourseDto.ShortName;
             course.StartDate = updateCourseDto.StartDate;
             course.EndDate = updateCourseDto.EndDate;
+            course.Description = updateCourseDto.Description;
 
             _dataContext.Courses.Update(course);
             await _dataContext.SaveChangesAsync();
@@ -170,6 +171,26 @@ namespace QuizzBankBE.Services.CourseServices
                 _dataContext.UserCourses.UpdateRange(userCourseByCourse);
                 await _dataContext.SaveChangesAsync();
             }
+        }
+
+        private async Task<ServiceResponse<CourseDTO>> validateCommon(CreateCourseDTO createCourseDTO, int userID)
+        {
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+            var dbCourseByUserID = (from c in _dataContext.Courses
+                                    join uc in _dataContext.UserCourses
+                                    on c.Id equals uc.CoursesId
+                                    where uc.UserId == userID
+                                    where c.FullName == createCourseDTO.FullName || c.ShortName == createCourseDTO.ShortName
+                                    select c).ToListAsync();
+
+            var courseDTOs = dbCourseByUserID.Result.Select(c => _mapper.Map<CourseDTO>(c)).ToList();
+
+            if (dbCourseByUserID != null)
+            {
+                serviceResponse.updateResponse(401, "FullName or ShortName already exists!");
+            }
+
+            return serviceResponse;
         }
     }
 }

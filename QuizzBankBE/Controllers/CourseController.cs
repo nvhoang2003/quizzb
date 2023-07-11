@@ -11,6 +11,7 @@ using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.CourseServices;
 using System.Security.Claims;
+using static QuizzBankBE.DTOs.UserCourseDTO;
 
 namespace QuizzBankBE.Controllers
 {
@@ -128,6 +129,13 @@ namespace QuizzBankBE.Controllers
             var accessRoleResponse = await accessRole(courseID, userIdLogin);
 
             if (accessRoleResponse.Status == false)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var studentRespone = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID && UserCourseRole.Student.Equals(x.Role)).ToListAsync();
+
+            if (studentRespone.Any())
             {
                 return new StatusCodeResult(403);
             }
