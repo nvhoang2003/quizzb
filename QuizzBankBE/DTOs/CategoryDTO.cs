@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace QuizzBankBE.DTOs
 {
     public class CategoryDTO
@@ -22,17 +24,12 @@ namespace QuizzBankBE.DTOs
 
     public class CreateCategoryDTO
     {
-        public string Name { get; set; } = null!;
 
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
         public string? Description { get; set; }
 
     }
-    public class CategoryResponseDTO
-    {
-        public string Status { get; set; }
-       
-        public int Version { get; set; }
-        public int? IsDeleted { get; set; }
-    }
-
+  
 }

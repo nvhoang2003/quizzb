@@ -83,18 +83,27 @@ namespace QuizzBankBE.Services.CategoryServices
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             var categoryDb = _dataContext.Categories.FirstOrDefaultAsync(q => q.Id== id).Result;
+            var tag = await _dataContext.Tags.ToListAsync();
+            var tags = tag.Select(u => _mapper.Map<TagDTO>(u)).Where(t => t.CategoryId == id).ToList();
 
-            if (categoryDb == null)
+            if (categoryDb == null )
             {
                 serviceResponse.updateResponse(404, "Không Tồn Tại");
             }
             else
             {
-                categoryDb.IsDeleted = 1;
-                _dataContext.Categories.Update(categoryDb);
-                await _dataContext.SaveChangesAsync();
+                if (tags != null) {
+                    serviceResponse.updateResponse(401,"Không thể xóa ");
+                }
+                else
+                {
+                    categoryDb.IsDeleted = 1;
+                    _dataContext.Categories.Update(categoryDb);
+                    await _dataContext.SaveChangesAsync();
 
-                serviceResponse.updateResponse(200, "Xóa thành công");
+                    serviceResponse.updateResponse(200, "Xóa thành công");
+                }
+                
             }
 
 
