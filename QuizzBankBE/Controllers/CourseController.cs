@@ -133,13 +133,6 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var studentRespone = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID && UserCourseRole.Student.Equals(x.Role)).ToListAsync();
-
-            if (studentRespone.Any())
-            {
-                return new StatusCodeResult(403);
-            }
-
             var response = await _courseServices.deleteCourse(courseID);
 
             if (response.Status == false)

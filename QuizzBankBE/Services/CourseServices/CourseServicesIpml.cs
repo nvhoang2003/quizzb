@@ -9,6 +9,7 @@ using QuizzBankBE.JWT;
 using Microsoft.EntityFrameworkCore;
 using static QuizzBankBE.DTOs.UserCourseDTO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 namespace QuizzBankBE.Services.CourseServices
 {
@@ -150,6 +151,15 @@ namespace QuizzBankBE.Services.CourseServices
         public async Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
+
+            var studentRespone = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID && UserCourseRole.Student.Equals(x.Role)).ToListAsync();
+
+            if (studentRespone.Any())
+            {
+                serviceResponse.updateResponse(400, "Đang tồn tại học viên!");
+
+                return serviceResponse;
+            }
 
             var courseRespone = await getCourseByCourseID(courseID);
 
