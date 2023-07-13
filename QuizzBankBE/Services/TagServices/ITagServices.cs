@@ -8,6 +8,7 @@ namespace QuizzBankBE.Services.TagServices
     {
         Task<ServiceResponse<TagResponseDTO>> createNewTag(CreateTagDTO createTagDTO);
         Task<ServiceResponse<PageList<TagDTO>>> getAllTagByCategoryID(OwnerParameter ownerParameters, int categoryID);
+        Task<ServiceResponse<TagDTO>> getTagByID(int tagID);
         Task<ServiceResponse<TagDTO>> updateTag(CreateTagDTO updateTagDTO, int id);
         Task<ServiceResponse<TagDTO>> deleteTag(int id);
     }

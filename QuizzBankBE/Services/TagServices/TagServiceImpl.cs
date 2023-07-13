@@ -45,6 +45,26 @@ namespace QuizzBankBE.Services.TagServices
             ownerParameters.pageSize);
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<TagDTO>> getTagByID(int tagID)
+        {
+            var serviceResponse = new ServiceResponse<TagDTO>();
+            var dbTag = await _dataContext.Tags.ToListAsync();
+
+            var tagDTO = dbTag.Select(u => _mapper.Map<TagDTO>(u)).Where(c => c.Id == tagID).FirstOrDefault();
+            if (tagDTO == null)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.StatusCode = 400;
+                serviceResponse.Message = "Câu hỏi không tồn tại !";
+                serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
+                return serviceResponse;
+            }
+            serviceResponse.Data = tagDTO;
+            serviceResponse.updateResponse(200, "");
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<TagDTO>> updateTag(CreateTagDTO updateTagDTO, int id)
         {
             var serviceResponse = new ServiceResponse<TagDTO>();
