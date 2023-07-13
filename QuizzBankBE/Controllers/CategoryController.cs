@@ -47,6 +47,13 @@ namespace QuizzBankBE.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(response);
         }
+
+        [HttpGet("getCategoryById/{id}")]
+        public async Task<ActionResult<CategoryDTO>> getCategoryById(int id)
+        {
+            var response = await _categoryServices.getCategoryByID(id);
+            return Ok(response);
+        }
         [HttpPost("CreateNewCategory")]
         public async Task<ActionResult<ServiceResponse<CategoryDTO>>> createNewCategory(
        [FromBody] CreateCategoryDTO createCategoryDTO)

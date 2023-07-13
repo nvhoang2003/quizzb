@@ -6,9 +6,11 @@ namespace QuizzBankBE.DTOs
     public class CategoryDTO
     {
         public int Id { get; set; }
-
+        [Required]
+        [StringLength(255)]
         public string Name { get; set; } = null!;
 
+        [StringLength(2 * 1024 * 1024)]
         public string? Description { get; set; }
 
         public int? CreateBy { get; set; }

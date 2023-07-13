@@ -41,6 +41,25 @@ namespace QuizzBankBE.Services.CategoryServices
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<CategoryDTO>> getCategoryByID(int categoryID)
+        {
+            var serviceResponse = new ServiceResponse<CategoryDTO>();
+            var dbCategory = await _dataContext.Categories.ToListAsync();
+
+            var categoryDTO = dbCategory.Select(u => _mapper.Map<CategoryDTO>(u)).Where(c => c.Id == categoryID).FirstOrDefault();
+            if (categoryDTO == null)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.StatusCode = 400;
+                serviceResponse.Message = "Câu hỏi không tồn tại !";
+                serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
+                return serviceResponse;
+            }
+            serviceResponse.Data = categoryDTO;
+            serviceResponse.updateResponse(200, "");
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<CategoryDTO>> createNewCategory(CreateCategoryDTO createCategory)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
