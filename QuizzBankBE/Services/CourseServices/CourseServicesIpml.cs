@@ -8,6 +8,7 @@ using AutoMapper;
 using QuizzBankBE.JWT;
 using Microsoft.EntityFrameworkCore;
 using static QuizzBankBE.DTOs.UserCourseDTO;
+using System.Security.Claims;
 
 namespace QuizzBankBE.Services.CourseServices
 {
@@ -17,18 +18,30 @@ namespace QuizzBankBE.Services.CourseServices
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CourseServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public CourseServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider, IHttpContextAccessor httpContextAccessor)
         {
             _dataContext = dataContext;
             _mapper = mapper;
             _jwtProvider = jwtProvider;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ServiceResponse<CourseDTO>> createCourse(CreateCourseDTO createCourseDto, int userIdLogin)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
+
+            var validateCommonRes = await validateCommon(createCourseDto);
+
+            if (validateCommonRes.Status == false)
+            {
+                serviceResponse.updateResponse(validateCommonRes.StatusCode, validateCommonRes.Message);
+
+                return serviceResponse;
+            }
+
             var courseSaved = _mapper.Map<Course>(createCourseDto);
 
             _dataContext.Courses.Add(courseSaved);
@@ -49,6 +62,7 @@ namespace QuizzBankBE.Services.CourseServices
             var dbCourse = await _dataContext.Courses.ToListAsync();
 
             courseDTOs = dbCourse.Select(u => _mapper.Map<CourseDTO>(u)).ToList();
+
             serviceResponse.Data = PageList<CourseDTO>.ToPageList(
             courseDTOs.AsEnumerable<CourseDTO>()/*.OrderBy(on => on.Courseid)*/,
             ownerParameters.pageIndex,
@@ -103,6 +117,15 @@ namespace QuizzBankBE.Services.CourseServices
             if (courseRespone.Status == false)
             {
                 serviceResponse.updateResponse(courseRespone.StatusCode, courseRespone.Message);
+
+                return serviceResponse;
+            }
+
+            var validateCommonRes = await validateCommon(updateCourseDto);
+
+            if (validateCommonRes.Status == false)
+            {
+                serviceResponse.updateResponse(validateCommonRes.StatusCode, validateCommonRes.Message);
 
                 return serviceResponse;
             }
@@ -173,13 +196,21 @@ namespace QuizzBankBE.Services.CourseServices
             }
         }
 
-        private async Task<ServiceResponse<CourseDTO>> validateCommon(CreateCourseDTO createCourseDTO, int userID)
+        private async Task<ServiceResponse<CourseDTO>> validateCommon(CreateCourseDTO createCourseDTO)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
+
+            var check = _httpContextAccessor?.HttpContext?.User?.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var isUserLoggedIn = int.TryParse(check, out var userId);
+
+            var modifiedOrCreatedBy = !isUserLoggedIn ? 0 : int.Parse(check);
+
             var dbCourseByUserID = (from c in _dataContext.Courses
                                     join uc in _dataContext.UserCourses
                                     on c.Id equals uc.CoursesId
-                                    where uc.UserId == userID
+                                    where uc.UserId == modifiedOrCreatedBy
                                     where c.FullName == createCourseDTO.FullName || c.ShortName == createCourseDTO.ShortName
                                     select c).ToListAsync();
 
