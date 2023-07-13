@@ -29,10 +29,10 @@ namespace QuizzBankBE
             CreateMap<CreateCourseDTO, CourseDTO>();
             CreateMap<UserCourseDTO, UserCourse>();
             CreateMap<UserCourse, UserCourseDTO>();
-            //CreateMap<Keyword, KeywordDTO>();
-            //CreateMap<KeywordDTO, Keyword>();
-            //CreateMap<Keyword, CreateKeywordDTO>();
-            //CreateMap<CreateKeywordDTO, Keyword>();
+            CreateMap<Tag, TagDTO>();
+            CreateMap<TagDTO, Tag>();
+            CreateMap<Tag, CreateTagDTO>();
+            CreateMap<CreateTagDTO, Tag>();
             //CreateMap<Quiz, QuizDTO>() ;
             //CreateMap<QuizDTO, Quiz>();
             //CreateMap<BaseQuizDTO, QuizDTO>();
