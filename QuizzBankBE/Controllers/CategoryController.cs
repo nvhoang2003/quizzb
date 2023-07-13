@@ -32,7 +32,7 @@ namespace QuizzBankBE.Controllers
         }
         [HttpGet("getListAllCategory")]
         public async Task<ActionResult<ServiceResponse<PageList<TagDTO>>>> GetListTagByCategoryID(
-        [FromQuery] OwnerParameter ownerParameters)
+            [FromQuery] OwnerParameter ownerParameters)
         {
             var response = await _categoryServices.getAllCategory(ownerParameters);
             var metadata = new
@@ -54,9 +54,10 @@ namespace QuizzBankBE.Controllers
             var response = await _categoryServices.getCategoryByID(id);
             return Ok(response);
         }
+
         [HttpPost("CreateNewCategory")]
         public async Task<ActionResult<ServiceResponse<CategoryDTO>>> createNewCategory(
-       [FromBody] CreateCategoryDTO createCategoryDTO)
+            [FromBody] CreateCategoryDTO createCategoryDTO)
         {
            
             var response = await _categoryServices.createNewCategory(createCategoryDTO);

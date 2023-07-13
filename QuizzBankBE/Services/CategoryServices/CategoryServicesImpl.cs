@@ -34,8 +34,10 @@ namespace QuizzBankBE.Services.CategoryServices
             var dbCategory = await _dataContext.Categories.ToListAsync();
 
             var categoryDTO  = dbCategory.Select(u => _mapper.Map<CategoryDTO>(u)).ToList();
+            
             serviceResponse.Data = PageList<CategoryDTO>.ToPageList(
             categoryDTO.AsEnumerable<CategoryDTO>(),
+           
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
             return serviceResponse;
@@ -49,14 +51,11 @@ namespace QuizzBankBE.Services.CategoryServices
             var categoryDTO = dbCategory.Select(u => _mapper.Map<CategoryDTO>(u)).Where(c => c.Id == categoryID).FirstOrDefault();
             if (categoryDTO == null)
             {
-                serviceResponse.Status = false;
-                serviceResponse.StatusCode = 400;
-                serviceResponse.Message = "Câu hỏi không tồn tại !";
-                serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
+                serviceResponse.updateResponse(400, "không tồn tại");
                 return serviceResponse;
             }
+            
             serviceResponse.Data = categoryDTO;
-            serviceResponse.updateResponse(200, "");
             return serviceResponse;
         }
 
@@ -102,6 +101,7 @@ namespace QuizzBankBE.Services.CategoryServices
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             var categoryDb = _dataContext.Categories.FirstOrDefaultAsync(q => q.Id== id).Result;
+            
             var tag = await _dataContext.Tags.ToListAsync();
             var tags = tag.Select(u => _mapper.Map<TagDTO>(u)).Where(t => t.CategoryId == id).ToList();
 

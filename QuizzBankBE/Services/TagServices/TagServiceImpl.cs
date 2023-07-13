@@ -29,8 +29,10 @@ namespace QuizzBankBE.Services.TagServices
         {
             var serviceResponse = new ServiceResponse<TagResponseDTO>();
             Tag tagSaved = _mapper.Map<Tag>(createTagDTO);
+            
             _dataContext.Tags.Add(tagSaved);
             await _dataContext.SaveChangesAsync();
+            
             serviceResponse.updateResponse(200, "Tạo thành công");
             return serviceResponse;
         }
@@ -38,9 +40,12 @@ namespace QuizzBankBE.Services.TagServices
         {
             var serviceResponse = new ServiceResponse<PageList<TagDTO>>();
             var dbTag = await _dataContext.Tags.ToListAsync();
+            
             var tagDTO = dbTag.Select(u => _mapper.Map<TagDTO>(u)).Where(c => c.CategoryId.Equals(categoryID)).ToList();
+            
             serviceResponse.Data = PageList<TagDTO>.ToPageList(
             tagDTO.AsEnumerable<TagDTO>(),
+            
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
             return serviceResponse;
@@ -54,14 +59,11 @@ namespace QuizzBankBE.Services.TagServices
             var tagDTO = dbTag.Select(u => _mapper.Map<TagDTO>(u)).Where(c => c.Id == tagID).FirstOrDefault();
             if (tagDTO == null)
             {
-                serviceResponse.Status = false;
-                serviceResponse.StatusCode = 400;
-                serviceResponse.Message = "Câu hỏi không tồn tại !";
-                serviceResponse.updateResponse(400, "Câu hỏi không tồn tại");
+                serviceResponse.updateResponse(400, "không tồn tại");
                 return serviceResponse;
             }
+            
             serviceResponse.Data = tagDTO;
-            serviceResponse.updateResponse(200, "");
             return serviceResponse;
         }
 
@@ -74,11 +76,14 @@ namespace QuizzBankBE.Services.TagServices
                 serviceResponse.updateResponse(400, "Tag không tồn tại");
                 return serviceResponse;
             }
+
             dbTag.Name = updateTagDTO.Name;
             dbTag.Description = updateTagDTO.Description;
             dbTag.CategoryId = updateTagDTO.CategoryId;
+            
             _dataContext.Tags.Update(dbTag);
             await _dataContext.SaveChangesAsync();
+            
             serviceResponse.updateResponse(200, "Update thành công");
             return serviceResponse;
         }
@@ -91,10 +96,13 @@ namespace QuizzBankBE.Services.TagServices
                 serviceResponse.updateResponse(400, "Tag không tồn tại");
                 return serviceResponse;
             }
+            
             dbTag.IsDeleted = 1;
             _dataContext.Tags.Update(dbTag);
+            
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Delete thành công");
+            
             return serviceResponse;
         }
 

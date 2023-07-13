@@ -30,6 +30,7 @@ namespace QuizzBankBE.DTOs
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
+        [StringLength(2 * 1024 * 1024)]
         public string? Description { get; set; }
 
     }
