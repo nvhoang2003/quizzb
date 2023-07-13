@@ -14,6 +14,6 @@ namespace QuizzBankBE.Services.CourseServices
         Task<ServiceResponse<PageList<CourseDTO>>> getAllCourseByUserID(OwnerParameter ownerParameters, int userID);
         Task<ServiceResponse<Course>> getCourseByCourseID(int courseID);
         Task<ServiceResponse<CourseDTO>> updateCourse(CreateCourseDTO updateCourseDto, int courseID);
-        Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID);
+        Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID, Course course);
     }
 }

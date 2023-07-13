@@ -148,7 +148,7 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID)
+        public async Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID, Course course)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
 
@@ -160,17 +160,6 @@ namespace QuizzBankBE.Services.CourseServices
 
                 return serviceResponse;
             }
-
-            var courseRespone = await getCourseByCourseID(courseID);
-
-            if (courseRespone.Status == false)
-            {
-                serviceResponse.updateResponse(courseRespone.StatusCode, courseRespone.Message);
-
-                return serviceResponse;
-            }
-
-            var course = courseRespone.Data;
 
             await deleteRelationshipCourse(course.Id);
 

@@ -126,14 +126,25 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
+            var checkCourseResponse = await _courseServices.getCourseByCourseID(courseID);
+
+            if (checkCourseResponse.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = checkCourseResponse.StatusCode,
+                    Title = checkCourseResponse.Message
+                });
+            }
+
             var accessRoleResponse = await accessRole(courseID, userIdLogin);
 
-            if (accessRoleResponse.Status == false)
+            if (accessRoleResponse.Status == false )
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _courseServices.deleteCourse(courseID);
+            var response = await _courseServices.deleteCourse(courseID, checkCourseResponse.Data);
 
             if (response.Status == false)
             {
