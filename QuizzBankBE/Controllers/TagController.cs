@@ -6,6 +6,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
+using QuizzBankBE.Services.CategoryServices;
 using QuizzBankBE.Services.TagServices;
 
 namespace QuizzBankBE.Controllers
@@ -52,6 +53,14 @@ namespace QuizzBankBE.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(response);
         }
+
+        [HttpGet("getTagById/{id}")]
+        public async Task<ActionResult<TagDTO>> getTagById(int id)
+        {
+            var response = await _tagServices.getTagByID(id);
+            return Ok(response);
+        }
+
         [HttpPut("updateTag/{id}")]
         public async Task<ActionResult<ServiceResponse<TagDTO>>> updateTag(
         [FromBody] CreateTagDTO updateTagDTO, int id)
