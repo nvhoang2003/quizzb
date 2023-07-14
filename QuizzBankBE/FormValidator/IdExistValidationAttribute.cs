@@ -39,7 +39,7 @@ namespace QuizzBankBE.FormValidator
             {
                 MySqlConnection connection = new MySqlConnection(scnn);
                 connection.Open();
-                string query = "SELECT * FROM " + tableName + " where " + columnName + " = " + id;
+                string query = "SELECT * FROM " + tableName + " where " + columnName + " = " + id + " and isDeleted = 0";
                 var command = new MySqlCommand(query, connection);
 
                 DataTable dataTable = new DataTable();

@@ -15,7 +15,7 @@ public partial class QuizzbContext : DbContext
     {
     }
 
-    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Course> Courses { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -23,47 +23,35 @@ public partial class QuizzbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>(entity =>
+        modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("users");
+            entity.ToTable("courses");
 
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Address)
-                .HasMaxLength(255)
-                .HasColumnName("address");
             entity.Property(e => e.CreateBy).HasColumnName("createBy");
             entity.Property(e => e.CreateDate)
                 .HasColumnType("date")
                 .HasColumnName("createDate");
-            entity.Property(e => e.Dob)
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.EndDate)
                 .HasColumnType("datetime")
-                .HasColumnName("dob");
-            entity.Property(e => e.Email)
+                .HasColumnName("endDate");
+            entity.Property(e => e.FullName)
                 .HasMaxLength(255)
-                .HasColumnName("email");
-            entity.Property(e => e.FirstName)
-                .HasMaxLength(255)
-                .HasColumnName("firstName");
-            entity.Property(e => e.Gender).HasColumnName("gender");
+                .HasColumnName("fullName");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-            entity.Property(e => e.LastName)
+            entity.Property(e => e.ShortName)
                 .HasMaxLength(255)
-                .HasColumnName("lastName");
-            entity.Property(e => e.Password)
-                .HasMaxLength(255)
-                .HasColumnName("password");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(10)
-                .HasColumnName("phone");
+                .HasColumnName("shortName");
+            entity.Property(e => e.StartDate)
+                .HasColumnType("datetime")
+                .HasColumnName("startDate");
             entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
                 .HasColumnName("updateDate");
-            entity.Property(e => e.UserName)
-                .HasMaxLength(255)
-                .HasColumnName("userName");
         });
 
         OnModelCreatingPartial(modelBuilder);

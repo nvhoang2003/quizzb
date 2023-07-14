@@ -1,186 +1,192 @@
-﻿//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Cors;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Newtonsoft.Json;
-//using QuizzBankBE.DataAccessLayer.Data;
-//using QuizzBankBE.DataAccessLayer.DataObject;
-//using QuizzBankBE.DTOs;
-//using QuizzBankBE.DTOs.BaseDTO;
-//using QuizzBankBE.Model;
-//using QuizzBankBE.Model.Pagination;
-//using QuizzBankBE.Services.CourseServices;
-//using QuizzBankBE.Services.QuestionServices;
-//using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.BaseDTO;
+using QuizzBankBE.Model;
+using QuizzBankBE.Model.Pagination;
+using QuizzBankBE.Services.CourseServices;
+using System.Security.Claims;
+using static QuizzBankBE.DTOs.UserCourseDTO;
 
-//namespace QuizzBankBE.Controllers
-//{
-//    [Authorize]
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    [EnableCors("AllowAll")]
-//    [Produces("application/json")]
-//    public class CourseController : ControllerBase
-//    {
-//        private readonly ICourseServices _courseServices;
-//        private readonly IHttpContextAccessor _httpContextAccessor;
-//        private readonly DataContext _dataContext;
-//        private readonly IConfiguration _configuration;
+namespace QuizzBankBE.Controllers
+{
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    [EnableCors("AllowAll")]
+    [Produces("application/json")]
+    public class CourseController : ControllerBase
+    {
+        private readonly ICourseServices _courseServices;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly DataContext _dataContext;
+        private readonly IConfiguration _configuration;
 
-//        public CourseController(ICourseServices courseServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
-//        {
-//            _courseServices = courseServices;
-//            _httpContextAccessor = httpContextAccessor;
-//            _dataContext = dataContext;
-//            _configuration = configuration;
-//        }
+        public CourseController(ICourseServices courseServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        {
+            _courseServices = courseServices;
+            _httpContextAccessor = httpContextAccessor;
+            _dataContext = dataContext;
+            _configuration = configuration;
+        }
 
-//        [HttpGet("GetCourses")]
-//        public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourse(
-//            [FromQuery] OwnerParameter ownerParameters)
-//        {
-//            var course = await _courseServices.getAllCourse(ownerParameters);
-//            var metadata = new
-//            {
-//                course.Data.TotalCount,
-//                course.Data.PageSize,
-//                course.Data.CurrentPage,
-//                course.Data.TotalPages,
-//                course.Data.HasNext,
-//                course.Data.HasPrevious
-//            };
-//            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-//            return Ok(course);
-//        }
+        [HttpGet("GetCourses")]
+        public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourse(
+            [FromQuery] OwnerParameter ownerParameters)
+        {
+            var courseResponse = await _courseServices.getAllCourse(ownerParameters);
 
-//        [HttpGet("GetCoursesByUser")]
-//        public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourseByUser(
-//            [FromQuery] OwnerParameter ownerParameters)
-//        {
-//            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var courseResponsePagedList = SettingsPagination(courseResponse);
 
-//            var course = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
-//            var metadata = new
-//            {
-//                course.Data.TotalCount,
-//                course.Data.PageSize,
-//                course.Data.CurrentPage,
-//                course.Data.TotalPages,
-//                course.Data.HasNext,
-//                course.Data.HasPrevious
-//            };
-//            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-//            return Ok(course);
-//        }
+            return Ok(courseResponse);
+        }
 
-//        [HttpGet("GetCourses/{courseID}")]
-//        public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int courseID)
-//        {
-//            var response = await _courseServices.getCourseByCourseID(courseID);
+        [HttpGet("GetCoursesByUser")]
+        public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourseByUser(
+            [FromQuery] OwnerParameter ownerParameters)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-//            if (response.Status == false)
-//            {
-//                return BadRequest(new ProblemDetails
-//                {
-//                    Status = response.StatusCode,
-//                    Title = response.Message
-//                });
-//            }
+            var courseResponse = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
 
-//            return Ok(response);
-//        }
+            var courseResponsePagedList = SettingsPagination(courseResponse);
 
-//        [HttpPost("CreateCourse")]
-//        public async Task<ActionResult<ServiceResponse<CourseDTO>>> createCourse([FromBody] BaseCourseDTO createCourseDTO)
-//        {
-//            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(courseResponsePagedList);
+        }
 
-//            var response = await _courseServices.createCourse(createCourseDTO, userIdLogin);
+        [HttpGet("GetCourses/{courseID}")]
+        public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int courseID)
+        {
+            var response = await _courseServices.getCourseByCourseID(courseID);
 
-//            if (response.Status == false)
-//            {
-//                return BadRequest(new ProblemDetails
-//                {
-//                    Status = response.StatusCode,
-//                    Title = response.Message
-//                });
-//            }
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
 
-//            return Ok(response);
-//        }
+            return Ok(response);
+        }
 
-//        [HttpPut("UpdateCourse/{courseID}")]
-//        public async Task<ActionResult<ServiceResponse<CourseDTO>>> updateCourse([FromBody] BaseCourseDTO updateCourseDTO, int courseID)
-//        {
-//            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        [HttpPost("CreateCourse")]
+        public async Task<ActionResult<ServiceResponse<CourseDTO>>> createCourse([FromBody] CreateCourseDTO createCourseDTO)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-//            var accessRoleResponse = await accessRole(courseID, userIdLogin);
+            var response = await _courseServices.createCourse(createCourseDTO, userIdLogin);
 
-//            if (accessRoleResponse.Status == false)
-//            {
-//                return new StatusCodeResult(403);
-//            }
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
 
-//            var response = await _courseServices.updateCourse(updateCourseDTO, courseID);
+            return Ok(response);
+        }
 
-//            if (response.Status == false)
-//            {
-//                return BadRequest(new ProblemDetails
-//                {
-//                    Status = response.StatusCode,
-//                    Title = response.Message
-//                });
-//            }
+        [HttpPut("UpdateCourse/{courseID}")]
+        public async Task<ActionResult<ServiceResponse<CourseDTO>>> updateCourse([FromBody] CreateCourseDTO updateCourseDTO, int courseID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-//            return Ok(response);
-//        }
+            var accessRoleResponse = await accessRole(courseID, userIdLogin);
 
-//        [HttpDelete("DeleteCourse/{courseID}")]
-//        public async Task<ActionResult<ServiceResponse<CourseDTO>>> deleteCourse(int courseID)
-//        {
-//            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            if (accessRoleResponse.Status == false)
+            {
+                return new StatusCodeResult(403);
+            }
 
-//            var accessRoleResponse = await accessRole(courseID, userIdLogin);
+            var response = await _courseServices.updateCourse(updateCourseDTO, courseID);
 
-//            if (accessRoleResponse.Status == false)
-//            {
-//                return new StatusCodeResult(403);
-//            }
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
 
-//            var response = await _courseServices.deleteCourse(courseID);
+            return Ok(response);
+        }
 
-//            if (response.Status == false)
-//            {
-//                return BadRequest(new ProblemDetails
-//                {
-//                    Status = response.StatusCode,
-//                    Title = response.Message
-//                });
-//            }
+        [HttpDelete("DeleteCourse/{courseID}")]
+        public async Task<ActionResult<ServiceResponse<CourseDTO>>> deleteCourse(int courseID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-//            return Ok(response);
-//        }
+            var checkCourseResponse = await _courseServices.getCourseByCourseID(courseID);
 
-//        private async Task<ServiceResponse<CourseDTO>> accessRole(int courseID, int userID)
-//        {
-//            var serviceResponse = new ServiceResponse<CourseDTO>();
-//            var userInCourse = await _dataContext.UserCourses.FirstOrDefaultAsync(c => c.UserId == userID && c.CoursesId == courseID);
+            if (checkCourseResponse.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = checkCourseResponse.StatusCode,
+                    Title = checkCourseResponse.Message
+                });
+            }
 
-//            if (userInCourse == null)
-//            {
-//                serviceResponse.updateResponse(404, "Không tồn tại!");
+            var accessRoleResponse = await accessRole(courseID, userIdLogin);
 
-//                return serviceResponse;
-//            }
+            if (accessRoleResponse.Status == false )
+            {
+                return new StatusCodeResult(403);
+            }
 
-//            if (UserCourseDTO.checkPowerfullUserCourseRole(userInCourse.Role) == false)
-//            {
-//                serviceResponse.updateResponse(403, "Không có quyền!");
+            var response = await _courseServices.deleteCourse(courseID, checkCourseResponse.Data);
 
-//                return serviceResponse;
-//            }
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
 
-//            return serviceResponse;
-//        }
-//    }
-//}
+            return Ok(response);
+        }
+
+        private async Task<ServiceResponse<CourseDTO>> accessRole(int courseID, int userID)
+        {
+            var serviceResponse = new ServiceResponse<CourseDTO>();
+            var userInCourse = await _dataContext.UserCourses.FirstOrDefaultAsync(c => c.UserId == userID && c.CoursesId == courseID);
+
+            if (UserCourseDTO.checkPowerfullUserCourseRole(userInCourse?.Role) == false)
+            {
+                serviceResponse.updateResponse(403, "Không có quyền!");
+
+                return serviceResponse;
+            }
+
+            return serviceResponse;
+        }
+
+        private ServiceResponse<PageList<CourseDTO>> SettingsPagination (ServiceResponse<PageList<CourseDTO>> courseResponsePagedList)
+        {
+            var metadata = new
+            {
+                courseResponsePagedList.Data.TotalCount,
+                courseResponsePagedList.Data.PageSize,
+                courseResponsePagedList.Data.CurrentPage,
+                courseResponsePagedList.Data.TotalPages,
+                courseResponsePagedList.Data.HasNext,
+                courseResponsePagedList.Data.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return courseResponsePagedList;
+        }
+    }
+}

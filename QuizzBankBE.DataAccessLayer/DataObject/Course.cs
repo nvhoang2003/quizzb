@@ -1,9 +1,10 @@
-﻿using System;
+﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class Course
+public partial class Course : IAuditedEntityBase
 {
     public int Id { get; set; }
 
@@ -13,7 +14,7 @@ public partial class Course
 
     public DateTime? StartDate { get; set; }
 
-    public DateTime? EnddDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     public string? Description { get; set; }
 
@@ -26,7 +27,6 @@ public partial class Course
     public DateTime? UpdateDate { get; set; }
 
     public int IsDeleted { get; set; }
-
     public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
     public virtual ICollection<UserCourse> UserCourses { get; set; } = new List<UserCourse>();
