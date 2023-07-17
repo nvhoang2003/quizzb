@@ -1,7 +1,8 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
 using System.ComponentModel.DataAnnotations;
 
-public class UniqueValidationAttribute : ValidationAttribute
+
+public class UniqueValidationAttribute<T> : ValidationAttribute
 {
     private readonly string _methodName;
     private readonly string _propertyName;
@@ -19,10 +20,14 @@ public class UniqueValidationAttribute : ValidationAttribute
 
         var method = type.GetMethod(_methodName);
 
-        var dbSet = (IEnumerable<Course>)method.Invoke(instance, null);
+        var dbSet = (IEnumerable<T>)method.Invoke(instance, null);
+
+        //var existingValue = dbSet.FirstOrDefault(e =>
+        //    e != validationContext.ObjectInstance &&
+        //    e.GetType().GetProperty(_propertyName)?.GetValue(e)?.Equals(value) == true);
 
         var existingValue = dbSet.FirstOrDefault(e =>
-            e != validationContext.ObjectInstance &&
+            !Equals(e, validationContext.ObjectInstance) &&
             e.GetType().GetProperty(_propertyName)?.GetValue(e)?.Equals(value) == true);
 
         if (existingValue != null)
