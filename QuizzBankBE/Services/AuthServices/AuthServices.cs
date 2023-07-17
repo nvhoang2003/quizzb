@@ -1,13 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
-//using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using AutoMapper;
 using System.Security.Principal;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Authorization;
-//using QuizzBankBE.Controllers;
 using System.Security.Claims;
 using QuizzBankBE.JWT;
 
@@ -46,8 +42,6 @@ namespace QuizzBankBE.Services.AuthServices
             var identity = new ClaimsIdentity(claims);
             return new ClaimsPrincipal(identity);
         }
-
-       
 
         public async Task<LoginResponse> login(LoginForm loginForm)
         {

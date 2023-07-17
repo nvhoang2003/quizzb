@@ -72,7 +72,6 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-
         [HttpGet("getUserById/{id}")]
         public async Task<ActionResult<UserDTO>> getUserById(int id)
         {
