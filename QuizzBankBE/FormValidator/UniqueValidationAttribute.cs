@@ -22,10 +22,6 @@ public class UniqueValidationAttribute<T> : ValidationAttribute
 
         var dbSet = (IEnumerable<T>)method.Invoke(instance, null);
 
-        //var existingValue = dbSet.FirstOrDefault(e =>
-        //    e != validationContext.ObjectInstance &&
-        //    e.GetType().GetProperty(_propertyName)?.GetValue(e)?.Equals(value) == true);
-
         var existingValue = dbSet.FirstOrDefault(e =>
             !Equals(e, validationContext.ObjectInstance) &&
             e.GetType().GetProperty(_propertyName)?.GetValue(e)?.Equals(value) == true);
