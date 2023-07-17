@@ -1,11 +1,23 @@
-﻿using QuizzBankBE.DTOs.BaseDTO;
+﻿
+using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs.BaseDTO;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
 {
+    
     public class CreateUserDTO : BaseUserDTO
     {
-        [Required]public string UserName { get; set; }
+        private DataContext _dataContext = new DataContext();
+
+        [Required]
+        [UniqueValidation<User>("GetDbSet", "UserName")]
+        public string UserName { get; set; }
+        public IEnumerable<User> GetDbSet()
+        {
+            return _dataContext.Set<User>();
+        }
 
         [Required]
         //[DataType(DataType.Password)]

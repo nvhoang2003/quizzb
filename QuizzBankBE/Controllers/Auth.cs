@@ -30,24 +30,7 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("registerSingleUser")]
-        [AllowAnonymous]
-        public async Task<ActionResult<ServiceResponse<UserDTO>>> registerSingleUser(
-        [FromBody] CreateUserDTO createUserDTO)
-        {
-            var response = await _authenServices.createUsers(createUserDTO);
-            if (response.Status == false)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Status = response.StatusCode,
-                    Title = response.Message
-                });
-            }
-
-            return Ok(response);
-        }
-
+        
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<ActionResult<LoginResponse>> login(

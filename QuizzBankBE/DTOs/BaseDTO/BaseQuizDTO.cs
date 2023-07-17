@@ -2,13 +2,15 @@
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public class BaseQuizDTO
+    public abstract class BaseQuizDTO
     {
 
         public int Courseid { get; set; }
+
         [Required(ErrorMessage = "Please enter course name")]
         [StringLength(200, ErrorMessage = "Name length can't be more than 200.")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
+
         [Required(ErrorMessage = "Description is required")]
         [StringLength(5000, ErrorMessage = "Description length can't be more than 5000.")]
         public string? Description { get; set; }
@@ -30,15 +32,16 @@ namespace QuizzBankBE.DTOs.BaseDTO
         [Required(ErrorMessage ="Please enter Point to Pass")]
         [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
         public float PointToPass { get; set; }//<max
+
         [Required(ErrorMessage = "Please enter Point to Pass")]
         [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
         public float MaxPoint { get; set; }//>point
+
         [Required]
         public string NaveMethod { get; set; } = null!;//đưa ra action ...... ko thể sửa đáp án đã đưa ra 
+
         [Required]
         public sbyte IsPublic { get; set; }
-
-
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -52,6 +55,5 @@ namespace QuizzBankBE.DTOs.BaseDTO
                 yield return new ValidationResult("PointToPass must be less than the MaxPoint.", new[] { "PointToPass" });
             }
         }
-
     }
 }

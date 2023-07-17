@@ -12,6 +12,8 @@ namespace QuizzBankBE
         {
             CreateMap<CreateUserDTO, User>();
             CreateMap<User, UserDTO>();
+            CreateMap<User, UpdateUserDTO>();
+            CreateMap<UpdateUserDTO, User>();
             //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
             //CreateMap<CreateQuestionDTO, Question>();
             //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
@@ -41,8 +43,11 @@ namespace QuizzBankBE
             //CreateMap<CreateQuizDTO, QuizDTO>();
             //CreateMap<Quiz, CreateQuizDTO>();
             //CreateMap<CreateQuizDTO, Quiz>();
-            //CreateMap<QuestionCategory, QuestionCategoryDTO>();
-            //CreateMap<QuestionCategoryDTO, QuestionCategory>();
+
+            CreateMap<Category, CategoryDTO>();
+            CreateMap<CategoryDTO, Category>();
+            CreateMap<CreateCategoryDTO, Category>();
+            CreateMap<CategoryDTO,CreateCategoryDTO>();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using QuizzBankBE.DTOs.BaseDTO;
+﻿using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,11 +8,33 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateCourseDTO : BaseCourseDTO
     {
+        private DataContext _dataContext;
+
+        [Required]
+        [StringLength(255)]
+        [UniqueValidation<Course>("GetDbSet", "FullName")]
+        public string FullName { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        [UniqueValidation<Course>("GetDbSet", "ShortName")]
+        public string ShortName { get; set; }
+
+        public CreateCourseDTO()
+        {
+            _dataContext = new DataContext();
+        }
+
+        public IEnumerable<Course> GetDbSet()
+        {
+            return _dataContext.Set<Course>();
+        }
     }
 
     public class CourseDTO : BaseCourseDTO
     {
         public int Id { get; set; }
+
         public int? CreateBy { get; set; }
 
         public int? UpdateBy { get; set; }
@@ -44,7 +68,7 @@ namespace QuizzBankBE.DTOs
         [Required]
         [IdExistValidation("courses", "coursesId")]
         public int CoursesId { get; set; }
-
+        
         [Required]
         [EnumDataType(typeof(UserCourseRole))]
         public string Role { get; set; } = null!;

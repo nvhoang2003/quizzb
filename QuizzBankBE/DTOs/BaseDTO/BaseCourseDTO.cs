@@ -3,23 +3,26 @@ using System.ComponentModel.DataAnnotations;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using System;
 using QuizzBankBE.DataAccessLayer.Data;
+using Microsoft.EntityFrameworkCore;
+using QuizzBankBE.Services.CategoryServices;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public class BaseCourseDTO
+    public abstract class BaseCourseDTO
     {
-        [Required]
-        [StringLength(255)]
-        public string FullName { get; set; } = null!;
-        [Required]
-        [StringLength(20)]
-        public string ShortName { get; set; } = null!;
+        public string FullName { get; set; }
+
+        public string ShortName { get; set; }
+
         [Required]
         public DateTime? StartDate { get; set; }
+
         [Required]
         public DateTime? EndDate { get; set; }
+
         [StringLength(16 * 1024 * 1024)]
         public string? Description { get; set; }
+        
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (StartDate.Value <= EndDate.Value)
