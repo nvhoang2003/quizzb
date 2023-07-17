@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public class BaseQuizAccessDTO
+    public abstract class BaseQuizAccessDTO
     {
         [Required]
         [IdExistValidation("users", "userId")]
