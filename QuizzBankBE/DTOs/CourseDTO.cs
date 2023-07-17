@@ -12,12 +12,12 @@ namespace QuizzBankBE.DTOs
 
         [Required]
         [StringLength(255)]
-        [UniqueValidation("GetDbSet", "FullName")]
+        [UniqueValidation<Course>("GetDbSet", "FullName")]
         public string FullName { get; set; }
 
         [Required]
         [StringLength(20)]
-        [UniqueValidation("GetDbSet", "ShortName")]
+        [UniqueValidation<Course>("GetDbSet", "ShortName")]
         public string ShortName { get; set; }
 
         public CreateCourseDTO()
