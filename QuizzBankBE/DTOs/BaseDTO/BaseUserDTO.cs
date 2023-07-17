@@ -2,7 +2,7 @@
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public class BaseUserDTO
+    public abstract class BaseUserDTO
     {
         [Required]
         [StringLength(100)]
@@ -10,19 +10,22 @@ namespace QuizzBankBE.DTOs.BaseDTO
         [Required]
         [StringLength(100)]
         public string? Lastname { get; set; }
+
+        
         [Required]
-        public DateTime? Dob { get; set; }//<
+        public DateTime? Dob { get; set; }
         [Required]
         public string? Address { get; set; }
 
         [Phone] 
         public string? Phone { get; set; }
-        public int? IsDeleted { get; set; }
+       
         [Required]
         public int? Gender { get; set; }
 
         [Required]
         [EmailAddress] 
         public string Email { get; set; }
+       
     }
 }
