@@ -14,7 +14,7 @@
 
         public bool HasNext => CurrentPage < TotalPages;
 
-        public PageList(List<T> items, int currentPage, int pageSize, int totalCount)
+        public PageList(List<T> items, int totalCount, int pageSize, int currentPage)
         {
             TotalCount = totalCount;
             CurrentPage = currentPage;
@@ -27,7 +27,7 @@
         {
             var count = source.Count();
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            return new PageList<T>(items, count, pageNumber, pageSize);
+            return new PageList<T>(items, count, pageSize, pageNumber);
         }
     }
 }
