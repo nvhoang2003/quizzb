@@ -38,12 +38,6 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<PageList<UserDTO>>>> getAllUsers(
             [FromQuery] OwnerParameter ownerParameters)
         {
-            //var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            //  if (userIdLogin == null)
-            //  {
-            //      return new StatusCodeResult(401);
-            //  }
-            // return Ok();
 
             var users = await _userServices.getAllUsers(ownerParameters);
             var metadata = new
@@ -55,9 +49,11 @@ namespace QuizzBankBE.Controllers
                 users.Data.HasNext,
                 users.Data.HasPrevious
             };
+
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(users);
         }
+
         [HttpPost("registerSingleUser")]
         [AllowAnonymous]
         public async Task<ActionResult<ServiceResponse<UserDTO>>> registerSingleUser(
@@ -84,13 +80,16 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-       
-
         [HttpPut("updateUser/{id}")]
-
         public async Task<ActionResult<ServiceResponse<UserDTO>>> updateUser(
         [FromBody] UpdateUserDTO updateUserDTO, int id)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
+            if (!userIdLogin.Equals(id)) {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _userServices.updateUser(updateUserDTO, id);
             return Ok(response);
         }

@@ -52,13 +52,8 @@ namespace QuizzBankBE.Services.UserServices
             
             serviceResponse.Data = _mapper.Map<UserDTO>(dbUser);
 
-            
-            
-
             return serviceResponse;
         }
-
-
 
         public async Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDTO)
         {
