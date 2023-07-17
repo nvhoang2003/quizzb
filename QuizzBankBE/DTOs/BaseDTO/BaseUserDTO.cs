@@ -28,5 +28,6 @@ namespace QuizzBankBE.DTOs.BaseDTO
         [Required]
         [EmailAddress] 
         public string Email { get; set; }
+       
     }
 }

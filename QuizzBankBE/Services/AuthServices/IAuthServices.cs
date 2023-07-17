@@ -6,7 +6,7 @@ namespace QuizzBankBE.Services.AuthServices
 {
     public interface IAuthServices
     {
-        Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDto);
+        //Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDto);
 
         Task<LoginResponse> login(LoginForm loginFrom);
     }
