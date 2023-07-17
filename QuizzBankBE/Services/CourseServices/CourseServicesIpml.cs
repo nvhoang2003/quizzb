@@ -34,15 +34,6 @@ namespace QuizzBankBE.Services.CourseServices
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
 
-            var validateCommonRes = await validateCommon(createCourseDto);
-
-            if (validateCommonRes.Status == false)
-            {
-                serviceResponse.updateResponse(validateCommonRes.StatusCode, validateCommonRes.Message);
-
-                return serviceResponse;
-            }
-
             var courseSaved = _mapper.Map<Course>(createCourseDto);
 
             _dataContext.Courses.Add(courseSaved);
@@ -122,15 +113,6 @@ namespace QuizzBankBE.Services.CourseServices
                 return serviceResponse;
             }
 
-            var validateCommonRes = await validateCommon(updateCourseDto);
-
-            if (validateCommonRes.Status == false)
-            {
-                serviceResponse.updateResponse(validateCommonRes.StatusCode, validateCommonRes.Message);
-
-                return serviceResponse;
-            }
-
             var course = courseRespone.Data;
 
             course.FullName = updateCourseDto.FullName;
@@ -193,34 +175,6 @@ namespace QuizzBankBE.Services.CourseServices
                 _dataContext.UserCourses.UpdateRange(userCourseByCourse);
                 await _dataContext.SaveChangesAsync();
             }
-        }
-
-        private async Task<ServiceResponse<CourseDTO>> validateCommon(CreateCourseDTO createCourseDTO)
-        {
-            var serviceResponse = new ServiceResponse<CourseDTO>();
-
-            var check = _httpContextAccessor?.HttpContext?.User?.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            var isUserLoggedIn = int.TryParse(check, out var userId);
-
-            var modifiedOrCreatedBy = !isUserLoggedIn ? 0 : int.Parse(check);
-
-            var dbCourseByUserID = (from c in _dataContext.Courses
-                                    join uc in _dataContext.UserCourses
-                                    on c.Id equals uc.CoursesId
-                                    where uc.UserId == modifiedOrCreatedBy
-                                    where c.FullName == createCourseDTO.FullName || c.ShortName == createCourseDTO.ShortName
-                                    select c).ToListAsync();
-
-            var courseDTOs = dbCourseByUserID.Result.Select(c => _mapper.Map<CourseDTO>(c)).ToList();
-
-            if (dbCourseByUserID != null)
-            {
-                serviceResponse.updateResponse(401, "FullName or ShortName already exists!");
-            }
-
-            return serviceResponse;
         }
     }
 }

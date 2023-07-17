@@ -21,7 +21,6 @@ namespace QuizzBankBE.FormValidator
         }
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var dataContext = new DataContext();
 
             bool isExist = FindByColumn((int)value, _tableName, _columnName);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                    

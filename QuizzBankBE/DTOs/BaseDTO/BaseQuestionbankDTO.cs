@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public class BaseQuestionbankDTO
+    public abstract class BaseQuestionbankDTO
     {
         [Required]
         [StringLength(255)]
