@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.FormValidator
 {
-    public class AnswerValidationAttribute : ValidationAttribute
+    public class AnswerValidationAttribute<T> : ValidationAttribute where T : class
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             float sumFraction = 0;
-            var answers = value as ICollection<QuestionAnswerDTO>;
+            var answers = value as ICollection<T>;
             foreach (var answer in answers)
             {
-                sumFraction += answer.Fraction;
+                sumFraction += (float)answer.GetType().GetProperty("Fraction").GetValue(answer);
             }
             if ((int)sumFraction != 1)
             {

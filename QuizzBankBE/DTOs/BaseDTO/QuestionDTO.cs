@@ -3,25 +3,26 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
-    public abstract class BaseQuestionbankDTO
+    public abstract class QuestionDTO
     {
         [Required]
-        [StringLength(255)]
+        [StringLength(Const.String)]
         public string Name { get; set; }
+
         [Required]
-        [StringLength(2 * 1024 * 1024)]
+        [StringLength(Const.MediumText)] //mediumtext 16 mib
         public string Content { get; set; }
+
         [Required]
         [EnumDataType(typeof(QuestionType))]
-        public string QuestionsType { get; set; }
+        public string Questionstype { get; set; }
 
-        public string? GeneralFeedback { get; set; }
+        public string? Generalfeedback { get; set; }//phan hoi chung
+
         [Required]
-        [IdExistValidation("category", "ID")]
-        public int CategoryId { get; set; }
-        [Range(0,1)]
-        public sbyte? IsPublic { get; set; }
-        [Range(0, 1)]
+        [Range(0, 100, ErrorMessage = "Default Mark must be between 0 and 100.")]
+        public float DefaultMark { get; set; }
+
         public sbyte IsShuffle { get; set; }
 
         public enum QuestionType

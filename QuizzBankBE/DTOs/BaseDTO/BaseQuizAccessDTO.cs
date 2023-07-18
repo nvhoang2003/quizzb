@@ -1,4 +1,5 @@
-﻿using QuizzBankBE.FormValidator;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
@@ -6,11 +7,11 @@ namespace QuizzBankBE.DTOs.BaseDTO
     public abstract class BaseQuizAccessDTO
     {
         [Required]
-        [IdExistValidation("users", "userId")]
+        [IdExistValidation<User>("Id")]
         public int UserId { get; set; }
 
         [Required]
-        [IdExistValidation("courses", "coursesId")]
+        [IdExistValidation<Course>("Id")]
         public int QuizId { get; set; }
 
         [Required]

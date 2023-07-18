@@ -1,10 +1,5 @@
-﻿using static QuizzBankBE.DTOs.CourseDTO;
+﻿using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
-using QuizzBankBE.DataAccessLayer.DataObject;
-using System;
-using QuizzBankBE.DataAccessLayer.Data;
-using Microsoft.EntityFrameworkCore;
-using QuizzBankBE.Services.CategoryServices;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
@@ -20,14 +15,14 @@ namespace QuizzBankBE.DTOs.BaseDTO
         [Required]
         public DateTime? EndDate { get; set; }
 
-        [StringLength(16 * 1024 * 1024)]
+        [StringLength(Const.MediumText)]
         public string? Description { get; set; }
         
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (StartDate.Value <= EndDate.Value)
             {
-                yield return new ValidationResult("End Date must be greater than the Start Date.", new[] { "EndDate" });
+                yield return new ValidationResult("End Date must be after the Start Date.", new[] { "EndDate" });
             }
         }
     }

@@ -1,15 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QuizzBankBE.FormValidator;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
     public abstract class BaseUserDTO
     {
         [Required]
-        [StringLength(100)]
+        [StringLength(Const.String)]
         public string? Firstname { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(Const.String)]
         public string? Lastname { get; set; }
 
         [Required]

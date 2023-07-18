@@ -1,11 +1,11 @@
-﻿using QuizzBankBE.FormValidator;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
 {
     public class TagDTO
     {
-
         public int Id { get; set; }
         [Required]
         public string? Name { get; set; }
@@ -23,23 +23,17 @@ namespace QuizzBankBE.DTOs
         public DateTime? UpdateDate { get; set; }
 
         public int IsDeleted { get; set; }
-
-
-
-
     }
 
     public class CreateTagDTO
     {
-
         [Required]
         public string? Name { get; set; }
         [Required]
         public string? Description { get; set; }
 
-        [Required][IdExistValidation("category", "ID")] 
+        [Required][IdExistValidation<Category>("Id")] 
         public int CategoryId { get; set; }
-
     }
 
     public class TagResponseDTO
@@ -47,6 +41,7 @@ namespace QuizzBankBE.DTOs
         public string Status { get; set; }
        
         public int Version { get; set; }
+
         public int? IsDeleted { get; set; }
     }
 }

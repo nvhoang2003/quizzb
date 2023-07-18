@@ -11,23 +11,18 @@ namespace QuizzBankBE.DTOs
         private DataContext _dataContext;
 
         [Required]
-        [StringLength(255)]
-        [UniqueValidation<Course>("GetDbSet", "FullName")]
+        [StringLength(Const.String)]
+        [UniqueValidation<Course>("FullName")]
         public string FullName { get; set; }
 
         [Required]
-        [StringLength(20)]
-        [UniqueValidation<Course>("GetDbSet", "ShortName")]
+        [StringLength(Const.MinString)]
+        [UniqueValidation<Course>("ShortName")]
         public string ShortName { get; set; }
 
         public CreateCourseDTO()
         {
             _dataContext = new DataContext();
-        }
-
-        public IEnumerable<Course> GetDbSet()
-        {
-            return _dataContext.Set<Course>();
         }
     }
 
@@ -62,11 +57,11 @@ namespace QuizzBankBE.DTOs
         }
 
         [Required]
-        [IdExistValidation("users", "userId")]
+        [IdExistValidation<User>("userId")]
         public int UserId { get; set; }
 
         [Required]
-        [IdExistValidation("courses", "coursesId")]
+        [IdExistValidation<Course>("coursesId")]
         public int CoursesId { get; set; }
         
         [Required]

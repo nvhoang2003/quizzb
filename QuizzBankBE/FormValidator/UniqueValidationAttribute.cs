@@ -1,34 +1,31 @@
-﻿using QuizzBankBE.DataAccessLayer.DataObject;
+﻿using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
 using System.ComponentModel.DataAnnotations;
 
 
-public class UniqueValidationAttribute<T> : ValidationAttribute
+public class UniqueValidationAttribute<T> : ValidationAttribute where T : class
 {
     private readonly string _methodName;
     private readonly string _propertyName;
 
-    public UniqueValidationAttribute(string methodName, string propertyName)
+    public UniqueValidationAttribute(string propertyName)
     {
-        _methodName = methodName;
         _propertyName = propertyName;
     }
 
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        var instance = validationContext.ObjectInstance;
-        var type = instance.GetType();
+        var _dataContext = new DataContext();
 
-        var method = type.GetMethod(_methodName);
+        var DbSet = _dataContext.Set<T>();
 
-        var dbSet = (IEnumerable<T>)method.Invoke(instance, null);
+        var valueExist = DbSet.ToList<T>().Where(
+            e =>
+            e.GetType().GetProperty(_propertyName).GetValue(e).Equals(value) == true);
 
-        var existingValue = dbSet.FirstOrDefault(e =>
-            !Equals(e, validationContext.ObjectInstance) &&
-            e.GetType().GetProperty(_propertyName)?.GetValue(e)?.Equals(value) == true);
-
-        if (existingValue != null)
+        if (valueExist.First() != null)
         {
-            return new ValidationResult(_propertyName + " must uniq");
+            return new ValidationResult(_propertyName + "must unique");
         }
         return ValidationResult.Success;
     }
