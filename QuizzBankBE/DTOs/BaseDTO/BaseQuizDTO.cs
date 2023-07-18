@@ -1,18 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QuizzBankBE.FormValidator;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
     public abstract class BaseQuizDTO
     {
-
         public int Courseid { get; set; }
 
         [Required(ErrorMessage = "Please enter course name")]
-        [StringLength(200, ErrorMessage = "Name length can't be more than 200.")]
+        [StringLength(Const.String)]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
-        [StringLength(5000, ErrorMessage = "Description length can't be more than 5000.")]
+        [StringLength(Const.MediumText)]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Please add TimeOpen to the request.")]
@@ -33,7 +33,7 @@ namespace QuizzBankBE.DTOs.BaseDTO
         [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
         public float PointToPass { get; set; }//<max
 
-        [Required(ErrorMessage = "Please enter Point to Pass")]
+        [Required(ErrorMessage = "Please enter Max Point")]
         [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
         public float MaxPoint { get; set; }//>point
 

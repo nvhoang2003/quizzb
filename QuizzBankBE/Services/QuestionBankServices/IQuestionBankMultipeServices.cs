@@ -6,9 +6,9 @@
 
 //namespace QuizzBankBE.Services.QuestionServices
 //{
-//    public interface IQuestionServices
+//    public interface IQuestionBankServices
 //    {
-//        Task<ServiceResponse<QuestionResponseDTO>> createNewQuestion(CreateQuestionDTO createQuestionDTO);
+//        Task<ServiceResponse<QuestionResponseDTO>> createNewMultipeQuestionBank(CreateQuestionDTO createQuestionDTO);
 
 //        Task<ServiceResponse<QuestionCategoryDTO>> getListQuestion(OwnerParameter ownerParameters, int questionCategoryId);
 

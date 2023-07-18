@@ -1,4 +1,5 @@
 ﻿
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
@@ -6,11 +7,9 @@ namespace QuizzBankBE.DTOs
     public class CategoryDTO
     {
         public int Id { get; set; }
-        [Required]
-        [StringLength(255)]
+
         public string Name { get; set; } = null!;
 
-        [StringLength(2 * 1024 * 1024)]
         public string? Description { get; set; }
 
         public int? CreateBy { get; set; }
@@ -28,9 +27,10 @@ namespace QuizzBankBE.DTOs
     {
 
         [Required]
-        [StringLength(255)]
+        [StringLength(Const.String)]
         public string Name { get; set; }
-        [StringLength(2 * 1024 * 1024)]
+
+        [StringLength(Const.Text)]
         public string? Description { get; set; }
 
     }

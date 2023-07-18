@@ -17,15 +17,8 @@ namespace QuizzBankBE.DTOs
     }
 
     public class UpdateUserDTO : BaseUserDTO {
-
-        private DataContext _dataContext = new DataContext();
-
         [Required]
-        [UniqueValidation<User>("GetDbSet", "UserName")]
+        [UniqueValidation<User>("UserName")]
         public string UserName { get; set; }
-        public IEnumerable<User> GetDbSet()
-        {
-            return _dataContext.Set<User>();
-        }
     }
 }

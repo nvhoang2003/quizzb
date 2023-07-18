@@ -12,13 +12,8 @@ namespace QuizzBankBE.DTOs
         private DataContext _dataContext = new DataContext();
 
         [Required]
-        [UniqueValidation<User>("GetDbSet", "UserName")]
+        [UniqueValidation<User>("UserName")]
         public string UserName { get; set; }
-        public IEnumerable<User> GetDbSet()
-        {
-            return _dataContext.Set<User>();
-        }
-
         [Required]
         //[DataType(DataType.Password)]
         //[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
