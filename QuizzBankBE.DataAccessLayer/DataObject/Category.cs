@@ -25,4 +25,6 @@ public partial class Category : IAuditedEntityBase
     public virtual ICollection<QuizBank> QuizBanks { get; set; } = new List<QuizBank>();
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+
+    public virtual ICollection<UserCategory> UserCategories { get; set; } = new List<UserCategory>();
 }

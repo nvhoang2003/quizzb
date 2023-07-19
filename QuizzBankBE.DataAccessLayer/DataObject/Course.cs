@@ -27,6 +27,7 @@ public partial class Course : IAuditedEntityBase
     public DateTime? UpdateDate { get; set; }
 
     public int IsDeleted { get; set; }
+
     public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
     public virtual ICollection<UserCourse> UserCourses { get; set; } = new List<UserCourse>();

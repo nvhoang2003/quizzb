@@ -22,6 +22,8 @@ public partial class User : IAuditedEntityBase
 
     public string? Phone { get; set; }
 
+    public int RoleId { get; set; }
+
     public int? Gender { get; set; }
 
     public int? CreateBy { get; set; }
@@ -34,15 +36,19 @@ public partial class User : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
-    public string? Email { get; set; }
-
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 
     public virtual ICollection<QuizAccess> QuizAccessAddByNavigations { get; set; } = new List<QuizAccess>();
 
     public virtual ICollection<QuizAccess> QuizAccessUsers { get; set; } = new List<QuizAccess>();
 
+    public virtual ICollection<QuizBank> QuizBanks { get; set; } = new List<QuizBank>();
+
     public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
+    public virtual Role Role { get; set; } = null!;
+
+    public virtual ICollection<UserCategory> UserCategories { get; set; } = new List<UserCategory>();
 
     public virtual ICollection<UserCourse> UserCourses { get; set; } = new List<UserCourse>();
 }
