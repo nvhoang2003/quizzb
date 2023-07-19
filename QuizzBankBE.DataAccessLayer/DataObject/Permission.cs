@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class QbTag : IAuditedEntityBase
+public partial class Permission : IAuditedEntityBase
 {
     public int Id { get; set; }
 
-    public int? QbId { get; set; }
+    public string Name { get; set; } = null!;
 
-    public int? TagId { get; set; }
+    public string? Description { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -22,7 +22,5 @@ public partial class QbTag : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
-    public virtual QuizBank? Qb { get; set; }
-
-    public virtual Tag? Tag { get; set; }
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

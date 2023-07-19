@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace QuizzBankBE.DataAccessLayer.Data
 {
-    public partial class DataContext :DbContext
+    public partial class DataContext : DbContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public DataContext()
@@ -28,6 +28,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
         public virtual DbSet<MatchSubQuestionBank> MatchSubQuestionBanks { get; set; }
 
+        public virtual DbSet<Permission> Permissions { get; set; }
+
         public virtual DbSet<QbTag> QbTags { get; set; }
 
         public virtual DbSet<Question> Questions { get; set; }
@@ -46,9 +48,15 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
         public virtual DbSet<QuizbankAnswer> QuizbankAnswers { get; set; }
 
+        public virtual DbSet<Role> Roles { get; set; }
+
+        public virtual DbSet<RolePermission> RolePermissions { get; set; }
+
         public virtual DbSet<Tag> Tags { get; set; }
 
         public virtual DbSet<User> Users { get; set; }
+
+        public virtual DbSet<UserCategory> UserCategories { get; set; }
 
         public virtual DbSet<UserCourse> UserCourses { get; set; }
 
@@ -144,6 +152,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Question).WithMany(p => p.MatchSubQuestions)
                     .HasForeignKey(d => d.QuestionId)
                     .HasConstraintName("fk_matchsub_question");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -176,6 +185,33 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.QuestionBank).WithMany(p => p.MatchSubQuestionBanks)
                     .HasForeignKey(d => d.QuestionBankId)
                     .HasConstraintName("fk_matchsub_questionbank");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
+            });
+
+            modelBuilder.Entity<Permission>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+                entity.ToTable("permissions");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CreateBy).HasColumnName("createBy");
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("createDate");
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .HasColumnName("description");
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .HasColumnName("name");
+                entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("updateDate");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -209,6 +245,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Tag).WithMany(p => p.QbTags)
                     .HasForeignKey(d => d.TagId)
                     .HasConstraintName("fk_tag_qb");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -248,6 +285,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Author).WithMany(p => p.Questions)
                     .HasForeignKey(d => d.AuthorId)
                     .HasConstraintName("fk_user_question");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -281,6 +319,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Question).WithMany(p => p.QuestionAnswers)
                     .HasForeignKey(d => d.QuestionId)
                     .HasConstraintName("fk_question_answer");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -394,6 +433,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.User).WithMany(p => p.QuizAccessUsers)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("fk_user_access");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -405,7 +445,10 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
                 entity.HasIndex(e => e.CategoryId, "fk_qb_category_idx");
 
+                entity.HasIndex(e => e.AuthorId, "fk_qb_user_idx");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.AuthorId).HasColumnName("authorId");
                 entity.Property(e => e.CategoryId).HasColumnName("categoryId");
                 entity.Property(e => e.Content)
                     .HasColumnType("mediumtext")
@@ -432,6 +475,10 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.UpdateDate)
                     .HasColumnType("date")
                     .HasColumnName("updateDate");
+
+                entity.HasOne(d => d.Author).WithMany(p => p.QuizBanks)
+                    .HasForeignKey(d => d.AuthorId)
+                    .HasConstraintName("fk_qb_user");
 
                 entity.HasOne(d => d.Category).WithMany(p => p.QuizBanks)
                     .HasForeignKey(d => d.CategoryId)
@@ -471,6 +518,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Quizz).WithMany(p => p.QuizQuestions)
                     .HasForeignKey(d => d.QuizzId)
                     .HasConstraintName("fk_quiz_question");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -502,6 +550,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Access).WithMany(p => p.QuizResponses)
                     .HasForeignKey(d => d.AccessId)
                     .HasConstraintName("fk_access");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -535,6 +584,67 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.QuizBank).WithMany(p => p.QuizbankAnswers)
                     .HasForeignKey(d => d.QuizBankId)
                     .HasConstraintName("fk_quizbank_answer");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
+            });
+
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+                entity.ToTable("role");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CreateBy).HasColumnName("createBy");
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("createDate");
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .HasColumnName("description");
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .HasColumnName("name");
+                entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("updateDate");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
+            });
+
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+                entity.ToTable("role_permissions");
+
+                entity.HasIndex(e => e.PermissionId, "fk_permission_role_idx");
+
+                entity.HasIndex(e => e.RoleId, "fk_role_permission_idx");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CreateBy).HasColumnName("createBy");
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("createDate");
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+                entity.Property(e => e.PermissionId).HasColumnName("permissionID");
+                entity.Property(e => e.RoleId).HasColumnName("roleID");
+                entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("updateDate");
+
+                entity.HasOne(d => d.Permission).WithMany(p => p.RolePermissions)
+                    .HasForeignKey(d => d.PermissionId)
+                    .HasConstraintName("fk_permission_role");
+
+                entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("fk_role_permission");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -567,6 +677,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Category).WithMany(p => p.Tags)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("fk_tag_category");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -576,13 +687,12 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
                 entity.ToTable("users");
 
+                entity.HasIndex(e => e.RoleId, "fk_user_role_idx");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
                 entity.Property(e => e.Address)
                     .HasMaxLength(255)
                     .HasColumnName("address");
-                entity.Property(e => e.Email)
-                    .HasMaxLength(255)
-                    .HasColumnName("email");
                 entity.Property(e => e.CreateBy).HasColumnName("createBy");
                 entity.Property(e => e.CreateDate)
                     .HasColumnType("date")
@@ -604,6 +714,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)
                     .HasColumnName("phone");
+                entity.Property(e => e.RoleId).HasColumnName("roleId");
                 entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
                 entity.Property(e => e.UpdateDate)
                     .HasColumnType("date")
@@ -611,6 +722,46 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.UserName)
                     .HasMaxLength(255)
                     .HasColumnName("userName");
+
+                entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_user_role");
+
+                entity.HasQueryFilter(q => q.IsDeleted != 1);
+            });
+
+            modelBuilder.Entity<UserCategory>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+                entity.ToTable("user_categories");
+
+                entity.HasIndex(e => e.UserId, "fk_category_user_idx");
+
+                entity.HasIndex(e => e.CategoryId, "fk_user_category_idx");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CategoryId).HasColumnName("categoryId");
+                entity.Property(e => e.CreateBy).HasColumnName("createBy");
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("createDate");
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+                entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("updateDate");
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
+                entity.HasOne(d => d.Category).WithMany(p => p.UserCategories)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("fk_user_category");
+
+                entity.HasOne(d => d.User).WithMany(p => p.UserCategories)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("fk_category_user");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 
@@ -647,6 +798,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.User).WithMany(p => p.UserCourses)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("fk_user_course");
+
                 entity.HasQueryFilter(q => q.IsDeleted != 1);
             });
 

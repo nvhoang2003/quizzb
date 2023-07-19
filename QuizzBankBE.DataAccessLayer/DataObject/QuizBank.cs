@@ -32,6 +32,10 @@ public partial class QuizBank : IAuditedEntityBase
 
     public sbyte IsShuffle { get; set; }
 
+    public int? AuthorId { get; set; }
+
+    public virtual User? Author { get; set; }
+
     public virtual Category Category { get; set; } = null!;
 
     public virtual ICollection<MatchSubQuestionBank> MatchSubQuestionBanks { get; set; } = new List<MatchSubQuestionBank>();
