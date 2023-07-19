@@ -700,6 +700,9 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.Dob)
                     .HasColumnType("datetime")
                     .HasColumnName("dob");
+                entity.Property(e => e.Email)
+                    .HasMaxLength(255)
+                    .HasColumnName("email");
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(255)
                     .HasColumnName("firstName");

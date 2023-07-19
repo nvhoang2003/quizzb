@@ -1,10 +1,9 @@
-﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class User : IAuditedEntityBase
+public partial class User
 {
     public int Id { get; set; }
 
@@ -36,6 +35,7 @@ public partial class User : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
+    public string? Email { get; set; }
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 
     public virtual ICollection<QuizAccess> QuizAccessAddByNavigations { get; set; } = new List<QuizAccess>();
@@ -51,4 +51,5 @@ public partial class User : IAuditedEntityBase
     public virtual ICollection<UserCategory> UserCategories { get; set; } = new List<UserCategory>();
 
     public virtual ICollection<UserCourse> UserCourses { get; set; } = new List<UserCourse>();
+
 }

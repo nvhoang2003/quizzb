@@ -59,27 +59,17 @@ namespace QuizzBankBE.Services.UserServices
         {
             var serviceResponse = new ServiceResponse<UserDTO>();
 
-            if (await _dataContext.Users.FirstOrDefaultAsync(
-                x => x.UserName == createUserDTO.UserName || x.Email == createUserDTO.Email) != null)
-            {
-                serviceResponse.Status = false;
-                serviceResponse.StatusCode = 400;
-                serviceResponse.Message = "Tài khoản đã tồn tại !";
-                return serviceResponse;
-            }
-            else
-            {
-                createUserDTO.Password = BCrypt.Net.BCrypt.HashPassword(createUserDTO.Password);
-                User userRegister = _mapper.Map<User>(createUserDTO);
-                var userSaved = _dataContext.Users.Add(userRegister);
-                await _dataContext.SaveChangesAsync();
+            createUserDTO.Password = BCrypt.Net.BCrypt.HashPassword(createUserDTO.Password);
+            User userRegister = _mapper.Map<User>(createUserDTO);
+            _dataContext.Users.Add(userRegister);
+            await _dataContext.SaveChangesAsync();
 
-                serviceResponse.Status = true;
-                serviceResponse.StatusCode = 200;
-                serviceResponse.Message = "Tạo thành công !";
+            serviceResponse.Data = _mapper.Map<UserDTO>(userRegister);
+            serviceResponse.Status = true;
+            serviceResponse.StatusCode = 200;
+            serviceResponse.Message = "Tạo thành công !";
 
-                return serviceResponse;
-            }
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<UpdateUserDTO>> updateUser(UpdateUserDTO updateDTO, int id)

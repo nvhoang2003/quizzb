@@ -23,7 +23,7 @@ public class UniqueValidationAttribute<T> : ValidationAttribute where T : class
             e =>
             e.GetType().GetProperty(_propertyName).GetValue(e).Equals(value) == true);
 
-        if (valueExist.First() != null)
+        if (valueExist.FirstOrDefault() != null)
         {
             return new ValidationResult(_propertyName + "must unique");
         }

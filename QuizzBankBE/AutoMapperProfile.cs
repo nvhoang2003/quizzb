@@ -48,6 +48,8 @@ namespace QuizzBankBE
             CreateMap<CategoryDTO, Category>();
             CreateMap<CreateCategoryDTO, Category>();
             CreateMap<CategoryDTO,CreateCategoryDTO>();
+
+            CreateMap<CreateQuestionBankMultipeChoiceDTO, QuizBank>();
         }
     }
 }

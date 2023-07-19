@@ -32,14 +32,11 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             //int questionCategoryId = createQuestionDTO.QuestionBankEntry.QuestionCategoryId;
             //var quesBankEntry = await createNewQuestionBankEntry(questionCategoryId);
-
             QuizBank quesSaved = _mapper.Map<QuizBank>(createQuestionBankDTO);
             _dataContext.QuizBanks.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
 
             //await createNewQuestionVersion(quesSaved.Idquestions, quesBankEntry.IdquestionBankEntry);
-
-
 
             serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
             return serviceResponse;

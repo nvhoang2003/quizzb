@@ -23,7 +23,7 @@ namespace QuizzBankBE.FormValidator
                 e =>
                 e.GetType().GetProperty(_columnName).GetValue(e).Equals(value) == true);
 
-            if (valueExist.First() == null)
+            if (valueExist.FirstOrDefault() == null)
             {
                 return new ValidationResult(_columnName + " does not exist");
             }

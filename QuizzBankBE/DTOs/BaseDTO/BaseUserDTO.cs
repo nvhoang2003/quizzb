@@ -1,4 +1,5 @@
-﻿using QuizzBankBE.FormValidator;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
@@ -21,13 +22,18 @@ namespace QuizzBankBE.DTOs.BaseDTO
 
         [Phone] 
         public string? Phone { get; set; }
+        [Required]
+        [IdExistValidation<Role>("Id")]
+        public int RoleId { get; set; }
+
         public int? IsDeleted { get; set; }
         
         [Required]
         public int? Gender { get; set; }
 
         [Required]
-        [EmailAddress] 
+        [EmailAddress]
+        [UniqueValidation<User>("Email")]
         public string Email { get; set; }
     }
 }
