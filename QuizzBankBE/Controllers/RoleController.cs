@@ -23,6 +23,7 @@ namespace QuizzBankBE.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
+
         public RoleController(IRoleServices roleServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
             _roleService = roleServices;
@@ -43,7 +44,6 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<PageList<RoleDTO>>>> getAllRole(
            [FromQuery] OwnerParameter ownerParameters)
         {
-
             var role = await _roleService.getAllRole(ownerParameters);
             var metadata = new
             {

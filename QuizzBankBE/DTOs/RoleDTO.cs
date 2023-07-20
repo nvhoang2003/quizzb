@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using QuizzBankBE.FormValidator;
 
 namespace QuizzBankBE.DTOs
 {
@@ -7,7 +8,8 @@ namespace QuizzBankBE.DTOs
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
+
         [Required]
         public string? Description { get; set; }
 
@@ -23,12 +25,13 @@ namespace QuizzBankBE.DTOs
     }
 
     public class CreateRoleDTO {
+        [Required]
+        [StringLength(Const.String)]
+        public string Name { get; set; }
 
         [Required]
-        public string Name { get; set; } = null!;
-        [Required]
+        [StringLength(Const.String)]
         public string? Description { get; set; }
-
     }
     public class RoleResponseDTO
     {

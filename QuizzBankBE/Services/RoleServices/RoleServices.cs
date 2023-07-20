@@ -43,14 +43,13 @@ namespace QuizzBankBE.Services.RoleServices
         {
             var serviceResponse = new ServiceResponse<PageList<RoleDTO>>();
             var dbRole= await _dataContext.Roles.ToListAsync();
-
             var roleDTO = dbRole.Select(u => _mapper.Map<RoleDTO>(u)).ToList();
 
             serviceResponse.Data = PageList<RoleDTO>.ToPageList(
             roleDTO.AsEnumerable<RoleDTO>(),
-
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
+
             return serviceResponse;
         }
 
@@ -58,16 +57,16 @@ namespace QuizzBankBE.Services.RoleServices
         {
             var serviceResponse = new ServiceResponse<RoleDTO>();
             var dbRole = await _dataContext.Roles.FirstOrDefaultAsync(q => q.Id == id);
+
             if (dbRole == null)
             {
-                serviceResponse.updateResponse(400, "Role không tồn tại");
+                serviceResponse.updateResponse(404, "Role không tồn tại");
                 return serviceResponse;
             }
 
             dbRole.Name = updateRoleDTO.Name;
             dbRole.Description = updateRoleDTO.Description;
             
-
             _dataContext.Roles.Update(dbRole);
             await _dataContext.SaveChangesAsync();
 
@@ -79,9 +78,10 @@ namespace QuizzBankBE.Services.RoleServices
         {
             var serviceResponse = new ServiceResponse<RoleDTO>();
             var dbRole= await _dataContext.Roles.FirstOrDefaultAsync(q => q.Id == id);
+
             if (dbRole == null)
             {
-                serviceResponse.updateResponse(400, "Role không tồn tại");
+                serviceResponse.updateResponse(404, "Role không tồn tại");
                 return serviceResponse;
             }
 
