@@ -30,6 +30,4 @@ namespace QuizzBankBE.FormValidator
             return ValidationResult.Success;
         }
     }
-
-
 }
