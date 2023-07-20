@@ -14,6 +14,10 @@ namespace QuizzBankBE
             CreateMap<User, UserDTO>();
             CreateMap<User, UpdateUserDTO>();
             CreateMap<UpdateUserDTO, User>();
+            CreateMap<Role, RoleDTO>();
+            CreateMap<RoleDTO, Role>();
+            CreateMap<CreateRoleDTO, Role>();
+            CreateMap<Role, CreateRoleDTO>();
             //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
             //CreateMap<CreateQuestionDTO, Question>();
             //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
