@@ -8,22 +8,6 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateCourseDTO : BaseCourseDTO
     {
-        private DataContext _dataContext;
-
-        [Required]
-        [StringLength(Const.String)]
-        [UniqueValidation<Course>("FullName")]
-        public string FullName { get; set; }
-
-        [Required]
-        [StringLength(Const.MinString)]
-        [UniqueValidation<Course>("ShortName")]
-        public string ShortName { get; set; }
-
-        public CreateCourseDTO()
-        {
-            _dataContext = new DataContext();
-        }
     }
 
     public class CourseDTO : BaseCourseDTO
