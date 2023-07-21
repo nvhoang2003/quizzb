@@ -47,13 +47,19 @@ namespace QuizzBankBE
             //CreateMap<CreateQuizDTO, QuizDTO>();
             //CreateMap<Quiz, CreateQuizDTO>();
             //CreateMap<CreateQuizDTO, Quiz>();
-
             CreateMap<Category, CategoryDTO>();
             CreateMap<CategoryDTO, Category>();
             CreateMap<CreateCategoryDTO, Category>();
             CreateMap<CategoryDTO,CreateCategoryDTO>();
-
             CreateMap<CreateQuestionBankMultipeChoiceDTO, QuizBank>();
+            CreateMap<Permission, PermissionDTO>();
+            CreateMap<PermissionDTO, PermissionDTO>();
+            CreateMap<RolePermissionDTO, RolePermission>();
+            CreateMap<RolePermissionDTO, CreateRolePermissionDTO>();
+            CreateMap<RolePermission, RolePermissionDTO>();
+            CreateMap<RolePermission, CreateRolePermissionDTO>();
+            CreateMap<CreateRolePermissionDTO, RolePermission>();
+            CreateMap<CreateRolePermissionDTO, RolePermissionDTO>();
         }
     }
 }

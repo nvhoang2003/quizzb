@@ -21,7 +21,7 @@ public class UniqueValidationAttribute<T> : ValidationAttribute where T : class
 
         var valueExist = DbSet.ToList<T>().Where(
             e =>
-            e.GetType().GetProperty(_propertyName).GetValue(e).Equals(value) == true);
+            e.GetType().GetProperty(_propertyName).GetValue(e).Equals(value));
 
         if (valueExist.FirstOrDefault() != null)
         {
