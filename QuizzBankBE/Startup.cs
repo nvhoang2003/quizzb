@@ -20,6 +20,7 @@ using QuizzBankBE.Services.CategoryServices;
 using QuizzBankBE.Services.UserServices;
 using QuizzBankBE.Services.QuestionBankServices;
 using QuizzBankBE.Services.RoleServices;
+using QuizzBankBE.Services.RolePermissionServices;
 //using QuizzBankBE.Services.QuestionServices;
 //using QuizzBankBE.Services.CourseServices;
 //using QuizzBankBE.Services.KeywordServices;
@@ -63,6 +64,7 @@ namespace QuizzBankBE
             ////services.AddScoped<IRoleServices, RoleServicesImpl>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IRolePermissionServices, RolePermissionServicesIpml>();
             //services.AddScoped<IGmcServices, GmcServicesImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();

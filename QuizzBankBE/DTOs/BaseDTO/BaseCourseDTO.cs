@@ -1,12 +1,19 @@
-﻿using QuizzBankBE.FormValidator;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
     public abstract class BaseCourseDTO
     {
+        [Required]
+        [StringLength(Const.String)]
+        [UniqueValidation<Course>("FullName")]
         public string FullName { get; set; }
 
+        [Required]
+        [StringLength(Const.MinString)]
+        [UniqueValidation<Course>("ShortName")]
         public string ShortName { get; set; }
 
         [Required]
