@@ -29,6 +29,7 @@ namespace QuizzBankBE
             //CreateMap<QuestionVersion, QuestionVersionDTO>();
             //CreateMap<Question, QuestionDTO>();
             //CreateMap<Answer, QuestionAnswerDTO>();
+
             CreateMap<Course, CourseDTO>();
             CreateMap<Course, CreateCourseDTO>();
             CreateMap<CourseDTO, Course>();
@@ -41,14 +42,15 @@ namespace QuizzBankBE
             CreateMap<TagDTO, Tag>();
             CreateMap<Tag, CreateTagDTO>();
             CreateMap<CreateTagDTO, Tag>();
-            //CreateMap<Quiz, QuizDTO>() ;
-            //CreateMap<QuizDTO, Quiz>();
-            //CreateMap<BaseQuizDTO, QuizDTO>();
-            //CreateMap<QuizDTO, BaseQuizDTO>();
-            //CreateMap<QuizDTO, CreateQuizDTO>();
-            //CreateMap<CreateQuizDTO, QuizDTO>();
-            //CreateMap<Quiz, CreateQuizDTO>();
-            //CreateMap<CreateQuizDTO, Quiz>();
+            CreateMap<Quiz, QuizDTO>();
+            CreateMap<QuizDTO, Quiz>();
+            CreateMap<BaseQuizDTO, QuizDTO>();
+            CreateMap<QuizDTO, BaseQuizDTO>();
+            CreateMap<QuizDTO, CreateQuizDTO>();
+            CreateMap<CreateQuizDTO, QuizDTO>();
+            CreateMap<Quiz, CreateQuizDTO>();
+            CreateMap<CreateQuizDTO, Quiz>();
+
             CreateMap<Category, CategoryDTO>();
             CreateMap<CategoryDTO, Category>();
             CreateMap<CreateCategoryDTO, Category>();
