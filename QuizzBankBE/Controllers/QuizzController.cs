@@ -122,7 +122,7 @@ namespace QuizzBankBE.Controllers
                               join rp in _dataContext.RolePermissions on r.Id equals rp.RoleId
                               join p in _dataContext.Permissions on rp.PermissionId equals p.Id
                               where u.Id == userIdLogin
-                              where p.Name == _configuration.GetSection("Permission:READ_QUIZZ").Value
+                              where p.Name == _configuration.GetSection("Permission:WRITE_QUIZZ").Value
                               select p).FirstOrDefault();
 
             if (permission == null)
