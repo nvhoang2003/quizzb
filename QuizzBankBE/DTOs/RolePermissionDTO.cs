@@ -25,9 +25,8 @@ namespace QuizzBankBE.DTOs
         public int? PermissionId { get; set; }
     }
 
-    public class RoleDetailPermissionsDTO 
+    public class RoleDetailPermissionsDTO : RoleDTO
     {
-        public RoleDTO Role { get; set; }
         public List<PermissionDTO> Permissions { get; set; }
     }
 

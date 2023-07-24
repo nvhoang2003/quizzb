@@ -40,8 +40,6 @@ namespace QuizzBankBE.Services.RolePermissionServices
                 return serviceResponse;
             }
 
-            var roleDto = _mapper.Map<RoleDTO>(role);
-
             var permissions = await _dataContext.Permissions.ToListAsync();
             var permissionsDto = _mapper.Map<List<PermissionDTO>>(permissions);
             var permissionsOfRole = await _dataContext.RolePermissions.Where(e => e.RoleId.Equals(roleID)).ToListAsync();
@@ -54,7 +52,7 @@ namespace QuizzBankBE.Services.RolePermissionServices
                 }
             }
 
-            rolePersResDto.Role = roleDto;
+            rolePersResDto = _mapper.Map<RoleDetailPermissionsDTO>(role);
             rolePersResDto.Permissions = permissionsDto;
 
             serviceResponse.Data = rolePersResDto;
