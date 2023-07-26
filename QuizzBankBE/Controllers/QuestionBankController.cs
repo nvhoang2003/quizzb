@@ -80,8 +80,9 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
+            var updateQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin,permissionName) || updateQuestionDTO.AuthorId != userIdLogin)
+            if (!CheckPermission.check(userIdLogin,permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }

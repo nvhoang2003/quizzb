@@ -14,8 +14,6 @@ namespace QuizzBankBE.DTOs
         [StringLength(Const.MediumText)] //mediumtext 16 mib
         public string Content { get; set; }
 
-        [Required]
-        [EnumDataType(typeof(QuestionType))]
         public string Questionstype { get; set; }
 
         public string? Generalfeedback { get; set; }//phan hoi chung
@@ -23,7 +21,7 @@ namespace QuizzBankBE.DTOs
         [Range(0, 1)]
         public sbyte? IsPublic { get; set; }
 
-        [IdExistValidation<Category>("ID")]
+        [IdExistValidation<Category>("Id")]
         public int CategoryId { get; set; }
 
         public int? AuthorId { get; set; }

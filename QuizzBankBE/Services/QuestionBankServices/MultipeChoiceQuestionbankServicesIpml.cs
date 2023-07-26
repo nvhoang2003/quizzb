@@ -41,11 +41,6 @@ namespace QuizzBankBE.Services.QuestionBankServices
                 createAnswer(item, quesSaved.Id);
             }
 
-            foreach (var item in createQuestionBankDTO.QbTags)
-            {
-                createTag(item, quesSaved.Id);
-            }
-
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
 
@@ -81,22 +76,14 @@ namespace QuizzBankBE.Services.QuestionBankServices
         {
             var serviceResponse = new ServiceResponse<QuestionBankMultipeChoiceResponseDTO>();
 
-            QuizBank quesSaved = _mapper.Map<QuizBank>(updateQbMultiChoiceDTO);
-            quesSaved.Id = id;
-
-            _dataContext.QuizBanks.Update(quesSaved);
-            await _dataContext.SaveChangesAsync();
+            var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == id);
+            _mapper.Map(updateQbMultiChoiceDTO, quesToUpdate);
 
             await deleteTagAndAnswer(id);
-
+            await _dataContext.SaveChangesAsync();
             foreach (var item in updateQbMultiChoiceDTO.Answers)
             {
-                createAnswer(item, quesSaved.Id);
-            }
-
-            foreach (var item in updateQbMultiChoiceDTO.QbTags)
-            {
-                createTag(item, quesSaved.Id);
+                createAnswer(item, id);
             }
 
             await _dataContext.SaveChangesAsync();
@@ -113,16 +100,6 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _dataContext.QuizbankAnswers.Add(answerSave);
 
             return answerSave;
-        }
-
-        public QbTag createTag(QbTagDTO qbTag, int quizBankId)
-        {
-            qbTag.QbId = quizBankId;
-
-            QbTag tagSave = _mapper.Map<QbTag>(qbTag);
-            _dataContext.QbTags.Add(tagSave);
-
-            return tagSave;
         }
 
         public async Task<bool> deleteTagAndAnswer(int quizBankId)
