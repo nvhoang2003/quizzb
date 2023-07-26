@@ -98,7 +98,7 @@ namespace QuizzBankBE.Controllers
             {
                 return new StatusCodeResult(403);
             }
-
+            
             if (!userIdLogin.Equals(id)) {
                 return new StatusCodeResult(403);
             }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
