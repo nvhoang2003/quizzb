@@ -99,8 +99,6 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-
             if (!userIdLogin.Equals(id)) {
                 return new StatusCodeResult(403);
             }

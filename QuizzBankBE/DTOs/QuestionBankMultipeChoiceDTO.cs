@@ -7,18 +7,7 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateQuestionBankMultipeChoiceDTO : QuestionDTO
     {
-        [IdExistValidation<Category>("Id")]
-        public int CategoryId { get; set; }
-
-        [Range(0, 1)]
-        public sbyte? IsPublic { get; set; }
-
-        //[AnswerValidation<>]
         public virtual ICollection<QuestionBankAnswerDTO> Answers { get; set; }
-
-        public string Questionstype { get; set; }
-
-        public virtual ICollection<QbTagDTO> QbTags { get; set; }
     }
 
     public class QuestionBankMultipeChoiceResponseDTO : QuestionDTO
