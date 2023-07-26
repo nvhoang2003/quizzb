@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using QuizzBankBE.Services.TagServices;
 using Microsoft.EntityFrameworkCore;
+using QuizzBankBE.Utility;
 
 namespace QuizzBankBE.Controllers
 {
@@ -38,6 +39,13 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<PageList<UserDTO>>>> getAllUsers(
             [FromQuery] OwnerParameter ownerParameters)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_LIST_USER").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
             var users = await _userServices.getAllUsers(ownerParameters);
             var metadata = new
@@ -83,6 +91,14 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<UserDTO>>> updateUser(
         [FromBody] UpdateUserDTO updateUserDTO, int id)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_USER").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
             if (!userIdLogin.Equals(id)) {

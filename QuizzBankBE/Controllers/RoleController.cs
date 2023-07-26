@@ -9,6 +9,8 @@ using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Model;
 using QuizzBankBE.Services.TagServices;
 using QuizzBankBE.Services.RoleServices;
+using QuizzBankBE.Utility;
+using System.Security.Claims;
 
 namespace QuizzBankBE.Controllers
 {
@@ -33,9 +35,17 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpPost("CreateNewRole")]
-        public async Task<ActionResult<ServiceResponse<RoleResponseDTO>>> createNewTag(
+        public async Task<ActionResult<ServiceResponse<RoleResponseDTO>>> createNewRole(
         [FromBody] CreateRoleDTO createRoleDTO)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_ROLE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _roleService.createNewRole(createRoleDTO);
             return Ok(response);
         }
@@ -44,6 +54,14 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<PageList<RoleDTO>>>> getAllRole(
            [FromQuery] OwnerParameter ownerParameters)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_ROLE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var role = await _roleService.getAllRole(ownerParameters);
             var metadata = new
             {
@@ -63,6 +81,14 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<RoleDTO>>> updateRole(
         [FromBody] CreateRoleDTO updateRoleDTO, int id)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_ROLE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _roleService.updateRole(updateRoleDTO, id);
             return Ok(response);
         }
@@ -70,6 +96,14 @@ namespace QuizzBankBE.Controllers
         [HttpDelete("deleteRole/{id}")]
         public async Task<ActionResult<ServiceResponse<RoleDTO>>> deleteRole(int id)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_ROLE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _roleService.deleteRole(id);
             if (response.Status == false)
             {

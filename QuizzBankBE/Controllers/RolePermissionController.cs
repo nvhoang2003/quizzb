@@ -10,6 +10,8 @@ using QuizzBankBE.Services.CategoryServices;
 using QuizzBankBE.Services.RolePermissionServices;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.Services.CourseServices;
+using QuizzBankBE.Utility;
+using System.Security.Claims;
 
 namespace QuizzBankBE.Controllers
 {
@@ -36,6 +38,14 @@ namespace QuizzBankBE.Controllers
         [HttpGet("GetDetail/{roleID}")]
         public async Task<ActionResult<ServiceResponse<RoleDetailPermissionsDTO>>> GetDetail(int roleID)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_ROLE_PERMISSION").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _rolePermissionServices.getDetailRolePermissions(roleID);
 
             if (response.Status == false)
@@ -53,6 +63,14 @@ namespace QuizzBankBE.Controllers
         [HttpPut("UpdatePermissions/{roleID}")]
         public async Task<ActionResult<ServiceResponse<RoleDetailPermissionsDTO>>> UpdatePermissions([FromBody] List<PermissionDTO> permissionDTOs, int roleID)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_ROLE_PERMISSION").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _rolePermissionServices.updatePermissions(permissionDTOs ,roleID);
 
             if (response.Status == false)
