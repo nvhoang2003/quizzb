@@ -7,6 +7,7 @@ using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.QuizService;
+using QuizzBankBE.Utility;
 using System.Security.Claims;
 
 namespace QuizzBankBE.Controllers
@@ -39,15 +40,9 @@ namespace QuizzBankBE.Controllers
         [FromBody] CreateQuizDTO createQuizDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permission = (from u in _dataContext.Users
-                              join r in _dataContext.Roles on u.RoleId equals r.Id
-                              join rp in _dataContext.RolePermissions on r.Id equals rp.RoleId
-                              join p in _dataContext.Permissions on rp.PermissionId equals p.Id
-                              where u.Id == userIdLogin
-                              where p.Name == _configuration.GetSection("Permission:WRITE_QUIZZ").Value
-                              select p).FirstOrDefault();
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
 
-            if (permission == null)
+            if (!CheckPermission.check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
@@ -62,15 +57,9 @@ namespace QuizzBankBE.Controllers
         [FromQuery] OwnerParameter ownerParameters)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permission = (from u in _dataContext.Users
-                              join r in _dataContext.Roles on u.RoleId equals r.Id
-                              join rp in _dataContext.RolePermissions on r.Id equals rp.RoleId
-                              join p in _dataContext.Permissions on rp.PermissionId equals p.Id
-                              where u.Id == userIdLogin
-                              where p.Name == _configuration.GetSection("Permission:READ_QUIZZ").Value
-                              select p).FirstOrDefault();
+            var permissionName = _configuration.GetSection("Permission:READ_QUIZZ").Value;
 
-            if (permission == null)
+            if (!CheckPermission.check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
@@ -95,15 +84,9 @@ namespace QuizzBankBE.Controllers
         [FromBody] CreateQuizDTO updateQuizDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permission = (from u in _dataContext.Users
-                              join r in _dataContext.Roles on u.RoleId equals r.Id
-                              join rp in _dataContext.RolePermissions on r.Id equals rp.RoleId
-                              join p in _dataContext.Permissions on rp.PermissionId equals p.Id
-                              where u.Id == userIdLogin
-                              where p.Name == _configuration.GetSection("Permission:WRITE_QUIZZ").Value
-                              select p).FirstOrDefault();
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
 
-            if (permission == null)
+            if (!CheckPermission.check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
@@ -117,15 +100,9 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<QuizDTO>>> deleteQuiz(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permission = (from u in _dataContext.Users
-                              join r in _dataContext.Roles on u.RoleId equals r.Id
-                              join rp in _dataContext.RolePermissions on r.Id equals rp.RoleId
-                              join p in _dataContext.Permissions on rp.PermissionId equals p.Id
-                              where u.Id == userIdLogin
-                              where p.Name == _configuration.GetSection("Permission:WRITE_QUIZZ").Value
-                              select p).FirstOrDefault();
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
 
-            if (permission == null)
+            if (!CheckPermission.check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }

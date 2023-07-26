@@ -10,6 +10,7 @@ using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.CourseServices;
+using QuizzBankBE.Utility;
 using System.Security.Claims;
 using static QuizzBankBE.DTOs.UserCourseDTO;
 
@@ -39,6 +40,14 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<PageList<CourseDTO>>>> getAllCourse(
             [FromQuery] OwnerParameter ownerParameters)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var courseResponse = await _courseServices.getAllCourse(ownerParameters);
 
             var courseResponsePagedList = SettingsPagination(courseResponse);
@@ -51,6 +60,12 @@ namespace QuizzBankBE.Controllers
             [FromQuery] OwnerParameter ownerParameters)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
             var courseResponse = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
 
@@ -62,6 +77,14 @@ namespace QuizzBankBE.Controllers
         [HttpGet("GetCourses/{courseID}")]
         public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int courseID)
         {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
             var response = await _courseServices.getCourseByCourseID(courseID);
 
             if (response.Status == false)
@@ -80,6 +103,12 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<CourseDTO>>> createCourse([FromBody] CreateCourseDTO createCourseDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
             var response = await _courseServices.createCourse(createCourseDTO, userIdLogin);
 
@@ -99,6 +128,12 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<CourseDTO>>> updateCourse([FromBody] CreateCourseDTO updateCourseDTO, int courseID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
             var accessRoleResponse = await accessRole(courseID, userIdLogin);
 
@@ -125,6 +160,12 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<CourseDTO>>> deleteCourse(int courseID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
             var checkCourseResponse = await _courseServices.getCourseByCourseID(courseID);
 
