@@ -64,6 +64,10 @@ namespace QuizzBankBE
             CreateMap<RolePermission, CreateRolePermissionDTO>();
             CreateMap<CreateRolePermissionDTO, RolePermission>();
             CreateMap<CreateRolePermissionDTO, RolePermissionDTO>();
+            CreateMap<QuizBank, QuestionBankMultipeChoiceResponseDTO>();
+            CreateMap<QuestionBankAnswerDTO, QuizbankAnswer>();
+            CreateMap<QuizbankAnswer, QuestionBankAnswerDTO >();
+            CreateMap<QbTagDTO, QbTag>();
         }
     }
 }
