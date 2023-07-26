@@ -7,9 +7,7 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateQuestionBankMultipeChoiceDTO : QuestionDTO
     {
-        public int Id { get; set; }
-
-        [IdExistValidation<Category>("ID")]
+        [IdExistValidation<Category>("Id")]
         public int CategoryId { get; set; }
 
         [Range(0, 1)]
@@ -18,7 +16,9 @@ namespace QuizzBankBE.DTOs
         //[AnswerValidation<>]
         public virtual ICollection<QuestionBankAnswerDTO> Answers { get; set; }
 
-        public string Questionstype = "MultiChoice";
+        public string Questionstype { get; set; }
+
+        public virtual ICollection<QbTagDTO> QbTags { get; set; }
     }
 
     public class QuestionBankMultipeChoiceResponseDTO : QuestionDTO
@@ -29,15 +29,13 @@ namespace QuizzBankBE.DTOs
 
         public sbyte? IsPublic { get; set; }
 
-        public virtual ICollection<QuestionBankAnswerDTO> Answers { get; set; }
+        public List<QuestionBankAnswerDTO> Answers { get; set; }
 
-        public string Questionstype = "MultiChoice";
+        public List<Tag> Tags { get; set; }
     }
 
     public class QuestionBankAnswerDTO : AnswerDTO
     {
-        [Required]
-        [IdExistValidation<QuizBank>("ID")]
-        public int? QuizBankId { get; set; }
+        public int Id { get; set; }
     }
 }

@@ -7,8 +7,10 @@ namespace QuizzBankBE.DTOs
     public class TagDTO
     {
         public int Id { get; set; }
+
         [Required]
         public string? Name { get; set; }
+
         [Required]
         public string? Description { get; set; }
 
@@ -32,7 +34,8 @@ namespace QuizzBankBE.DTOs
         [Required]
         public string? Description { get; set; }
 
-        [Required][IdExistValidation<Category>("Id")] 
+        [Required]
+        [IdExistValidation<Category>("Id")] 
         public int CategoryId { get; set; }
     }
 

@@ -18,6 +18,8 @@ namespace QuizzBankBE
             CreateMap<RoleDTO, Role>();
             CreateMap<CreateRoleDTO, Role>();
             CreateMap<Role, CreateRoleDTO>();
+            CreateMap<Role, RoleDetailPermissionsDTO>();
+            CreateMap<RoleDetailPermissionsDTO, Role>();
             //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
             //CreateMap<CreateQuestionDTO, Question>();
             //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
@@ -27,6 +29,7 @@ namespace QuizzBankBE
             //CreateMap<QuestionVersion, QuestionVersionDTO>();
             //CreateMap<Question, QuestionDTO>();
             //CreateMap<Answer, QuestionAnswerDTO>();
+
             CreateMap<Course, CourseDTO>();
             CreateMap<Course, CreateCourseDTO>();
             CreateMap<CourseDTO, Course>();
@@ -39,21 +42,32 @@ namespace QuizzBankBE
             CreateMap<TagDTO, Tag>();
             CreateMap<Tag, CreateTagDTO>();
             CreateMap<CreateTagDTO, Tag>();
-            //CreateMap<Quiz, QuizDTO>() ;
-            //CreateMap<QuizDTO, Quiz>();
-            //CreateMap<BaseQuizDTO, QuizDTO>();
-            //CreateMap<QuizDTO, BaseQuizDTO>();
-            //CreateMap<QuizDTO, CreateQuizDTO>();
-            //CreateMap<CreateQuizDTO, QuizDTO>();
-            //CreateMap<Quiz, CreateQuizDTO>();
-            //CreateMap<CreateQuizDTO, Quiz>();
+            CreateMap<Quiz, QuizDTO>();
+            CreateMap<QuizDTO, Quiz>();
+            CreateMap<BaseQuizDTO, QuizDTO>();
+            CreateMap<QuizDTO, BaseQuizDTO>();
+            CreateMap<QuizDTO, CreateQuizDTO>();
+            CreateMap<CreateQuizDTO, QuizDTO>();
+            CreateMap<Quiz, CreateQuizDTO>();
+            CreateMap<CreateQuizDTO, Quiz>();
 
             CreateMap<Category, CategoryDTO>();
             CreateMap<CategoryDTO, Category>();
             CreateMap<CreateCategoryDTO, Category>();
             CreateMap<CategoryDTO,CreateCategoryDTO>();
-
             CreateMap<CreateQuestionBankMultipeChoiceDTO, QuizBank>();
+            CreateMap<Permission, PermissionDTO>();
+            CreateMap<PermissionDTO, PermissionDTO>();
+            CreateMap<RolePermissionDTO, RolePermission>();
+            CreateMap<RolePermissionDTO, CreateRolePermissionDTO>();
+            CreateMap<RolePermission, RolePermissionDTO>();
+            CreateMap<RolePermission, CreateRolePermissionDTO>();
+            CreateMap<CreateRolePermissionDTO, RolePermission>();
+            CreateMap<CreateRolePermissionDTO, RolePermissionDTO>();
+            CreateMap<QuizBank, QuestionBankMultipeChoiceResponseDTO>();
+            CreateMap<QuestionBankAnswerDTO, QuizbankAnswer>();
+            CreateMap<QuizbankAnswer, QuestionBankAnswerDTO >();
+            CreateMap<QbTagDTO, QbTag>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using QuizzBankBE.DTOs;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 
 namespace QuizzBankBE.Services.QuestionBankServices
@@ -7,10 +8,10 @@ namespace QuizzBankBE.Services.QuestionBankServices
     {
         Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> createNewMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionBankDTO);
 
-        //Task<ServiceResponse<QuestionBankEntryResponseDTO>> getMultipeQuestionBankById(int questionbankEntryId);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> getMultipeQuestionBankById(int id);
 
-        //Task<ServiceResponse<QuestionResponseDTO>> updateMultipeQuestionBank(CreateQuestionDTO createQuestionDTO, int id);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> updateMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionDTO, int id);
 
-        //Task<ServiceResponse<QuestionResponseDTO>> deleteMultipeQuestionBank(int id);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> deleteMultipeQuestionBank(int id);
     }
 }

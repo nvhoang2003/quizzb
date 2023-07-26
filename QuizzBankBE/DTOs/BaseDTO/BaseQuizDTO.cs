@@ -17,28 +17,28 @@ namespace QuizzBankBE.DTOs.BaseDTO
 
         [Required(ErrorMessage = "Please add TimeOpen to the request.")]
         [DataType(DataType.DateTime)]
-        public DateTime? TimeOpen { get; set; }//ngay-thang-năm
+        public DateTime? TimeOpen { get; set; }
 
         [Required(ErrorMessage = "Please add TimeClose to the request.")]
         [DataType(DataType.DateTime)]
-        public DateTime? TimeClose { get; set; }//
+        public DateTime? TimeClose { get; set; }
         [Required]
-        public string? TimeLimit { get; set; }//phút
+        public string? TimeLimit { get; set; }
         [Required]
-        public string? Overduehanding { get; set; }//khi chưa lm xong đề thì hết h thì đây là đánh giá kết quả bài thi 
+        public string? Overduehanding { get; set; }
         [Required]
-        public string? PreferedBehavior { get; set; }// cho cơ hội để luyện tập lại các câu hỏi đã sai 
+        public string? PreferedBehavior { get; set; }
 
         [Required(ErrorMessage ="Please enter Point to Pass")]
         [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
-        public float PointToPass { get; set; }//<max
+        public float PointToPass { get; set; }
 
         [Required(ErrorMessage = "Please enter Max Point")]
         [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
-        public float MaxPoint { get; set; }//>point
+        public float MaxPoint { get; set; }
 
         [Required]
-        public string NaveMethod { get; set; } = null!;//đưa ra action ...... ko thể sửa đáp án đã đưa ra 
+        public string NaveMethod { get; set; } = null!;
 
         [Required]
         public sbyte IsPublic { get; set; }
