@@ -16,7 +16,10 @@ namespace QuizzBankBE.DTOs
 
         public virtual ICollection<CreateMatchSubQuestionBankDTO> Answers { get; set; }
 
+
         public string Questionstype = "Matching";
+
+        public virtual ICollection<QbTagDTO> Tags { get; set; }
     }
 
     public class CreateMatchSubQuestionBankDTO
