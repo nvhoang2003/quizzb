@@ -22,7 +22,7 @@ namespace QuizzBankBE.DTOs
 
         public string Questionstype { get; set; }
 
-        public List<Tag> Tags { get; set; }
+ 
     }
 
     public class QuestionBankAnswerDTO : AnswerDTO

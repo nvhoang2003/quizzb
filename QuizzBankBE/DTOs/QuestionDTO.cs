@@ -1,4 +1,6 @@
-﻿using QuizzBankBE.DataAccessLayer.DataObject;
+﻿using AutoMapper;
+using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
@@ -34,6 +36,8 @@ namespace QuizzBankBE.DTOs
 
         public virtual ICollection<QbTagDTO> QbTags { get; set; }
 
+        public List<TagDTO> Tags { get; set; }
+
         public enum QuestionType
         {
             MultiChoice,
@@ -45,6 +49,18 @@ namespace QuizzBankBE.DTOs
             DragAndDropIntoMaker,
             DragAndDropOntoImage,
             RandomShortAnswerMatching,
+        }
+
+        public void addTags(int questionBankID, DataContext _dataContext, IMapper _mapper)
+        {
+            var tags =  (from q in _dataContext.QuizBanks
+                              join qt in _dataContext.QbTags on q.Id equals qt.QbId
+                              join t in _dataContext.Tags on qt.TagId equals t.Id
+                              where q.Id == questionBankID
+                              select t).Distinct().ToList();
+
+            this.Tags = _mapper.Map<List<TagDTO>>(tags);
+
         }
     }
 }
