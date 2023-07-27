@@ -14,7 +14,7 @@ namespace QuizzBankBE.DTOs
         [StringLength(Const.MediumText)] //mediumtext 16 mib
         public string Content { get; set; }
 
-        public string Questionstype { get; set; }
+        //public string Questionstype { get; set; }
 
         public string? Generalfeedback { get; set; }//phan hoi chung
 
@@ -41,13 +41,9 @@ namespace QuizzBankBE.DTOs
             Match,
             ShortAnswer,
             Numerical,
-            Essay,
-            Calculated,
-            CalculatedMultichoice,
             DragAndDropIntoText,
             DragAndDropIntoMaker,
             DragAndDropOntoImage,
-            EmbbedAnswer,
             RandomShortAnswerMatching,
         }
     }
