@@ -7,6 +7,10 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateQuestionBankMultipeChoiceDTO : QuestionDTO
     {
+        [RegularExpression("^MultiChoice$", ErrorMessage = "The Question Type must be equal to 'MultiChoice'")]
+        public string Questionstype { get; set; }
+
+        [AnswerValidation]
         public virtual ICollection<QuestionBankAnswerDTO> Answers { get; set; }
     }
 
@@ -14,11 +18,9 @@ namespace QuizzBankBE.DTOs
     {
         public int Id { get; set; }
 
-        public CategoryDTO Category { get; set; }
-
-        public sbyte? IsPublic { get; set; }
-
         public List<QuestionBankAnswerDTO> Answers { get; set; }
+
+        public string Questionstype { get; set; }
 
         public List<Tag> Tags { get; set; }
     }
