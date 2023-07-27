@@ -17,37 +17,17 @@ namespace QuizzBankBE.DTOs
 
         public List<Tag> Tags { get; set; }
 
+        [RegularExpression("^TrueFalse$", ErrorMessage = "The Question Type must be equal to 'TrueFalse'")]
         public string Questionstype { get; set; }
-
-    }
-
-    public class TrueFalseQuestionDTO : QuestionDTO
-    {
-        
 
     }
 
     public class CreateTrueFalseQuestionDTO : QuestionDTO
     {
-        public virtual ICollection<CreateAnswerTrueFalseDTO> Answers { get; set; }
+        public List<QuestionBankAnswerDTO> Answers { get; set; }
 
         [RegularExpression("^TrueFalse", ErrorMessage = "The Question Type must be equal to 'TrueFalse'")]
         public string Questionstype { get; set; }
-    }
-
-    public class CreateAnswerTrueFalseDTO
-    {
-        public int id;
-        [Required]
-        public Boolean Content { get; set; }
-        [Required]
-        [Range(0, 1, ErrorMessage = "Fraction must be between 0% and 100%.")]
-        public float Fraction { get; set; }
-
-        [StringLength(Const.String)]
-        public string? Feedback { get; set; }
-
-        public int? QuizBankId { get; set; }
-
+        public bool RightAnswer { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using static QuizzBankBE.DTOs.QuestionDTO;
@@ -36,10 +37,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _dataContext.QuizBanks.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            foreach (var item in createQuestionTFDTO.Answers)
-            {
-                createAnswer(item, quesSaved.Id);
-            }
+            createAnswer(createQuestionTFDTO, quesSaved.Id);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
@@ -50,7 +48,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
         public async Task<ServiceResponse<TrueFalseQuestionBankDTO>> getTrueFalseQuestionBankById(int Id)
         {
             var serviceResponse = new ServiceResponse<TrueFalseQuestionBankDTO>();
-            var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == Id);
+            var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "TrueFalse");
 
             if (quizBank == null)
             {
@@ -81,10 +79,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             await deleteTagAndAnswer(id);
             await _dataContext.SaveChangesAsync();
-            foreach (var item in updateQbTrueFalseDTO.Answers)
-            {
-                createAnswer(item, id);
-            }
+            createAnswer(updateQbTrueFalseDTO, id);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Cập nhật câu hỏi thành công");
@@ -128,13 +123,19 @@ namespace QuizzBankBE.Services.QuestionBankServices
             return true;
         }
 
-        public QuizbankAnswer createAnswer(CreateAnswerTrueFalseDTO answer, int quizBankId)
+        public QuizbankAnswer createAnswer(CreateTrueFalseQuestionDTO answer, int quizBankId)
         {
-            answer.QuizBankId = quizBankId;
-            
-            QuizbankAnswer answerSave = _mapper.Map<QuizbankAnswer>(answer);
-            answerSave.Content = answer.Content.ToString();
-            _dataContext.QuizbankAnswers.Add(answerSave);
+            List<QuizbankAnswer> qa = new List<QuizbankAnswer>();
+            QuestionBankAnswerDTO rightAnswer =  new QuestionBankAnswerDTO(1, answer.RightAnswer.ToString(), quizBankId);
+            QuizbankAnswer answerSave = _mapper.Map<QuizbankAnswer>(rightAnswer);
+            qa.Add(answerSave);
+
+            string wrongAnswerContent = answer.RightAnswer == true ? "False" : "True";
+            QuestionBankAnswerDTO wrongAnswer = new QuestionBankAnswerDTO(0, wrongAnswerContent, quizBankId);
+            answerSave = _mapper.Map<QuizbankAnswer>(wrongAnswer);
+            qa.Add(answerSave);
+
+            _dataContext.QuizbankAnswers.AddRange(qa);
 
             return answerSave;
         }

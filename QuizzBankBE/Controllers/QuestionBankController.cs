@@ -5,11 +5,9 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
-using QuizzBankBE.Services.CourseServices;
 using QuizzBankBE.Services.QuestionBankServices;
 using QuizzBankBE.Utility;
 using System.Security.Claims;
-using static QuizzBankBE.DTOs.QuestionDTO;
 
 namespace QuizzBankBE.Controllers
 {
@@ -21,15 +19,13 @@ namespace QuizzBankBE.Controllers
     public class QuestionBankController : ControllerBase
     {
         private readonly IMultipeChoiceQuizBankServices _multipeChoiceQuizBankServices;
-        private readonly ITrueFalseQuestionBankService _trueFalseQuestionBankService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public QuestionBankController(IMultipeChoiceQuizBankServices multipeChoiceQuizBankServices,ITrueFalseQuestionBankService trueFalseQuestionBankService, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public QuestionBankController(IMultipeChoiceQuizBankServices multipeChoiceQuizBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
             _multipeChoiceQuizBankServices = multipeChoiceQuizBankServices;
-            _trueFalseQuestionBankService = trueFalseQuestionBankService;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
