@@ -43,7 +43,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             }
 
             await _dataContext.SaveChangesAsync();
-            serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
+            serviceResponse.updateResponse(200, "Tạo câu hỏi thành công");
 
             return serviceResponse;
         }

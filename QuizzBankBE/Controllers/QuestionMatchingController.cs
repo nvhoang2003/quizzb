@@ -73,5 +73,38 @@ namespace QuizzBankBE.Controllers
 
             return Ok(response);
         }
+
+        [HttpPut("Update/{questionBankID}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> updateMatchingQuestion(
+             [FromBody] CreateQuestionBankMatchingDTO updateQuestionDTO, int questionBankID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
+            var updateQuestion = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
+
+            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            {
+                return new StatusCodeResult(403);
+            }
+            updateQuestionDTO.AuthorId = userIdLogin;
+            var response = await _matchingQuestionBankServices.updateMatchSubsQuestionBank(updateQuestionDTO, questionBankID);
+            return Ok(response);
+        }
+
+        [HttpDelete("Delete/{questionBankID}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> deleteMatchingQuestion(int questionBankID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
+            var deleteQuestion = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
+
+            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _matchingQuestionBankServices.deleteMatchSubsQuestionBank(questionBankID);
+            return Ok(response);
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace QuizzBankBE.DTOs
     {
         public int Id { get; set; }
 
-        public List<MatchSubQuestionBankResponseDTO> MatchSubs { get; set; }
+        public List<MatchSubQuestionBankResponseDTO> MatchSubQuestions { get; set; }
         public List<String> MatchSubAnswers { get; set; }
 
         public string Questionstype { get; set; }
