@@ -70,6 +70,12 @@ namespace QuizzBankBE
             CreateMap<QbTagDTO, QbTag>();
             CreateMap<CreateQuestionBankShortAnswerDTO, QuizBank>();
             CreateMap<QuizBank, QuestionBankShortAnswerDTO>();
+            CreateMap<QuizBank, QuestionBankMatchingResponseDTO>();
+            CreateMap<QuizBank, CreateQuestionBankMatchingDTO>();
+            CreateMap<QuestionBankMatchingResponseDTO, QuizBank>();
+            CreateMap<CreateQuestionBankMatchingDTO, QuizBank>();
+            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankDTO>();
+            CreateMap<MatchSubQuestionBankDTO, MatchSubQuestionBank>();
         }
     }
 }

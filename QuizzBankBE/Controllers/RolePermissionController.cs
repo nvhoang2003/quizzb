@@ -47,7 +47,7 @@ namespace QuizzBankBE.Controllers
             }
 
             var response = await _rolePermissionServices.getDetailRolePermissions(roleID);
-
+            
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -72,15 +72,6 @@ namespace QuizzBankBE.Controllers
             }
 
             var response = await _rolePermissionServices.updatePermissions(permissionDTOs ,roleID);
-
-            if (response.Status == false)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Status = response.StatusCode,
-                    Title = response.Message
-                });
-            }
 
             return Ok(response);
         }

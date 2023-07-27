@@ -8,7 +8,7 @@ using QuizzBankBE.Model;
 
 namespace QuizzBankBE.Services.QuestionBankServices
 {
-    public class MatchingQuestionBankServicesImpl
+    public class MatchingQuestionBankServicesImpl : IMatchingQuestionBankServices
     {
         public DataContext _dataContext;
         public IMapper _mapper;
@@ -30,39 +30,76 @@ namespace QuizzBankBE.Services.QuestionBankServices
         public async Task<ServiceResponse<QuestionBankMatchingResponseDTO>> createMatchingQuestionBank(CreateQuestionBankMatchingDTO createQuestionBankMatchingDTO)
         {
             var serviceResponse = new ServiceResponse<QuestionBankMatchingResponseDTO>();
+            var questionMatchingResDto = new QuestionBankMatchingResponseDTO();
 
             var quesSaved = _mapper.Map<QuizBank>(createQuestionBankMatchingDTO);
+
             _dataContext.QuizBanks.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
+            questionMatchingResDto = _mapper.Map<QuestionBankMatchingResponseDTO>(quesSaved);
 
-            _dataContext.MatchSubQuestionBanks.AddRange(_mapper.Map<List<MatchSubQuestionBank>>(createQuestionBankMatchingDTO.MatchSubs));
+            var matchSubs = createMatchSubQuestion(createQuestionBankMatchingDTO.MatchSubs.ToList(), quesSaved.Id);
             await _dataContext.SaveChangesAsync();
 
-            serviceResponse.Message = "Tạo Câu Hỏi thành công";
-            serviceResponse.Data = _mapper.Map<QuestionBankMatchingResponseDTO>(createQuestionBankMatchingDTO);
+            questionMatchingResDto.MatchSubs = swapToMatchSubRes(matchSubs);
+
+            serviceResponse.Message = "Tạo câu hỏi thành công!";
+            serviceResponse.Data = questionMatchingResDto;
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuestionBankMatchingResponseDTO>> getMatchSubsQuestionBankById(int Id)
+        public async Task<ServiceResponse<QuestionBankMatchingResponseDTO>> getMatchSubsQuestionBankById(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<QuestionBankMatchingResponseDTO>();
-            var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "MultiChoice");
+            var questionBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == questionBankID && c.QuestionsType == "Match");
 
-            if (quizBank == null)
+            if (questionBank == null)
             {
                 serviceResponse.updateResponse(404, "Không tồn tại!");
                 return serviceResponse;
             }
 
-            var quizBankResponse = _mapper.Map<QuestionBankMatchingResponseDTO>(quizBank);
-            var dbMatchSubs = await _dataContext.MatchSubQuestionBanks.Where(c => c.QuestionBankId.Equals(Id)).ToListAsync();
+            var questionMatchingResDto = _mapper.Map<QuestionBankMatchingResponseDTO>(questionBank);
+            var dbMatchSubs = await _dataContext.MatchSubQuestionBanks.Where(c => c.QuestionBankId.Equals(questionBankID)).ToListAsync();
 
-            quizBankResponse.MatchSubs = _mapper.Map<List<MatchSubQuestionBankDTO>>(dbMatchSubs);
-            quizBankResponse.addTags(Id, _dataContext, _mapper);
+            questionMatchingResDto.MatchSubs = swapToMatchSubRes(dbMatchSubs);
+            questionMatchingResDto.addTags(questionBankID, _dataContext, _mapper);
 
-            serviceResponse.Data = quizBankResponse;
+            serviceResponse.Message = "OK";
+            serviceResponse.Data = questionMatchingResDto;
+
             return serviceResponse;
+        }
+
+        private List<MatchSubQuestionBank> createMatchSubQuestion (List<MatchSubQuestionBankDTO> matchSubQuestionBankDTOs, int questionBankID)
+        {
+            var matchSubQuestionBanks= _mapper.Map<List<MatchSubQuestionBank>>(matchSubQuestionBankDTOs);
+
+            matchSubQuestionBanks.ForEach(e =>
+            {
+                e.QuestionBankId = questionBankID;
+            });
+
+            _dataContext.MatchSubQuestionBanks.AddRange(matchSubQuestionBanks);
+
+            return matchSubQuestionBanks;
+        }
+
+        private MatchSubQuestionBankResponseDTO swapToMatchSubRes (List<MatchSubQuestionBank> matchSubQuestionBankDTOs)
+        {
+            var matchSubRes = new MatchSubQuestionBankResponseDTO();
+
+            matchSubQuestionBankDTOs.ForEach(e =>
+            {
+                string answerText = e.AnswerText;
+                string questionText = e.QuestionText;
+
+                matchSubRes.AnswerTexts.Add(answerText);
+                matchSubRes.QuestionTexts.Add(questionText);
+            });
+
+            return matchSubRes;
         }
     }
 }
