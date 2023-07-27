@@ -21,8 +21,6 @@ namespace QuizzBankBE.DTOs
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 
         public string Questionstype { get; set; }
-
- 
     }
 
     public class QuestionBankAnswerDTO : AnswerDTO

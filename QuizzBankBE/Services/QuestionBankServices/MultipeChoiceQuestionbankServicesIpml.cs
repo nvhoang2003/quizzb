@@ -60,9 +60,9 @@ namespace QuizzBankBE.Services.QuestionBankServices
             }
 
             QuestionBankMultipeChoiceResponseDTO quizBankResponse = _mapper.Map<QuestionBankMultipeChoiceResponseDTO>(quizBank);
-            var dbAnswers = await _dataContext.QuizbankAnswers.ToListAsync();
+            var dbAnswers = await _dataContext.QuizbankAnswers.Where(c => c.QuizBankId.Equals(Id)).ToListAsync();
 
-            quizBankResponse.Answers = dbAnswers.Select(u => _mapper.Map<QuestionBankAnswerDTO>(u)).Where(c => c.QuizBankId.Equals(Id)).ToList();
+            quizBankResponse.Answers = _mapper.Map<List<QuestionBankAnswerDTO>>(dbAnswers);
             quizBankResponse.addTags(Id, _dataContext, _mapper);
 
             serviceResponse.Data = quizBankResponse;
