@@ -75,7 +75,9 @@ namespace QuizzBankBE
             CreateMap<QuestionBankMatchingResponseDTO, QuizBank>();
             CreateMap<CreateQuestionBankMatchingDTO, QuizBank>();
             CreateMap<MatchSubQuestionBank, MatchSubQuestionBankDTO>();
+            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankResponseDTO>();
             CreateMap<MatchSubQuestionBankDTO, MatchSubQuestionBank>();
+            CreateMap<MatchSubQuestionBankResponseDTO, MatchSubQuestionBank>();
         }
     }
 }

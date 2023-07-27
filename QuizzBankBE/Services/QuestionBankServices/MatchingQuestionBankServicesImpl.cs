@@ -41,7 +41,10 @@ namespace QuizzBankBE.Services.QuestionBankServices
             var matchSubs = createMatchSubQuestion(createQuestionBankMatchingDTO.MatchSubs.ToList(), quesSaved.Id);
             await _dataContext.SaveChangesAsync();
 
-            questionMatchingResDto.MatchSubs = swapToMatchSubRes(matchSubs);
+            var matchSubDtos = _mapper.Map<List<MatchSubQuestionBankDTO>>(matchSubs);
+
+            questionMatchingResDto.MatchSubs = _mapper.Map<List<MatchSubQuestionBankResponseDTO>>(matchSubs);
+            questionMatchingResDto.MatchSubAnswers = swapToMatchAnswerRes(matchSubDtos);
 
             serviceResponse.Message = "Tạo câu hỏi thành công!";
             serviceResponse.Data = questionMatchingResDto;
@@ -62,8 +65,10 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             var questionMatchingResDto = _mapper.Map<QuestionBankMatchingResponseDTO>(questionBank);
             var dbMatchSubs = await _dataContext.MatchSubQuestionBanks.Where(c => c.QuestionBankId.Equals(questionBankID)).ToListAsync();
+            var matchSubDtos = _mapper.Map<List<MatchSubQuestionBankDTO>>(dbMatchSubs);
 
-            questionMatchingResDto.MatchSubs = swapToMatchSubRes(dbMatchSubs);
+            questionMatchingResDto.MatchSubs = _mapper.Map<List<MatchSubQuestionBankResponseDTO>>(dbMatchSubs);
+            questionMatchingResDto.MatchSubAnswers = swapToMatchAnswerRes(matchSubDtos);
             questionMatchingResDto.addTags(questionBankID, _dataContext, _mapper);
 
             serviceResponse.Message = "OK";
@@ -86,17 +91,13 @@ namespace QuizzBankBE.Services.QuestionBankServices
             return matchSubQuestionBanks;
         }
 
-        private MatchSubQuestionBankResponseDTO swapToMatchSubRes (List<MatchSubQuestionBank> matchSubQuestionBankDTOs)
+        private List<String> swapToMatchAnswerRes (List<MatchSubQuestionBankDTO> matchSubQuestionBankDTOs)
         {
-            var matchSubRes = new MatchSubQuestionBankResponseDTO();
+            var matchSubRes = new List<String>();
 
             matchSubQuestionBankDTOs.ForEach(e =>
             {
-                string answerText = e.AnswerText;
-                string questionText = e.QuestionText;
-
-                matchSubRes.AnswerTexts.Add(answerText);
-                matchSubRes.QuestionTexts.Add(questionText);
+                matchSubRes.Add(e.AnswerText);
             });
 
             return matchSubRes;
