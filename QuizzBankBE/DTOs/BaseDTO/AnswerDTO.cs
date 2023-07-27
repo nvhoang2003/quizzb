@@ -18,4 +18,6 @@ namespace QuizzBankBE.DTOs.BaseDTO
 
         public int? QuizBankId { get; set; }
     }
+
+   
 }
