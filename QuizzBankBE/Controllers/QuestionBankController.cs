@@ -51,7 +51,6 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("GetMultipeQuestionBankById/{Id}")]
         public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int Id)
-
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
