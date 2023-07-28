@@ -3,6 +3,7 @@ using QuizzBankBE.DTOs;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using System.Data;
 using QuizzBankBE.DTOs.BaseDTO;
+using static QuizzBankBE.DTOs.QuestionDTO;
 
 namespace QuizzBankBE
 {
@@ -78,6 +79,11 @@ namespace QuizzBankBE
             CreateMap<MatchSubQuestionBank, MatchSubQuestionBankResponseDTO>();
             CreateMap<MatchSubQuestionBankDTO, MatchSubQuestionBank>();
             CreateMap<MatchSubQuestionBankResponseDTO, MatchSubQuestionBank>();
+            CreateMap<QuizBank, TrueFalseQuestionBankDTO>();
+            CreateMap<TrueFalseQuestionBankDTO,QuizBank>();
+            CreateMap<QuestionBankAnswerDTO,CreateTrueFalseQuestionDTO>();
+            CreateMap<QuizBank, CreateTrueFalseQuestionDTO>();
+            CreateMap<CreateTrueFalseQuestionDTO, QuizBank>();
         }
     }
 }
