@@ -76,6 +76,14 @@ namespace QuizzBankBE
             CreateMap<QuestionBankAnswerDTO,CreateTrueFalseQuestionDTO>();
             CreateMap<QuizBank, CreateTrueFalseQuestionDTO>();
             CreateMap<CreateTrueFalseQuestionDTO, QuizBank>();
+            CreateMap<NumericalQuestionDTO, QuestionDTO>();
+            CreateMap<QuestionDTO, NumericalQuestionDTO>();
+            CreateMap<CreateNumericalQuestionDTO, QuestionDTO>();
+            CreateMap<QuestionDTO, CreateNumericalQuestionDTO>();
+            CreateMap<QuizBank, CreateNumericalQuestionDTO>();
+            CreateMap<CreateNumericalQuestionDTO, QuizBank>();
+            CreateMap<NumericalQuestionDTO, QuizBank>();
+            CreateMap<QuizBank, NumericalQuestionDTO>();
         }
     }
 }

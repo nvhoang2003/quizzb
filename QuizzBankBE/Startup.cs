@@ -60,6 +60,7 @@ namespace QuizzBankBE
             services.AddScoped<IShortAnswerQuestionServices, ShortAnswerQuestionBankServicesIpml>();
             services.AddScoped<IQuizService, QuizServiceIpml>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
+            services.AddScoped<INumericalQuestionService, NumericalQuestionServices>();
             services.AddScoped<ITagServices, TagServicesIpml>();
             services.AddScoped<ICategoryServices, CategoryServicesImpl>();
             services.AddScoped<IMultipeChoiceQuizBankServices, MultipeChoiceQuestionbankServicesIpml>();
