@@ -84,10 +84,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             var questionMatchingResDto = new QuestionBankMatchingResponseDTO();
 
             var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == questionBankID);
-            var questSaved = _mapper.Map(updateQuestionBankMatchingDTO, quesToUpdate);
-
-            _dataContext.QuizBanks.Update(questSaved);
-            await _dataContext.SaveChangesAsync();
+            _mapper.Map(updateQuestionBankMatchingDTO, quesToUpdate);
 
             await deleteRelationShip(questionBankID);
             await _dataContext.SaveChangesAsync();

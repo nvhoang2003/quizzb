@@ -82,10 +82,20 @@ namespace QuizzBankBE.Controllers
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
             var updateQuestion = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
 
+            if (updateQuestion.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = updateQuestion.StatusCode,
+                    Title = updateQuestion.Message
+                });
+            }
+
             if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
+
             updateQuestionDTO.AuthorId = userIdLogin;
             var response = await _matchingQuestionBankServices.updateMatchSubsQuestionBank(updateQuestionDTO, questionBankID);
             return Ok(response);
@@ -98,7 +108,16 @@ namespace QuizzBankBE.Controllers
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
             var deleteQuestion = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (deleteQuestion.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = deleteQuestion.StatusCode,
+                    Title = deleteQuestion.Message
+                });
+            }
+
+            if (!CheckPermission.check(userIdLogin, permissionName) || deleteQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
