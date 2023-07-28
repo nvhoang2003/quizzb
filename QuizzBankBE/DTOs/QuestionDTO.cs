@@ -60,7 +60,6 @@ namespace QuizzBankBE.DTOs
                               select t).Distinct().ToList();
 
             this.Tags = _mapper.Map<List<TagDTO>>(tags);
-
         }
     }
 }

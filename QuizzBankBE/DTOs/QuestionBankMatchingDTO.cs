@@ -8,17 +8,35 @@ namespace QuizzBankBE.DTOs
 {
     public class CreateQuestionBankMatchingDTO : QuestionDTO
     {
-        public virtual ICollection<CreateMatchSubQuestionBankDTO> MatchSubs { get; set; }
+        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
+        public string Questionstype { get; set; }
+
+        public virtual List<MatchSubQuestionBankDTO> MatchSubs { get; set; }
+    }
+    public class QuestionBankMatchingResponseDTO : QuestionDTO
+    {
+        public int Id { get; set; }
+
+        public List<MatchSubQuestionBankResponseDTO> MatchSubQuestions { get; set; }
+        public List<String> MatchSubAnswers { get; set; }
+
+        public string Questionstype { get; set; }
     }
 
-    public class CreateMatchSubQuestionBankDTO
+    public class MatchSubQuestionBankDTO
     {
         [Required]
         [StringLength(Const.String)]
-        public string? QuestionText { get; set; }
+        public string QuestionText { get; set; }
 
         [Required]
         [StringLength(Const.String)]
-        public string? AnswerText { get; set; }
+        public string AnswerText { get; set; }
+    }
+
+    public class MatchSubQuestionBankResponseDTO
+    {
+        public int Id { get; set; }
+        public string QuestionText { get; set; }
     }
 }
