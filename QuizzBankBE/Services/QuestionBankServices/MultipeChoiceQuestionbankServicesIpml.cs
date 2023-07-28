@@ -6,6 +6,7 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using QuizzBankBE.Services.TagServices;
 
 namespace QuizzBankBE.Services.QuestionBankServices
 {
@@ -62,11 +63,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             var dbAnswers = await _dataContext.QuizbankAnswers.ToListAsync();
 
             quizBankResponse.Answers = dbAnswers.Select(u => _mapper.Map<QuestionBankAnswerDTO>(u)).Where(c => c.QuizBankId.Equals(Id)).ToList();
-            quizBankResponse.Tags =  (from q in _dataContext.QuizBanks
-                            join qt in _dataContext.QbTags on q.Id equals qt.QbId
-                            join t in _dataContext.Tags on qt.TagId equals t.Id
-                            where q.Id == Id
-                            select t).Distinct().ToList();
+            quizBankResponse.addTags(Id, _dataContext, _mapper);
 
             serviceResponse.Data = quizBankResponse;
             return serviceResponse;
