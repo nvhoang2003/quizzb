@@ -67,6 +67,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             serviceResponse.Data = quizBankResponse;
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<NumericalQuestionDTO>> updateNumericalQuestionBank(CreateNumericalQuestionDTO updateQbNumericalDTO, int id)
         {
             var serviceResponse = new ServiceResponse<NumericalQuestionDTO>();
@@ -124,12 +125,10 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
         public QuizbankAnswer createAnswer(CreateNumericalQuestionDTO answer, int quizBankId)
         {
-            List<QuizbankAnswer> qa = new List<QuizbankAnswer>();
             QuestionBankAnswerDTO rightAnswer = new QuestionBankAnswerDTO(1, answer.RightAnswers.ToString(), quizBankId);
             QuizbankAnswer answerSave = _mapper.Map<QuizbankAnswer>(rightAnswer);
-            qa.Add(answerSave);
 
-            _dataContext.QuizbankAnswers.AddRange(qa);
+            _dataContext.QuizbankAnswers.Add(answerSave);
 
             return answerSave;
         }
