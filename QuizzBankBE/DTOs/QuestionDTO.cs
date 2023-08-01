@@ -46,9 +46,6 @@ namespace QuizzBankBE.DTOs
             ShortAnswer,
             Numerical,
             DragAndDropIntoText,
-            DragAndDropIntoMaker,
-            DragAndDropOntoImage,
-            RandomShortAnswerMatching,
         }
 
         public void addTags(int questionBankID, DataContext _dataContext, IMapper _mapper)
