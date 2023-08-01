@@ -32,7 +32,7 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpPost("CreateNewQuesstion")]
-        public async Task<ActionResult<ServiceResponse<QBankDragAndDropDTO>>> createNewMultipeChoiceQuestionBank(
+        public async Task<ActionResult<ServiceResponse<QBankDragAndDropDTO>>> createNewQuestionBank(
                 [FromBody] CreateQBankDragAndDropDTO createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);

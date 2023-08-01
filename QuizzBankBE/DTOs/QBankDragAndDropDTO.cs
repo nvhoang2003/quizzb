@@ -2,7 +2,9 @@
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.FormValidator;
+using ServiceStack;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace QuizzBankBE.DTOs
 {
@@ -47,18 +49,24 @@ namespace QuizzBankBE.DTOs
         [RegularExpression("^DragAndDropIntoText$", ErrorMessage = "The Question Type must be equal to 'DragAndDropIntoText'")]
         public string Questionstype { get; set; }
 
+        [CheckDragAndDropFields("Content")]
         public List<Choice> Choice { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            foreach(var choice in Choice)
-            {
-                if (!Content.Contains("[[" + choice.Position + "]]"))
-                {
-                    yield return new ValidationResult("End Date must be after the Start Date.", new[] { "EndDate.[" + choice.Position + "]" });
-                }
-            }
-        }
+        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        //{
+        //    string pattern = @"\[\[(\d+)\]\]";
+
+        //    MatchCollection matches = Regex.Matches(Content, pattern);
+        //    foreach (Match match in matches)
+        //    {
+        //        int value = int.Parse(match.Groups[1].Value);
+        //        bool check = Choice.Any(c => c.Position == value);
+        //        if(check == false)
+        //        {
+        //            yield return new ValidationResult("Câu trả lời [[" + value + "]] cần có nội dung.", new[] { "Choice.[" + value + "]" });
+        //        }
+        //    }
+        //}
     }
 
     public class Choice
