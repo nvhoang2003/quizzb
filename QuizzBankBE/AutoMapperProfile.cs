@@ -92,6 +92,18 @@ namespace QuizzBankBE
             CreateMap<CreateNumericalQuestionDTO, QuizBank>();
             CreateMap<NumericalQuestionDTO, QuizBank>();
             CreateMap<QuizBank, NumericalQuestionDTO>();
+            CreateMap<QuizAccess, CreateQuizAccessDTO>();
+            CreateMap<CreateQuizAccessDTO, QuizAccess>();
+            CreateMap<QuizAccess, BaseQuizAccessDTO>();
+            CreateMap<BaseQuizAccessDTO, QuizAccess>();
+            CreateMap<QuizAccessDTO, QuizAccess>();
+            CreateMap<QuizAccess, QuizAccessDTO>();
+            CreateMap<QuizAccessDTO, BaseQuizAccessDTO>();
+            CreateMap<BaseQuizAccessDTO, QuizAccessDTO>();
+            CreateMap<CreateQuizAccessDTO, BaseQuizAccessDTO>();
+            CreateMap<BaseQuizAccessDTO, CreateQuizAccessDTO>();
+            CreateMap<CreateQuizAccessDTO, QuizAccessDTO>();
+            CreateMap<QuizAccessDTO,CreateQuizAccessDTO>();
         }
     }
 }

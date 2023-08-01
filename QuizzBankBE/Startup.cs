@@ -69,6 +69,7 @@ namespace QuizzBankBE
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IRolePermissionServices, RolePermissionServicesIpml>();
+            services.AddScoped<IQuizzAccessService,QuizzAccessService>();
             //services.AddScoped<IGmcServices, GmcServicesImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
