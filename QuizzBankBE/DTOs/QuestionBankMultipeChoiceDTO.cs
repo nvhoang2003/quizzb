@@ -27,6 +27,8 @@ namespace QuizzBankBE.DTOs
     {
         public int Id { get; set; }
 
+        public QuestionBankAnswerDTO(){}
+
         public QuestionBankAnswerDTO(float fraction, string content, int quizBankId) {
             this.Fraction = fraction;
             this.Content = content;

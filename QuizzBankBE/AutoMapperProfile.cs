@@ -92,6 +92,9 @@ namespace QuizzBankBE
             CreateMap<CreateNumericalQuestionDTO, QuizBank>();
             CreateMap<NumericalQuestionDTO, QuizBank>();
             CreateMap<QuizBank, NumericalQuestionDTO>();
+            CreateMap<CreateQBankDragAndDropDTO, QuizBank>();
+            CreateMap<QuizBank, CreateQBankDragAndDropDTO>();
+            CreateMap<QuizBank, QBankDragAndDropDTO>();
         }
     }
 }
