@@ -29,6 +29,8 @@ namespace QuizzBankBE.Services.QuizService
         public async Task<ServiceResponse<QuizAccessDTO>> createQuizzAccess(CreateQuizAccessDTO createAccessDTO)
         {
             var serviceResponse = new ServiceResponse<QuizAccessDTO>();
+            createAccessDTO.Status = "Wait";
+
             QuizAccess quizSaved = _mapper.Map<QuizAccess>(createAccessDTO);
 
             _dataContext.QuizAccesses.Add(quizSaved);
