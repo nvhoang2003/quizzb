@@ -3,7 +3,9 @@ using QuizzBankBE.DTOs;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using System.Data;
 using QuizzBankBE.DTOs.BaseDTO;
-using static QuizzBankBE.DTOs.QuestionDTO;
+using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 
 namespace QuizzBankBE
 {
@@ -21,16 +23,6 @@ namespace QuizzBankBE
             CreateMap<Role, CreateRoleDTO>();
             CreateMap<Role, RoleDetailPermissionsDTO>();
             CreateMap<RoleDetailPermissionsDTO, Role>();
-            //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
-            //CreateMap<CreateQuestionDTO, Question>();
-            //CreateMap<QuestionBankEntryDTO, QuestionBankEntry>();
-            //CreateMap<QuestionAnswerDTO, Answer>();
-            //CreateMap<QuestionVersionDTO, QuestionVersion>();
-            //CreateMap<QuestionBankEntry, QuestionBankEntryResponseDTO>();
-            //CreateMap<QuestionVersion, QuestionVersionDTO>();
-            //CreateMap<Question, QuestionDTO>();
-            //CreateMap<Answer, QuestionAnswerDTO>();
-
             CreateMap<Course, CourseDTO>();
             CreateMap<Course, CreateCourseDTO>();
             CreateMap<CourseDTO, Course>();
@@ -51,7 +43,6 @@ namespace QuizzBankBE
             CreateMap<CreateQuizDTO, QuizDTO>();
             CreateMap<Quiz, CreateQuizDTO>();
             CreateMap<CreateQuizDTO, Quiz>();
-
             CreateMap<Category, CategoryDTO>();
             CreateMap<CategoryDTO, Category>();
             CreateMap<CreateCategoryDTO, Category>();
@@ -84,10 +75,10 @@ namespace QuizzBankBE
             CreateMap<QuestionBankAnswerDTO,CreateTrueFalseQuestionDTO>();
             CreateMap<QuizBank, CreateTrueFalseQuestionDTO>();
             CreateMap<CreateTrueFalseQuestionDTO, QuizBank>();
-            CreateMap<NumericalQuestionDTO, QuestionDTO>();
-            CreateMap<QuestionDTO, NumericalQuestionDTO>();
-            CreateMap<CreateNumericalQuestionDTO, QuestionDTO>();
-            CreateMap<QuestionDTO, CreateNumericalQuestionDTO>();
+            CreateMap<NumericalQuestionDTO, BaseQuestionBankDTO>();
+            CreateMap<BaseQuestionBankDTO, NumericalQuestionDTO>();
+            CreateMap<CreateNumericalQuestionDTO, BaseQuestionBankDTO>();
+            CreateMap<BaseQuestionBankDTO, CreateNumericalQuestionDTO>();
             CreateMap<QuizBank, CreateNumericalQuestionDTO>();
             CreateMap<CreateNumericalQuestionDTO, QuizBank>();
             CreateMap<NumericalQuestionDTO, QuizBank>();
@@ -107,6 +98,8 @@ namespace QuizzBankBE
             CreateMap<BaseQuizAccessDTO, CreateQuizAccessDTO>();
             CreateMap<CreateQuizAccessDTO, QuizAccessDTO>();
             CreateMap<QuizAccessDTO,CreateQuizAccessDTO>();
+            CreateMap<CreateDragAndDropDTO, Question>().ReverseMap();
+            CreateMap<QuestionAnswer, QuestionAnswerDTO>().ReverseMap();
         }
     }
 }

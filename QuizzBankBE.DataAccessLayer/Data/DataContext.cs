@@ -266,6 +266,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.CreateDate)
                     .HasColumnType("date")
                     .HasColumnName("createDate");
+                entity.Property(e => e.DefaultMark).HasColumnName("defaultMark");
                 entity.Property(e => e.GeneralFeedback)
                     .HasColumnType("mediumtext")
                     .HasColumnName("generalFeedback");

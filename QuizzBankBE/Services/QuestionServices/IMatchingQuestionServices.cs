@@ -1,9 +1,9 @@
 ﻿using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public interface IMatchingQuestionBankServices
+    public interface IMatchingQuestionServices
     {
         Task<ServiceResponse<QuestionBankMatchingResponseDTO>> createMatchingQuestionBank(CreateQuestionBankMatchingDTO createQuestionBankMatchingDTO);
         Task<ServiceResponse<QuestionBankMatchingResponseDTO>> getMatchSubsQuestionBankById(int questionBankID);

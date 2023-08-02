@@ -6,16 +6,16 @@ using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public class MatchingQuestionBankServicesImpl : IMatchingQuestionBankServices
+    public class MatchingQuestionServicesImpl : IMatchingQuestionServices
     {
         public DataContext _dataContext;
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
 
-        public MatchingQuestionBankServicesImpl(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public MatchingQuestionServicesImpl(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
         {
             _dataContext = dataContext;
             _mapper = mapper;
@@ -23,7 +23,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _configuration = configuration;
         }
 
-        public MatchingQuestionBankServicesImpl()
+        public MatchingQuestionServicesImpl()
         {
         }
 

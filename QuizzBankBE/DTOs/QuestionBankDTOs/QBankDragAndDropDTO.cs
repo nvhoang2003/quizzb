@@ -6,9 +6,9 @@ using ServiceStack;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace QuizzBankBE.DTOs
+namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class QBankDragAndDropDTO : QuestionDTO
+    public class QBankDragAndDropDTO : BaseQuestionBankDTO
     {
         public int Id { get; set; }
 

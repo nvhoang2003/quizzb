@@ -1,23 +1,21 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
-using QuizzBankBE.Services.TagServices;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public class MultipeChoiceQuestionbankServicesIpml : IMultipeChoiceQuizBankServices
+    public class ShortAnswerQuestionServicesIpml : IShortAnswerQuestionServices
     {
         public DataContext _dataContext;
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
 
-        public MultipeChoiceQuestionbankServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public ShortAnswerQuestionServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
         {
             _dataContext = dataContext;
             _mapper = mapper;
@@ -25,13 +23,13 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _configuration = configuration;
         }
 
-        public MultipeChoiceQuestionbankServicesIpml()
+        public ShortAnswerQuestionServicesIpml()
         {
         }
 
-        public async Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> createNewMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionBankDTO)
+        public async Task<ServiceResponse<QuestionBankShortAnswerDTO>> createSAQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionBankDTO)
         {
-            var serviceResponse = new ServiceResponse<QuestionBankMultipeChoiceResponseDTO>();
+            var serviceResponse = new ServiceResponse<QuestionBankShortAnswerDTO>();
 
             QuizBank quesSaved = _mapper.Map<QuizBank>(createQuestionBankDTO);
             _dataContext.QuizBanks.Add(quesSaved);
@@ -43,15 +41,32 @@ namespace QuizzBankBE.Services.QuestionBankServices
             }
 
             await _dataContext.SaveChangesAsync();
-            serviceResponse.updateResponse(200, "Tạo câu hỏi thành công");
+            serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> getMultipeQuestionBankById(int Id)
+        public async Task<ServiceResponse<QuestionBankShortAnswerDTO>> deleteSAQuestionBank(int id)
         {
-            var serviceResponse = new ServiceResponse<QuestionBankMultipeChoiceResponseDTO>();
-            var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "MultiChoice");
+            var serviceResponse = new ServiceResponse<QuestionBankShortAnswerDTO>();
+
+            QuizBank quesSaved = _dataContext.QuizBanks.FirstOrDefault(c => c.Id.Equals(id));
+            quesSaved.IsDeleted = 1;
+
+            _dataContext.QuizBanks.Update(quesSaved);
+            await _dataContext.SaveChangesAsync();
+
+            await deleteTagAndAnswer(id);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<QuestionBankShortAnswerDTO>> getSAQuestionBankById(int id)
+        {
+            var serviceResponse = new ServiceResponse<QuestionBankShortAnswerDTO>();
+            var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == id && c.QuestionsType == "ShortAnswer");
 
             if (quizBank == null)
             {
@@ -59,26 +74,30 @@ namespace QuizzBankBE.Services.QuestionBankServices
                 return serviceResponse;
             }
 
-            QuestionBankMultipeChoiceResponseDTO quizBankResponse = _mapper.Map<QuestionBankMultipeChoiceResponseDTO>(quizBank);
-            var dbAnswers = await _dataContext.QuizbankAnswers.Where(c => c.QuizBankId.Equals(Id)).ToListAsync();
+            QuestionBankShortAnswerDTO quizBankResponse = _mapper.Map<QuestionBankShortAnswerDTO>(quizBank);
+            var dbAnswers = await _dataContext.QuizbankAnswers.ToListAsync();
 
-            quizBankResponse.Answers = _mapper.Map<List<QuestionBankAnswerDTO>>(dbAnswers);
-            quizBankResponse.addTags(Id, _dataContext, _mapper);
+            quizBankResponse.Answers = dbAnswers.Select(u => _mapper.Map<QuestionBankAnswerDTO>(u)).Where(c => c.QuizBankId.Equals(id)).ToList();
+            quizBankResponse.Tags = (from q in _dataContext.QuizBanks
+                                     join qt in _dataContext.QbTags on q.Id equals qt.QbId
+                                     join t in _dataContext.Tags on qt.TagId equals t.Id
+                                     where q.Id == id
+                                     select t).Distinct().ToList();
 
             serviceResponse.Data = quizBankResponse;
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> updateMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO updateQbMultiChoiceDTO, int id)
+        public async Task<ServiceResponse<QuestionBankShortAnswerDTO>> updateSAQuestionBank(CreateQuestionBankShortAnswerDTO updateQuestionDTO, int id)
         {
-            var serviceResponse = new ServiceResponse<QuestionBankMultipeChoiceResponseDTO>();
+            var serviceResponse = new ServiceResponse<QuestionBankShortAnswerDTO>();
 
             var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == id);
-            _mapper.Map(updateQbMultiChoiceDTO, quesToUpdate);
+            _mapper.Map(updateQuestionDTO, quesToUpdate);
 
             await deleteTagAndAnswer(id);
             await _dataContext.SaveChangesAsync();
-            foreach (var item in updateQbMultiChoiceDTO.Answers)
+            foreach (var item in updateQuestionDTO.Answers)
             {
                 createAnswer(item, id);
             }
@@ -116,23 +135,6 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _dataContext.QbTags.UpdateRange(dbQbTags);
 
             return true;
-        }
-
-        public async Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> deleteMultipeQuestionBank(int id)
-        {
-            var serviceResponse = new ServiceResponse<QuestionBankMultipeChoiceResponseDTO>();
-
-            QuizBank quesSaved = _dataContext.QuizBanks.FirstOrDefault(c => c.Id.Equals(id));
-            quesSaved.IsDeleted = 1;
-
-            _dataContext.QuizBanks.Update(quesSaved);
-            await _dataContext.SaveChangesAsync();
-
-            await deleteTagAndAnswer(id);
-            await _dataContext.SaveChangesAsync();
-
-            serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
-            return serviceResponse;
         }
     }
 }

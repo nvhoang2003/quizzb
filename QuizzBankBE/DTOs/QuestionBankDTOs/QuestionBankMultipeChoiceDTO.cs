@@ -3,9 +3,9 @@ using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizzBankBE.DTOs
+namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class CreateQuestionBankMultipeChoiceDTO : QuestionDTO
+    public class CreateQuestionBankMultipeChoiceDTO : BaseQuestionBankDTO
     {
         [RegularExpression("^MultiChoice$", ErrorMessage = "The Question Type must be equal to 'MultiChoice'")]
         public string Questionstype { get; set; }
@@ -14,7 +14,7 @@ namespace QuizzBankBE.DTOs
         public virtual ICollection<QuestionBankAnswerDTO> Answers { get; set; }
     }
 
-    public class QuestionBankMultipeChoiceResponseDTO : QuestionDTO
+    public class QuestionBankMultipeChoiceResponseDTO : BaseQuestionBankDTO
     {
         public int Id { get; set; }
 

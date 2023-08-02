@@ -1,9 +1,9 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizzBankBE.DTOs
+namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class NumericalQuestionDTO : QuestionDTO
+    public class NumericalQuestionDTO : BaseQuestionBankDTO
     {
         public int Id { get; set; }
         public List<QuestionBankAnswerDTO> Answers { get; set; }
@@ -14,7 +14,7 @@ namespace QuizzBankBE.DTOs
         public List<Tag> Tags { get; set; }
     }
 
-    public class CreateNumericalQuestionDTO : QuestionDTO {
+    public class CreateNumericalQuestionDTO : BaseQuestionBankDTO {
 
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
     public interface INumericalQuestionService
     {

@@ -22,6 +22,7 @@ using QuizzBankBE.Services.QuestionBankServices;
 using QuizzBankBE.Services.RoleServices;
 using QuizzBankBE.Services.RolePermissionServices;
 using QuizzBankBE.Services.QuizService;
+using QuizzBankBE.Services.QuestionServices;
 //using QuizzBankBE.Services.QuestionServices;
 //using QuizzBankBE.Services.CourseServices;
 //using QuizzBankBE.Services.KeywordServices;
@@ -57,10 +58,10 @@ namespace QuizzBankBE
             services.AddScoped<ICourseServices, CourseServicesIpml>();
             services.AddScoped<IRoleServices, RoleServices>();
             services.AddScoped<ITrueFalseQuestionBankService, TrueFalseQuestionBankService>();            
-            services.AddScoped<IShortAnswerQuestionServices, ShortAnswerQuestionBankServicesIpml>();
+            services.AddScoped<Services.QuestionBankServices.IShortAnswerQuestionServices, ShortAnswerQuestionBankServicesIpml>();
             services.AddScoped<IQuizService, QuizServiceIpml>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
-            services.AddScoped<INumericalQuestionService, NumericalQuestionServices>();
+            services.AddScoped<Services.QuestionBankServices.INumericalQuestionService, Services.QuestionBankServices.NumericalQuestionServices>();
             services.AddScoped<ITagServices, TagServicesIpml>();
             services.AddScoped<ICategoryServices, CategoryServicesImpl>();
             services.AddScoped<IMultipeChoiceQuizBankServices, MultipeChoiceQuestionbankServicesIpml>();
@@ -71,12 +72,12 @@ namespace QuizzBankBE
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IRolePermissionServices, RolePermissionServicesIpml>();
             services.AddScoped<IQuizzAccessService,QuizzAccessService>();
+            services.AddScoped<IDragAndDropQuestion, QuestionDragAndDropServicesIpml>();
             //services.AddScoped<IGmcServices, GmcServicesImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IjwtProvider, JwtProvider>();
-
 
             services.AddOptions();
             services.AddHttpContextAccessor();

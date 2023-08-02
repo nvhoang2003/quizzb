@@ -2,9 +2,9 @@
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public interface IMultipeChoiceQuizBankServices
+    public interface IMultipeChoiceQuestionServices
     {
         Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> createNewMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionBankDTO);
 

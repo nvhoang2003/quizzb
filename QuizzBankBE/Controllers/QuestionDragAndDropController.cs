@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.Model;
-using QuizzBankBE.Services.QuestionBankServices;
+using QuizzBankBE.Services.QuestionServices;
 using QuizzBankBE.Utility;
 using System.Security.Claims;
 
@@ -16,24 +17,24 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class NumericalQuestionController : ControllerBase
+    public class QuestionDragAndDropController : ControllerBase
     {
-        private readonly INumericalQuestionService _numericalQuestionService;
+        private readonly IDragAndDropQuestion _dragAndDropQuestionServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public NumericalQuestionController(INumericalQuestionService numericalQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public QuestionDragAndDropController(IDragAndDropQuestion shortAnswerQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
-            _numericalQuestionService = numericalQuestionServices;
+            _dragAndDropQuestionServices = shortAnswerQuestionServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
         }
 
-        [HttpPost("CreateNewNumericalQuesstion")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> createNewNumericalQuestionBank(
-              [FromBody] CreateNumericalQuestionDTO createQuestionDTO)
+        [HttpPost("CreateNewQuesstion")]
+        public async Task<ActionResult<ServiceResponse<DragAndDropQuestionDTO>>> createNewQuestionBank(
+               [FromBody] CreateDragAndDropDTO createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
@@ -44,14 +45,13 @@ namespace QuizzBankBE.Controllers
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _numericalQuestionService.createNumericalQuestionBank(createQuestionDTO);
+            var response = await _dragAndDropQuestionServices.createDDQuestion(createQuestionDTO);
 
             return Ok(response);
         }
 
-
-        [HttpGet("getNumericalQuestionBankById/{Id}")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> getNumericalQuestionBankById(int Id)
+        [HttpGet("GetQuestionBankById/{Id}")]
+        public async Task<ActionResult<ServiceResponse<DragAndDropQuestionDTO>>> getQuestionByID(int Id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
@@ -61,7 +61,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.getNumericalQuestionBankById(Id);
+            var response = await _dragAndDropQuestionServices.getDDQuestionById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -74,36 +74,19 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-        [HttpPut("updateNumericalQuestionBank/{id}")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> updateTrueFalseQuestionBank(
-              [FromBody] CreateNumericalQuestionDTO updateQuestionDTO, int id)
+        [HttpDelete("DeleteQuestionBank/{id}")]
+        public async Task<ActionResult<ServiceResponse<DragAndDropQuestionDTO>>> deleteQuestionBank(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _numericalQuestionService.getNumericalQuestionBankById(id);
-
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
-            {
-                return new StatusCodeResult(403);
-            }
-
-            var response = await _numericalQuestionService.updateNumericalQuestionBank(updateQuestionDTO, id);
-            return Ok(response);
-        }
-
-        [HttpDelete("deleteNumericalQuestionBank/{id}")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> deleteNumericalQuestionBank(int id)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _numericalQuestionService.getNumericalQuestionBankById(id);
+            var deleteQuestion = await _dragAndDropQuestionServices.getDDQuestionById(id);
 
             if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.deleteNumericalQuestionBank(id);
+            var response = await _dragAndDropQuestionServices.deleteDDQuestion(id);
             return Ok(response);
         }
     }
