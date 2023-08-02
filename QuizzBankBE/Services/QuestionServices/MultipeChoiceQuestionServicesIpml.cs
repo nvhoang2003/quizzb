@@ -8,16 +8,16 @@ using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using QuizzBankBE.Services.TagServices;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public class MultipeChoiceQuestionbankServicesIpml : IMultipeChoiceQuizBankServices
+    public class MultipeChoiceQuestionServicesIpml : IMultipeChoiceQuestionServices
     {
         public DataContext _dataContext;
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
 
-        public MultipeChoiceQuestionbankServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public MultipeChoiceQuestionServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
         {
             _dataContext = dataContext;
             _mapper = mapper;
@@ -25,7 +25,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _configuration = configuration;
         }
 
-        public MultipeChoiceQuestionbankServicesIpml()
+        public MultipeChoiceQuestionServicesIpml()
         {
         }
 

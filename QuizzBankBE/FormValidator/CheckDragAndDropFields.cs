@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 

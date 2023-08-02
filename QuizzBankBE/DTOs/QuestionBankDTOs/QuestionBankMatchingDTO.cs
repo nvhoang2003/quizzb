@@ -4,16 +4,16 @@ using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizzBankBE.DTOs
+namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class CreateQuestionBankMatchingDTO : QuestionDTO
+    public class CreateQuestionBankMatchingDTO : BaseQuestionBankDTO
     {
         [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
         public string Questionstype { get; set; }
 
         public virtual List<MatchSubQuestionBankDTO> MatchSubs { get; set; }
     }
-    public class QuestionBankMatchingResponseDTO : QuestionDTO
+    public class QuestionBankMatchingResponseDTO : BaseQuestionBankDTO
     {
         public int Id { get; set; }
 

@@ -3,9 +3,9 @@ using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public interface ITrueFalseQuestionBankService
+    public interface ITrueFalseQuestionService
     {
         Task<ServiceResponse<TrueFalseQuestionBankDTO>> createNewTrueFalseQuestionBank(CreateTrueFalseQuestionDTO createQuestionTFDTO);
         Task<ServiceResponse<TrueFalseQuestionBankDTO>> getTrueFalseQuestionBankById(int Id);

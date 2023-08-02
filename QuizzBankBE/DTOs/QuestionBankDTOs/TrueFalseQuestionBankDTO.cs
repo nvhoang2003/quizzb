@@ -3,9 +3,9 @@ using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizzBankBE.DTOs
+namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class TrueFalseQuestionBankDTO : QuestionDTO
+    public class TrueFalseQuestionBankDTO : BaseQuestionBankDTO
     {
         public int Id { get; set; }
 
@@ -22,7 +22,7 @@ namespace QuizzBankBE.DTOs
 
     }
 
-    public class CreateTrueFalseQuestionDTO : QuestionDTO
+    public class CreateTrueFalseQuestionDTO : BaseQuestionBankDTO
     {
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 

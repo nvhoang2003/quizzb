@@ -29,6 +29,8 @@ public partial class Question
 
     public sbyte IsShuffle { get; set; }
 
+    public int? DefaultMark { get; set; }
+
     public virtual User? Author { get; set; }
 
     public virtual ICollection<MatchSubQuestion> MatchSubQuestions { get; set; } = new List<MatchSubQuestion>();

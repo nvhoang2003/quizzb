@@ -8,16 +8,16 @@ using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
 
-namespace QuizzBankBE.Services.QuestionBankServices
+namespace QuizzBankBE.Services.QuestionServices
 {
-    public class TrueFalseQuestionBankService : ITrueFalseQuestionBankService
+    public class TrueFalseQuestionService : ITrueFalseQuestionService
     {
         public DataContext _dataContext;
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
 
-        public TrueFalseQuestionBankService(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public TrueFalseQuestionService(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
         {
             _dataContext = dataContext;
             _mapper = mapper;
@@ -25,7 +25,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _configuration = configuration;
         }
 
-        public TrueFalseQuestionBankService()
+        public TrueFalseQuestionService()
         {
         }
 
