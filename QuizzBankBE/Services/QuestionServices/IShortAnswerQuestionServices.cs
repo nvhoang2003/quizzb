@@ -1,16 +1,15 @@
 ﻿using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.Model;
 
 namespace QuizzBankBE.Services.QuestionServices
 {
     public interface IShortAnswerQuestionServices
     {
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> createSAQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionBankDTO);
+        Task<ServiceResponse<ShortAnswerQuestionDTO>> createSAQuestion(CreateShortAnswerQuestionDTO createQuestionBankDTO);
 
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> getSAQuestionBankById(int id);
+        Task<ServiceResponse<ShortAnswerQuestionDTO>> getSAQuestionById(int id);
 
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> updateSAQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionDTO, int id);
-
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> deleteSAQuestionBank(int id);
+        Task<ServiceResponse<ShortAnswerQuestionDTO>> deleteSAQuestion(int id);
     }
 }
