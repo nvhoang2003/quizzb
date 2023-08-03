@@ -7,7 +7,6 @@ using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
-using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
 
 namespace QuizzBankBE.Services.QuestionServices
 {

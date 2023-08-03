@@ -74,6 +74,7 @@ namespace QuizzBankBE
             services.AddScoped<IQuizzAccessService,QuizzAccessService>();
             services.AddScoped<IDragAndDropQuestion, QuestionDragAndDropServicesIpml>();
             services.AddScoped<ITrueFalseQuestionService, TrueFalseQuestionService>();
+            services.AddScoped<IMatchingQuestionServices, MatchingQuestionServicesImpl>();
             //services.AddScoped<IGmcServices, GmcServicesImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
