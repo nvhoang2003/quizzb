@@ -16,24 +16,24 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class TrueFalseQuestionController : ControllerBase
+    public class MultiQuestionController : ControllerBase
     {
-        private readonly ITrueFalseQuestionService _trueFalseQuestionServices;
+        private readonly IMultipeChoiceQuestionServices _multiQuestionServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public TrueFalseQuestionController(ITrueFalseQuestionService tFQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public MultiQuestionController(IMultipeChoiceQuestionServices multiQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
-            _trueFalseQuestionServices = tFQuestionServices;
+            _multiQuestionServices = multiQuestionServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
         }
 
         [HttpPost("CreateNewQuesstion")]
-        public async Task<ActionResult<ServiceResponse<TrueFalseQuestionDTO>>> createNewQuestionBank(
-               [FromBody] CreateQuestionTrueFalseDTO createQuestionDTO)
+        public async Task<ActionResult<ServiceResponse<MultiQuestionDTO>>> createNewQuestionBank(
+               [FromBody] CreateMultiQuestionDTO createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
@@ -44,7 +44,7 @@ namespace QuizzBankBE.Controllers
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _trueFalseQuestionServices.createNewTrueFalseQuestion(createQuestionDTO);
+            var response = await _multiQuestionServices.createNewMultipeQuestion(createQuestionDTO);
 
             return Ok(response);
         }
@@ -60,7 +60,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _trueFalseQuestionServices.getTrueFalseQuestionById(Id);
+            var response = await _multiQuestionServices.getMultipeQuestionById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -78,14 +78,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
-            var deleteQuestion = await _trueFalseQuestionServices.getTrueFalseQuestionById(id);
+            var deleteQuestion = await _multiQuestionServices.getMultipeQuestionById(id);
 
             if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _trueFalseQuestionServices.deleteTrueFalseQuestion(id);
+            var response = await _multiQuestionServices.deleteMultipeQuestion(id);
             return Ok(response);
         }
     }
