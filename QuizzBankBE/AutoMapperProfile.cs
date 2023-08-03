@@ -109,6 +109,8 @@ namespace QuizzBankBE
             CreateMap<CreateMatchSubQuestionDTO, MatchSubQuestion>().ReverseMap();
             CreateMap<CreateMultiQuestionDTO, Question>().ReverseMap();
             CreateMap<MultiQuestionDTO, Question>().ReverseMap();
+            CreateMap<CreateShortAnswerQuestionDTO, Question>().ReverseMap();
+            CreateMap<ShortAnswerQuestionDTO, Question>().ReverseMap();
         }
     }
 }

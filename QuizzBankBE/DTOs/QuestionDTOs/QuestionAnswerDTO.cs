@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.QuestionDTOs
 {
-    public class QuestionAnswerDTO : AnswerDTO
+    public class QuestionAnswerDTO
     {
         [Required]
         public string Content { get; set; }
