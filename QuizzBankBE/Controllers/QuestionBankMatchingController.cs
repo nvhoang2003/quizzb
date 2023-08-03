@@ -16,14 +16,14 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class QuestionMatchingController : ControllerBase
+    public class QuestionBankMatchingController : ControllerBase
     {
         private readonly IMatchingQuestionBankServices _matchingQuestionBankServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public QuestionMatchingController(IMatchingQuestionBankServices matchingQuestionBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public QuestionBankMatchingController(IMatchingQuestionBankServices matchingQuestionBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
             _matchingQuestionBankServices = matchingQuestionBankServices;
             _httpContextAccessor = httpContextAccessor;
