@@ -16,14 +16,14 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class QuestionBankController : ControllerBase
+    public class MultiQuestionBankController : ControllerBase
     {
         private readonly IMultipeChoiceQuizBankServices _multipeChoiceQuizBankServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public QuestionBankController(IMultipeChoiceQuizBankServices multipeChoiceQuizBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public MultiQuestionBankController(IMultipeChoiceQuizBankServices multipeChoiceQuizBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
             _multipeChoiceQuizBankServices = multipeChoiceQuizBankServices;
             _httpContextAccessor = httpContextAccessor;
