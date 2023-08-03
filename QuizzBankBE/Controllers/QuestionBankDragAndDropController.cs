@@ -23,9 +23,9 @@ namespace QuizzBankBE.Controllers
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public QuestionBankDragAndDropController(IDragAndDropQuestionBank shortAnswerQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public QuestionBankDragAndDropController(IDragAndDropQuestionBank dragAndDropQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
-            _dragAndDropQuestionServices = shortAnswerQuestionServices;
+            _dragAndDropQuestionServices = dragAndDropQuestionServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;

@@ -9,7 +9,7 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
     {
         public int Id { get; set; }
 
-        public List<QuestionBankAnswerDTO> Answers { get; set; }
+        public List<QuestionAnswerDTO> Answers { get; set; }
 
         public string Questionstype { get; set; }
     }

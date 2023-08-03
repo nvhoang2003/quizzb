@@ -100,6 +100,9 @@ namespace QuizzBankBE
             CreateMap<QuizAccessDTO,CreateQuizAccessDTO>();
             CreateMap<CreateDragAndDropDTO, Question>().ReverseMap();
             CreateMap<QuestionAnswer, QuestionAnswerDTO>().ReverseMap();
+            CreateMap<DragAndDropQuestionDTO, Question>().ReverseMap();
+            CreateMap<TrueFalseQuestionDTO, Question>().ReverseMap();
+            CreateMap<CreateQuestionTrueFalseDTO, Question>().ReverseMap();
         }
     }
 }
