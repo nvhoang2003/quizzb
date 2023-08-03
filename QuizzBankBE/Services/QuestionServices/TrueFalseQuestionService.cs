@@ -4,6 +4,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
@@ -29,12 +30,12 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionBankDTO>> createNewTrueFalseQuestionBank(CreateTrueFalseQuestionDTO createQuestionTFDTO)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> createNewTrueFalseQuestion(CreateQuestionTrueFalseDTO createQuestionTFDTO)
         {
-            var serviceResponse = new ServiceResponse<TrueFalseQuestionBankDTO>();
+            var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
 
-            QuizBank quesSaved = _mapper.Map<QuizBank>(createQuestionTFDTO);
-            _dataContext.QuizBanks.Add(quesSaved);
+            Question quesSaved = _mapper.Map<Question>(createQuestionTFDTO);
+            _dataContext.Questions.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
 
             createAnswer(createQuestionTFDTO, quesSaved.Id);
@@ -45,39 +46,34 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionBankDTO>> getTrueFalseQuestionBankById(int Id)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> getTrueFalseQuestionById(int Id)
         {
-            var serviceResponse = new ServiceResponse<TrueFalseQuestionBankDTO>();
-            var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "TrueFalse");
+            var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
+            var question = await _dataContext.Questions.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "TrueFalse");
 
-            if (quizBank == null)
+            if (question == null)
             {
                 serviceResponse.updateResponse(404, "Không tồn tại!");
                 return serviceResponse;
             }
 
-            TrueFalseQuestionBankDTO quizBankResponse = _mapper.Map<TrueFalseQuestionBankDTO>(quizBank);
-            var dbAnswers = await _dataContext.QuizbankAnswers.ToListAsync();
+            TrueFalseQuestionDTO questionResponse = _mapper.Map<TrueFalseQuestionDTO>(question);
+            var dbAnswers = await _dataContext.QuestionAnswers.ToListAsync();
 
-            quizBankResponse.Answers = dbAnswers.Select(u => _mapper.Map<QuestionBankAnswerDTO>(u)).Where(c => c.QuizBankId.Equals(Id)).ToList();
-            quizBankResponse.Tags = (from q in _dataContext.QuizBanks
-                                     join qt in _dataContext.QbTags on q.Id equals qt.QbId
-                                     join t in _dataContext.Tags on qt.TagId equals t.Id
-                                     where q.Id == Id
-                                     select t).Distinct().ToList();
+            questionResponse.Answers = dbAnswers.Select(u => _mapper.Map<QuestionAnswerDTO>(u)).Where(c => c.QuestionId.Equals(Id)).ToList();
 
-            serviceResponse.Data = quizBankResponse;
+            serviceResponse.Data = questionResponse;
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionBankDTO>> updateTrueFalseQuestionBank(CreateTrueFalseQuestionDTO updateQbTrueFalseDTO, int id)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> updateTrueFalseQuestion(CreateQuestionTrueFalseDTO updateQbTrueFalseDTO, int id)
         {
-            var serviceResponse = new ServiceResponse<TrueFalseQuestionBankDTO>();
+            var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
 
-            var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == id);
+            var quesToUpdate = _dataContext.Questions.FirstOrDefault(c => c.Id == id);
             _mapper.Map(updateQbTrueFalseDTO, quesToUpdate);
 
-            await deleteTagAndAnswer(id);
+            await deleteAnswer(id);
             await _dataContext.SaveChangesAsync();
             createAnswer(updateQbTrueFalseDTO, id);
 
@@ -87,57 +83,57 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionBankDTO>> deleteTrueFalseQuestionBank(int id)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> deleteTrueFalseQuestion(int id)
         {
-            var serviceResponse = new ServiceResponse<TrueFalseQuestionBankDTO>();
+            var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
 
-            QuizBank quesSaved = _dataContext.QuizBanks.FirstOrDefault(c => c.Id.Equals(id));
+            Question quesSaved = _dataContext.Questions.FirstOrDefault(c => c.Id.Equals(id));
             quesSaved.IsDeleted = 1;
 
-            _dataContext.QuizBanks.Update(quesSaved);
+            _dataContext.Questions.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteTagAndAnswer(id);
+            await deleteAnswer(id);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
             return serviceResponse;
         }
 
-        public async Task<bool> deleteTagAndAnswer(int quizBankId)
+        public async Task<bool> deleteAnswer(int quizBankId)
         {
-            var dbAnswers = await _dataContext.QuizbankAnswers.Where(c => c.QuizBankId.Equals(quizBankId)).ToListAsync();
+            var dbAnswers = await _dataContext.QuestionAnswers.Where(c => c.QuestionId.Equals(quizBankId)).ToListAsync();
             foreach (var item in dbAnswers)
             {
                 item.IsDeleted = 1;
             }
-            _dataContext.QuizbankAnswers.UpdateRange(dbAnswers);
-
-            var dbQbTags = await _dataContext.QbTags.Where(c => c.QbId.Equals(quizBankId)).ToListAsync();
-            foreach (var item in dbQbTags)
-            {
-                item.IsDeleted = 1;
-            }
-            _dataContext.QbTags.UpdateRange(dbQbTags);
+            _dataContext.QuestionAnswers.UpdateRange(dbAnswers);
 
             return true;
         }
 
-        public QuizbankAnswer createAnswer(CreateTrueFalseQuestionDTO answer, int quizBankId)
+        public  QuestionAnswer createAnswer(CreateQuestionTrueFalseDTO answer, int questionId)
         {
-            List<QuizbankAnswer> qa = new List<QuizbankAnswer>();
-            QuestionBankAnswerDTO rightAnswer =  new QuestionBankAnswerDTO(1, answer.RightAnswer.ToString(), quizBankId);
-            QuizbankAnswer answerSave = _mapper.Map<QuizbankAnswer>(rightAnswer);
-            qa.Add(answerSave);
+            List<QuestionAnswer> qa = new List<QuestionAnswer>();
+            QuestionAnswer rightAnswer =  new QuestionAnswer();
+            defineAnswer(rightAnswer, 1, answer.RightAnswer.ToString(), questionId);
+            qa.Add(rightAnswer);
 
             string wrongAnswerContent = answer.RightAnswer == true ? "False" : "True";
-            QuestionBankAnswerDTO wrongAnswer = new QuestionBankAnswerDTO(0, wrongAnswerContent, quizBankId);
-            answerSave = _mapper.Map<QuizbankAnswer>(wrongAnswer);
-            qa.Add(answerSave);
+            QuestionAnswer wrongAnswer = new QuestionAnswer();
+            defineAnswer(wrongAnswer, 0, wrongAnswerContent, questionId);
+            qa.Add(wrongAnswer);
 
-            _dataContext.QuizbankAnswers.AddRange(qa);
+            _dataContext.QuestionAnswers.AddRange(qa);
 
-            return answerSave;
+            return rightAnswer;
+        }
+
+        public void defineAnswer(QuestionAnswer answer, int fraction, string content, int questionId)
+        {
+            answer.Fraction = fraction;
+            answer.Content = content;
+            answer.QuestionId = questionId;
         }
     }
 }

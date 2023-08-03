@@ -65,7 +65,7 @@ namespace QuizzBankBE.Services.QuestionServices
         public async Task<ServiceResponse<DragAndDropQuestionDTO>> getDDQuestionById(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<DragAndDropQuestionDTO>();
-            var question = await _dataContext.Questions.FirstOrDefaultAsync(c => c.Id == questionBankID && c.QuestionsType == "DragAndDropIntoText");
+            var question = await _dataContext.Questions.Where(c => c.Id == questionBankID && c.QuestionsType == "DragAndDropIntoText").FirstOrDefaultAsync();
 
             if (question == null)
             {
@@ -74,7 +74,7 @@ namespace QuizzBankBE.Services.QuestionServices
             }
 
             DragAndDropQuestionDTO questionResponse = _mapper.Map<DragAndDropQuestionDTO>(question);
-            questionResponse.Answers = _dataContext.QuestionAnswers.Select(u => _mapper.Map<QuestionBankAnswerDTO>(u)).Where(c => c.QuestionId.Equals(questionBankID)).ToList();
+            questionResponse.Answers = _dataContext.QuestionAnswers.Where(c => c.QuestionId.Equals(questionBankID)).Select(u => _mapper.Map<QuestionAnswerDTO>(u)).ToList();
 
             serviceResponse.Data = questionResponse;
             return serviceResponse;
