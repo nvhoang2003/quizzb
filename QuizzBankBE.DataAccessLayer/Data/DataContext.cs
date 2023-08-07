@@ -431,36 +431,44 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
                     entity.HasIndex(e => e.AuthorId, "fk_qb_user_idx");
 
-                    entity.Property(e => e.Id).HasColumnName("ID");
-                    entity.Property(e => e.AuthorId).HasColumnName("authorId");
-                    entity.Property(e => e.CategoryId).HasColumnName("categoryId");
-                    entity.Property(e => e.Content)
-                        .HasColumnType("mediumtext")
-                        .HasColumnName("content");
-                    entity.Property(e => e.CreateBy).HasColumnName("createBy");
-                    entity.Property(e => e.CreateDate)
-                        .HasColumnType("date")
-                        .HasColumnName("createDate");
-                    entity.Property(e => e.DefaultMark).HasColumnName("defaultMark");
-                    entity.Property(e => e.GeneralFeedback)
-                        .HasColumnType("mediumtext")
-                        .HasColumnName("generalFeedback");
-                    entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-                    entity.Property(e => e.IsPublic)
-                        .HasDefaultValueSql("'1'")
-                        .HasColumnName("isPublic");
-                    entity.Property(e => e.IsShuffle).HasColumnName("isShuffle");
-                    entity.Property(e => e.Name)
-                        .HasMaxLength(45)
-                        .HasColumnName("name");
-                    entity.Property(e => e.QuestionsType)
-                        .HasMaxLength(45)
-                        .HasColumnName("questionsType");
-                    entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
-                    entity.Property(e => e.UpdateDate)
-                        .HasColumnType("date")
-                        .HasColumnName("updateDate");
-                });
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.AuthorId).HasColumnName("authorId");
+                entity.Property(e => e.CategoryId).HasColumnName("categoryId");
+                entity.Property(e => e.Content)
+                    .HasColumnType("mediumtext")
+                    .HasColumnName("content");
+                entity.Property(e => e.CreateBy).HasColumnName("createBy");
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("createDate");
+                entity.Property(e => e.DefaultMark).HasColumnName("defaultMark");
+                entity.Property(e => e.GeneralFeedback)
+                    .HasColumnType("mediumtext")
+                    .HasColumnName("generalFeedback");
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+                entity.Property(e => e.IsPublic)
+                    .HasDefaultValueSql("'1'")
+                    .HasColumnName("isPublic");
+                entity.Property(e => e.IsShuffle).HasColumnName("isShuffle");
+                entity.Property(e => e.Name)
+                    .HasMaxLength(45)
+                    .HasColumnName("name");
+                entity.Property(e => e.QuestionsType)
+                    .HasMaxLength(45)
+                    .HasColumnName("questionsType");
+                entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("date")
+                    .HasColumnName("updateDate");
+
+                entity.HasOne(d => d.Author).WithMany(p => p.QuizBanks)
+                    .HasForeignKey(d => d.AuthorId)
+                    .HasConstraintName("fk_qb_user");
+
+                entity.HasOne(d => d.Category).WithMany(p => p.QuizBanks)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_qb_category");
             });
 
             modelBuilder.Entity<QuizQuestion>(entity =>

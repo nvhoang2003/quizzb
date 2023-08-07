@@ -30,7 +30,7 @@ public partial class Question : IAuditedEntityBase
 
     public sbyte IsShuffle { get; set; }
 
-    public int? DefaultMark { get; set; }
+    public float? DefaultMark { get; set; }
 
     public virtual User? Author { get; set; }
 

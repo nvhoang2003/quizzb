@@ -15,6 +15,8 @@ public partial class QuizzbContext : DbContext
     {
     }
 
+    public virtual DbSet<Question> Questions { get; set; }
+
     public virtual DbSet<QuizBank> QuizBanks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -23,6 +25,41 @@ public partial class QuizzbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Question>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("questions");
+
+            entity.HasIndex(e => e.AuthorId, "fk_user_question_idx");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AuthorId).HasColumnName("authorId");
+            entity.Property(e => e.Content)
+                .HasColumnType("mediumtext")
+                .HasColumnName("content");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.DefaultMark).HasColumnName("defaultMark");
+            entity.Property(e => e.GeneralFeedback)
+                .HasColumnType("mediumtext")
+                .HasColumnName("generalFeedback");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.IsShuffle).HasColumnName("isShuffle");
+            entity.Property(e => e.Name)
+                .HasMaxLength(45)
+                .HasColumnName("name");
+            entity.Property(e => e.QuestionsType)
+                .HasMaxLength(45)
+                .HasColumnName("questionsType");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+        });
+
         modelBuilder.Entity<QuizBank>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
