@@ -122,9 +122,9 @@ namespace QuizzBankBE.Services.QuestionBankServices
             return serviceResponse;
         }
 
-        private List<MatchSubQuestionBank> createMatchSubQuestion (List<MatchSubQuestionBankDTO> matchSubQuestionBankDTOs, int questionBankID)
+        private List<MatchSubQuestionBank> createMatchSubQuestion (List<CreateMatchSubQuestionBankDTO> createMatchSubQuestionBankDTOs, int questionBankID)
         {
-            var matchSubQuestionBanks= _mapper.Map<List<MatchSubQuestionBank>>(matchSubQuestionBankDTOs);
+            var matchSubQuestionBanks= _mapper.Map<List<MatchSubQuestionBank>>(createMatchSubQuestionBankDTOs);
 
             matchSubQuestionBanks.ForEach(e =>
             {

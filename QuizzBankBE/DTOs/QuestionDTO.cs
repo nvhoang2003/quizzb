@@ -16,7 +16,7 @@ namespace QuizzBankBE.DTOs
         [StringLength(Const.MediumText)] //mediumtext 16 mib
         public string Content { get; set; }
 
-        //public string Questionstype { get; set; }
+        public abstract string Questionstype { get; set; }
 
         public string? Generalfeedback { get; set; }//phan hoi chung
 

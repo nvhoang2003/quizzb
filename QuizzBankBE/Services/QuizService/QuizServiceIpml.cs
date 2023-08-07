@@ -25,9 +25,11 @@ namespace QuizzBankBE.Services.QuizService
             _jwtProvider = jwtProvider;
             _configuration = configuration;
         }
+
         public QuizServiceIpml()
         {
         }
+
         public async Task<ServiceResponse<QuizResponseDTO>> createNewQuiz(CreateQuizDTO createQuizDTO)
         {
             var serviceResponse = new ServiceResponse<QuizResponseDTO>();
@@ -38,6 +40,7 @@ namespace QuizzBankBE.Services.QuizService
             serviceResponse.updateResponse(200, "Tạo thành công");
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters)
         {
             var serviceResponse = new ServiceResponse<PageList<QuizDTO>>();
@@ -51,6 +54,7 @@ namespace QuizzBankBE.Services.QuizService
 
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<BaseQuizDTO>> updateQuizz(BaseQuizDTO updateQuizDTO, int id)
         {
             var serviceResponse = new ServiceResponse<BaseQuizDTO>();
@@ -80,6 +84,7 @@ namespace QuizzBankBE.Services.QuizService
 
             return serviceResponse;
         }
+
         public async Task<ServiceResponse<QuizDTO>> deleteQuizz(int id)
         {
             var serviceResponse = new ServiceResponse<QuizDTO>();

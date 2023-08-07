@@ -11,14 +11,15 @@ namespace QuizzBankBE.DTOs
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 
         [RegularExpression("^ShortAnswer$", ErrorMessage = "The Question Type must be equal to 'ShortAnswer'")]
-        public string Questionstype { get; set; }
+        public override string Questionstype { get; set; }
 
         public List<Tag> Tags { get; set; }
     }
 
     public class CreateQuestionBankShortAnswerDTO : QuestionDTO
     {
-        public string Questionstype { get; set; }
+        [RegularExpression("^ShortAnswer$", ErrorMessage = "The Question Type must be equal to 'ShortAnswer'")]
+        public override string Questionstype { get; set; }
         public List<QuestionBankAnswerDTO> Answers { get; set; }
     }
 }

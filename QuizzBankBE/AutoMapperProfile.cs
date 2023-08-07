@@ -76,9 +76,11 @@ namespace QuizzBankBE
             CreateMap<QuestionBankMatchingResponseDTO, QuizBank>();
             CreateMap<CreateQuestionBankMatchingDTO, QuizBank>();
             CreateMap<MatchSubQuestionBank, MatchSubQuestionBankDTO>();
+            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankDTO>().ReverseMap();
+            CreateMap<MatchSubQuestionBank, CreateMatchSubQuestionBankDTO>();
+            CreateMap<MatchSubQuestionBank, CreateMatchSubQuestionBankDTO>().ReverseMap();
             CreateMap<MatchSubQuestionBank, MatchSubQuestionBankResponseDTO>();
-            CreateMap<MatchSubQuestionBankDTO, MatchSubQuestionBank>();
-            CreateMap<MatchSubQuestionBankResponseDTO, MatchSubQuestionBank>();
+            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankResponseDTO>().ReverseMap();
             CreateMap<QuizBank, TrueFalseQuestionBankDTO>();
             CreateMap<TrueFalseQuestionBankDTO,QuizBank>();
             CreateMap<QuestionBankAnswerDTO,CreateTrueFalseQuestionDTO>();
