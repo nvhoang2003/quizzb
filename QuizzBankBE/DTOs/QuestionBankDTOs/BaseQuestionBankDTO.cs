@@ -4,9 +4,9 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizzBankBE.DTOs
+namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public abstract class QuestionDTO
+    public abstract class BaseQuestionBankDTO
     {
         [Required]
         [StringLength(Const.String)]
@@ -46,20 +46,17 @@ namespace QuizzBankBE.DTOs
             ShortAnswer,
             Numerical,
             DragAndDropIntoText,
-            DragAndDropIntoMaker,
-            DragAndDropOntoImage,
-            RandomShortAnswerMatching,
         }
 
         public void addTags(int questionBankID, DataContext _dataContext, IMapper _mapper)
         {
-            var tags =  (from q in _dataContext.QuizBanks
-                              join qt in _dataContext.QbTags on q.Id equals qt.QbId
-                              join t in _dataContext.Tags on qt.TagId equals t.Id
-                              where q.Id == questionBankID
-                              select t).Distinct().ToList();
+            var tags = (from q in _dataContext.QuizBanks
+                        join qt in _dataContext.QbTags on q.Id equals qt.QbId
+                        join t in _dataContext.Tags on qt.TagId equals t.Id
+                        where q.Id == questionBankID
+                        select t).Distinct().ToList();
 
-            this.Tags = _mapper.Map<List<TagDTO>>(tags);
+            Tags = _mapper.Map<List<TagDTO>>(tags);
         }
     }
 }

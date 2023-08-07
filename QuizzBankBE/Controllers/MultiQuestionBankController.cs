@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Services.QuestionBankServices;
@@ -16,24 +16,24 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class NumericalQuestionController : ControllerBase
+    public class MultiQuestionBankController : ControllerBase
     {
-        private readonly INumericalQuestionService _numericalQuestionService;
+        private readonly IMultipeChoiceQuizBankServices _multipeChoiceQuizBankServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public NumericalQuestionController(INumericalQuestionService numericalQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public MultiQuestionBankController(IMultipeChoiceQuizBankServices multipeChoiceQuizBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
-            _numericalQuestionService = numericalQuestionServices;
+            _multipeChoiceQuizBankServices = multipeChoiceQuizBankServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
         }
 
-        [HttpPost("CreateNewNumericalQuesstion")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> createNewNumericalQuestionBank(
-              [FromBody] CreateNumericalQuestionDTO createQuestionDTO)
+        [HttpPost("CreateNewMultipeChoiceQuestionBank")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> createNewMultipeChoiceQuestionBank(
+                [FromBody] CreateQuestionBankMultipeChoiceDTO createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
@@ -44,14 +44,13 @@ namespace QuizzBankBE.Controllers
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _numericalQuestionService.createNumericalQuestionBank(createQuestionDTO);
+            var response = await _multipeChoiceQuizBankServices.createNewMultipeQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
 
-
-        [HttpGet("getNumericalQuestionBankById/{Id}")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> getNumericalQuestionBankById(int Id)
+        [HttpGet("GetMultipeQuestionBankById/{Id}")]
+        public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int Id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
@@ -61,7 +60,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.getNumericalQuestionBankById(Id);
+            var response = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -74,36 +73,36 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-        [HttpPut("updateNumericalQuestionBank/{id}")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> updateTrueFalseQuestionBank(
-              [FromBody] CreateNumericalQuestionDTO updateQuestionDTO, int id)
+        [HttpPut("UpdateMultipeChoiceQuestionBank/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> updateMultipeChoiceQuestionBank(
+               [FromBody] CreateQuestionBankMultipeChoiceDTO updateQuestionDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _numericalQuestionService.getNumericalQuestionBankById(id);
+            var updateQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.check(userIdLogin,permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.updateNumericalQuestionBank(updateQuestionDTO, id);
+            var response = await _multipeChoiceQuizBankServices.updateMultipeQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
-        [HttpDelete("deleteNumericalQuestionBank/{id}")]
-        public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> deleteNumericalQuestionBank(int id)
+        [HttpDelete("DeleteMultipeChoiceQuestionBank/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> deleteMultipeChoiceQuestionBank(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _numericalQuestionService.getNumericalQuestionBankById(id);
+            var deleteQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
 
             if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.deleteNumericalQuestionBank(id);
+            var response = await _multipeChoiceQuizBankServices.deleteMultipeQuestionBank(id);
             return Ok(response);
         }
     }

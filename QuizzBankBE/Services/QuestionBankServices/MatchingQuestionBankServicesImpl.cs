@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
-using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 

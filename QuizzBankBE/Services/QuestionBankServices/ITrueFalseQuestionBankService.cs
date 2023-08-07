@@ -1,7 +1,7 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
-using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
-using static QuizzBankBE.DTOs.QuestionDTO;
+using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
 
 namespace QuizzBankBE.Services.QuestionBankServices
 {

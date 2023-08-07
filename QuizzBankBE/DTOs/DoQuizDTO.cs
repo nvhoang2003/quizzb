@@ -1,4 +1,5 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 

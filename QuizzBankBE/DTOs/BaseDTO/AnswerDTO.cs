@@ -17,7 +17,6 @@ namespace QuizzBankBE.DTOs.BaseDTO
         public string? Feedback { get; set; }
 
         public int? QuizBankId { get; set; }
+        public int? QuestionId { get; set; }
     }
-
-   
 }

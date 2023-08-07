@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizzBankBE.DataAccessLayer.Data;
-using QuizzBankBE.DataAccessLayer.DataObject;
-using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Services.QuestionBankServices;
 using QuizzBankBE.Utility;
@@ -16,24 +16,24 @@ namespace QuizzBankBE.Controllers
     [ApiController]
     [EnableCors("AllowAll")]
     [Produces("application/json")]
-    public class QuestionBankController : ControllerBase
+    public class QuestionBankDragAndDropController : ControllerBase
     {
-        private readonly IMultipeChoiceQuizBankServices _multipeChoiceQuizBankServices;
+        private readonly IDragAndDropQuestionBank _dragAndDropQuestionServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
 
-        public QuestionBankController(IMultipeChoiceQuizBankServices multipeChoiceQuizBankServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public QuestionBankDragAndDropController(IDragAndDropQuestionBank dragAndDropQuestionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
-            _multipeChoiceQuizBankServices = multipeChoiceQuizBankServices;
+            _dragAndDropQuestionServices = dragAndDropQuestionServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
         }
 
-        [HttpPost("CreateNewMultipeChoiceQuestionBank")]
-        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> createNewMultipeChoiceQuestionBank(
-                [FromBody] CreateQuestionBankMultipeChoiceDTO createQuestionDTO)
+        [HttpPost("CreateNewQuesstion")]
+        public async Task<ActionResult<ServiceResponse<QBankDragAndDropDTO>>> createNewQuestionBank(
+                [FromBody] CreateQBankDragAndDropDTO createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
@@ -44,13 +44,13 @@ namespace QuizzBankBE.Controllers
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _multipeChoiceQuizBankServices.createNewMultipeQuestionBank(createQuestionDTO);
+            var response = await _dragAndDropQuestionServices.createDDQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
 
-        [HttpGet("GetMultipeQuestionBankById/{Id}")]
-        public async Task<ActionResult<ServiceResponse<Course>>> getCourseByCourseID(int Id)
+        [HttpGet("GetQuestionBankById/{Id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankShortAnswerDTO>>> getQuestionByID(int Id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
@@ -60,7 +60,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(Id);
+            var response = await _dragAndDropQuestionServices.getDDQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -73,36 +73,36 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-        [HttpPut("UpdateMultipeChoiceQuestionBank/{id}")]
-        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> updateMultipeChoiceQuestionBank(
-               [FromBody] CreateQuestionBankMultipeChoiceDTO updateQuestionDTO, int id)
+        [HttpPut("UpdateQuestionBank/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> updateQuestionBank(
+           [FromBody] CreateQBankDragAndDropDTO updateQuestionDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
+            var updateQuestion = await _dragAndDropQuestionServices.getDDQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin,permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multipeChoiceQuizBankServices.updateMultipeQuestionBank(updateQuestionDTO, id);
+            var response = await _dragAndDropQuestionServices.updateDDQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
-        [HttpDelete("DeleteMultipeChoiceQuestionBank/{id}")]
-        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> deleteMultipeChoiceQuestionBank(int id)
+        [HttpDelete("DeleteQuestionBank/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>>> deleteQuestionBank(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
+            var deleteQuestion = await _dragAndDropQuestionServices.getDDQuestionBankById(id);
 
             if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multipeChoiceQuizBankServices.deleteMultipeQuestionBank(id);
+            var response = await _dragAndDropQuestionServices.deleteDDQuestionBank(id);
             return Ok(response);
         }
     }

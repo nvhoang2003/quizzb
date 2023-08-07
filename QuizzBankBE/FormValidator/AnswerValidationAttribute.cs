@@ -1,4 +1,4 @@
-﻿using QuizzBankBE.DTOs;
+﻿using QuizzBankBE.DTOs.QuestionBankDTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.FormValidator

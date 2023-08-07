@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizzBankBE.DataAccessLayer.DataObject;
-using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Services.QuestionBankServices;
 using QuizzBankBE.Utility;
-using static QuizzBankBE.DTOs.QuestionDTO;
+using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
 using System.Security.Claims;
 using QuizzBankBE.DataAccessLayer.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 
 namespace QuizzBankBE.Controllers
 {

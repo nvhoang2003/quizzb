@@ -1,5 +1,5 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
-using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 
 namespace QuizzBankBE.Services.QuestionBankServices
