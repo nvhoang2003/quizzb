@@ -1,9 +1,10 @@
-﻿using System;
+﻿using QuizzBankBE.DataAccessLayer.Entity.Interface;
+using System;
 using System.Collections.Generic;
 
 namespace QuizzBankBE.DataAccessLayer.DataObject;
 
-public partial class Question
+public partial class Question : IAuditedEntityBase
 {
     public int Id { get; set; }
 
@@ -38,4 +39,6 @@ public partial class Question
     public virtual ICollection<QuestionAnswer> QuestionAnswers { get; set; } = new List<QuestionAnswer>();
 
     public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
+
+    public virtual ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
 }
