@@ -582,6 +582,9 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.ToTable("role");
 
                     entity.Property(e => e.Id).HasColumnName("ID");
+                    entity.Property(e => e.AcceptChange)
+                        .HasDefaultValueSql("'1'")
+                        .HasColumnName("acceptChange");
                     entity.Property(e => e.CreateBy).HasColumnName("createBy");
                     entity.Property(e => e.CreateDate)
                         .HasColumnType("date")
@@ -781,7 +784,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 });
 
                 OnModelCreatingPartial(modelBuilder);
-            }); 
+            });
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

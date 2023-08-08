@@ -63,6 +63,11 @@ namespace QuizzBankBE.Services.RoleServices
                 serviceResponse.updateResponse(404, "Role không tồn tại");
                 return serviceResponse;
             }
+            if (dbRole.AcceptChange==0)
+            {
+                serviceResponse.updateResponse(403, "Role này không thể thay đổi");
+                return serviceResponse;
+            }
 
             dbRole.Name = updateRoleDTO.Name;
             dbRole.Description = updateRoleDTO.Description;
@@ -83,6 +88,11 @@ namespace QuizzBankBE.Services.RoleServices
             {
                 serviceResponse.updateResponse(404, "Role không tồn tại");
                 return serviceResponse;
+            }
+            if (dbRole.AcceptChange==0) {
+                serviceResponse.updateResponse(403, "Role này không thể xóa ");
+                return serviceResponse;
+
             }
 
             dbRole.IsDeleted = 1;
