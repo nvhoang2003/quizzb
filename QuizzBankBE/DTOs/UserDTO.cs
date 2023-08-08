@@ -1,6 +1,7 @@
 ﻿using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.BaseDTO;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
@@ -20,5 +21,21 @@ namespace QuizzBankBE.DTOs
         [Required]
         [UniqueValidation<User>("UserName")]
         public string UserName { get; set; }
+    }
+
+    public class UpdatePwdDTO
+    {
+        [Required]
+        public int UserId { get; set; }
+
+        [Required]
+        public string OldPwd { get; set; }
+
+        [Required]
+        public string NewPwd { get; set; }
+        
+        [ValueEqualWithField("NewPwd")]
+        [Required]
+        public string ConfirmPwd { get; set; }
     }
 }
