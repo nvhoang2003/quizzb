@@ -87,6 +87,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.UpdateDate)
                     .HasColumnType("date")
                     .HasColumnName("updateDate");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Course>(entity =>
@@ -118,6 +120,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.UpdateDate)
                     .HasColumnType("date")
                     .HasColumnName("updateDate");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<MatchSubQuestion>(entity =>
@@ -149,6 +153,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Question).WithMany(p => p.MatchSubQuestions)
                     .HasForeignKey(d => d.QuestionId)
                     .HasConstraintName("fk_matchsub_question");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<MatchSubQuestionBank>(entity =>
@@ -180,6 +186,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.QuestionBank).WithMany(p => p.MatchSubQuestionBanks)
                     .HasForeignKey(d => d.QuestionBankId)
                     .HasConstraintName("fk_matchsub_questionbank");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Permission>(entity =>
@@ -204,6 +212,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.Property(e => e.UpdateDate)
                     .HasColumnType("date")
                     .HasColumnName("updateDate");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QbTag>(entity =>
@@ -236,6 +246,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Tag).WithMany(p => p.QbTags)
                     .HasForeignKey(d => d.TagId)
                     .HasConstraintName("fk_tag_qb");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Question>(entity =>
@@ -275,6 +287,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Author).WithMany(p => p.Questions)
                     .HasForeignKey(d => d.AuthorId)
                     .HasConstraintName("fk_user_question");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuestionAnswer>(entity =>
@@ -307,6 +321,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Question).WithMany(p => p.QuestionAnswers)
                     .HasForeignKey(d => d.QuestionId)
                     .HasConstraintName("fk_question_answer");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<Quiz>(entity =>
@@ -371,6 +387,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.Course).WithMany(p => p.Quizzes)
                     .HasForeignKey(d => d.CourseId)
                     .HasConstraintName("fk_quiz_course");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuizAccess>(entity =>
@@ -417,6 +435,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                 entity.HasOne(d => d.User).WithMany(p => p.QuizAccessUsers)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("fk_user_access");
+
+                entity.HasQueryFilter(e => e.IsDeleted != 1);
             });
 
             modelBuilder.Entity<QuizBank>(entity =>
@@ -469,6 +489,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                         .HasForeignKey(d => d.CategoryId)
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("fk_qb_category");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<QuizQuestion>(entity =>
@@ -501,6 +523,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.Quizz).WithMany(p => p.QuizQuestions)
                         .HasForeignKey(d => d.QuizzId)
                         .HasConstraintName("fk_quiz_question");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<QuizResponse>(entity =>
@@ -541,6 +565,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.Question).WithMany(p => p.QuizResponses)
                         .HasForeignKey(d => d.QuestionId)
                         .HasConstraintName("fk_response_question");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<QuizbankAnswer>(entity =>
@@ -573,6 +599,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.QuizBank).WithMany(p => p.QuizbankAnswers)
                         .HasForeignKey(d => d.QuizBankId)
                         .HasConstraintName("fk_quizbank_answer");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<Role>(entity =>
@@ -600,6 +628,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.Property(e => e.UpdateDate)
                         .HasColumnType("date")
                         .HasColumnName("updateDate");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<RolePermission>(entity =>
@@ -632,6 +662,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
                         .HasForeignKey(d => d.RoleId)
                         .HasConstraintName("fk_role_permission");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<Tag>(entity =>
@@ -663,6 +695,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.Category).WithMany(p => p.Tags)
                         .HasForeignKey(d => d.CategoryId)
                         .HasConstraintName("fk_tag_category");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<User>(entity =>
@@ -714,6 +748,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                         .HasForeignKey(d => d.RoleId)
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("fk_user_role");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<UserCategory>(entity =>
@@ -746,6 +782,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.User).WithMany(p => p.UserCategories)
                         .HasForeignKey(d => d.UserId)
                         .HasConstraintName("fk_category_user");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 modelBuilder.Entity<UserCourse>(entity =>
@@ -781,6 +819,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
                     entity.HasOne(d => d.User).WithMany(p => p.UserCourses)
                         .HasForeignKey(d => d.UserId)
                         .HasConstraintName("fk_user_course");
+
+                    entity.HasQueryFilter(e => e.IsDeleted != 1);
                 });
 
                 OnModelCreatingPartial(modelBuilder);
