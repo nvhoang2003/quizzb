@@ -22,6 +22,8 @@ public partial class Role : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
+    public sbyte? AcceptChange { get; set; }
+
     public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
