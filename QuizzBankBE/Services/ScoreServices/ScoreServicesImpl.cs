@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using System.Reflection;
@@ -74,32 +76,72 @@ namespace QuizzBankBE.Services.ScoreServices
 
             var score = (float)scoreMethod.Invoke(null, new object[] { doQuestionDTO, question });
 
-            var qAPName = "QuizAccessID";
-            var qAPi = questionType.GetProperty(qAPName);
-            var qAV = (int)qAPi.GetValue(doQuestionDTO);
-
             servicesResponse.Message = "OK";
 
-            return servicesResponse; 
+            return servicesResponse;
         }
 
-        public async void saveQuizAccess (int questionID, int quizAccessID, float mark)
+        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer)
+        {
+            var quizRes = new QuizResponse();
+
+            quizRes.AccessId = quizAccessID;
+            quizRes.Mark = mark;
+            quizRes.QuestionId = questionID;
+            quizRes.Answer = JsonConvert.SerializeObject(Answer);
+
+            return await saveQuizRes(quizRes);
+        }
+
+        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, List<T> Answer)
+        {
+            var quizRes = new QuizResponse();
+
+            quizRes.AccessId = quizAccessID;
+            quizRes.Mark = mark;
+            quizRes.QuestionId = questionID;
+            quizRes.Answer = JsonConvert.SerializeObject(Answer);
+
+            return await saveQuizRes(quizRes);
+        }
+
+        public async Task<QuizResponse> saveQuizRes (QuizResponse quizRes)
         {
 
+            var quizExs = await _dataContext.QuizResponses.FirstOrDefaultAsync(e => e.QuestionId == quizRes.QuestionId && e.AccessId == quizRes.AccessId);
+
+            if (quizExs == null)
+            {
+                _dataContext.QuizResponses.Add(quizRes);
+            }
+            else
+            {
+
+                _dataContext.QuizResponses.Update(quizRes);
+            }
+
+            await _dataContext.SaveChangesAsync();
+
+            return quizRes;
         }
 
         public async Task<float> doMatchQuestion(DoMatchingDTO doQuestionDTO, Question question)
         {
             var servicesResponse = new ServiceResponse<float>();
+            float mark;
 
             var isCorrect = await scoreMatchQuestion(doQuestionDTO.MatchSubs);
 
             if (!isCorrect)
             {
-                return 0;
+                mark = 0;
             }
 
-            return question.DefaultMark;
+            mark = (float) question.DefaultMark;
+
+            await saveMark<MatchSubQuestionBankDTO>(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
+
+            return mark;
         }
 
         public async Task<bool> scoreMatchQuestion(List<MatchSubQuestionBankDTO> matchSubDtos)
