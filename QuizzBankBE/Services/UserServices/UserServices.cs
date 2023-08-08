@@ -98,5 +98,68 @@ namespace QuizzBankBE.Services.UserServices
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<UpdateUserDTO>> updatePwd(UpdatePwdDTO updateDTO)
+        {
+            var serviceResponse = new ServiceResponse<UpdateUserDTO>();
+
+            var user = await _dataContext.Users.FirstOrDefaultAsync(c => c.Id == updateDTO.UserId);
+            if(VerifyPassword(updateDTO.OldPwd, user.Password))
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(updateDTO.NewPwd);
+                _dataContext.Users.Update(user);
+                await _dataContext.SaveChangesAsync();
+                serviceResponse.updateResponse(200, "Update thành công");
+            }
+            else
+            {
+                serviceResponse.updateResponse(400, "Sai mật khẩu");
+            };
+
+            return serviceResponse;
+        }
+
+        private bool VerifyPassword(string password, string storedpassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, storedpassword);
+        }
+
+        public async Task<ServiceResponse<UpdateUserDTO>> adminUpdateUser(CreateUserDTO updateDTO, int id)
+        {
+
+            var serviceResponse = new ServiceResponse<UpdateUserDTO>();
+            var dbUser = await _dataContext.Users.FirstOrDefaultAsync(q => q.Id == id);
+            if (dbUser == null)
+            {
+                serviceResponse.updateResponse(400, "User không tồn tại");
+                return serviceResponse;
+            }
+
+            dbUser.UserName = updateDTO.UserName;
+            dbUser.FirstName = updateDTO.Firstname;
+            dbUser.LastName = updateDTO.Lastname;
+            dbUser.Dob = updateDTO.Dob;
+            dbUser.Gender = updateDTO.Gender;
+            dbUser.Email = updateDTO.Email;
+            dbUser.Address = updateDTO.Address;
+            dbUser.Phone = updateDTO.Phone;
+            dbUser.Password = BCrypt.Net.BCrypt.HashPassword(updateDTO.Password);
+
+            _dataContext.Users.Update(dbUser);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.updateResponse(200, "Update thành công");
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<UpdateUserDTO>> setActive(int isActive, int id)
+        {
+            var serviceResponse = new ServiceResponse<UpdateUserDTO>();
+            var dbUser = await _dataContext.Users.FirstOrDefaultAsync(q => q.Id == id);
+            dbUser.IsActive = (sbyte?)isActive;
+
+            _dataContext.Users.Update(dbUser);
+            await _dataContext.SaveChangesAsync();
+            return serviceResponse;
+        }
     }
 }

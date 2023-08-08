@@ -11,6 +11,8 @@ namespace QuizzBankBE.Services.UserServices
         Task<ServiceResponse<UserDTO>> getUserByUserID(int id);
         Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDTO);
         Task<ServiceResponse<UpdateUserDTO>> updateUser(UpdateUserDTO updateDTO, int id);
-        
+        Task<ServiceResponse<UpdateUserDTO>> adminUpdateUser(CreateUserDTO updateDTO, int id);
+        Task<ServiceResponse<UpdateUserDTO>> updatePwd(UpdatePwdDTO updateDTO);
+        Task<ServiceResponse<UpdateUserDTO>> setActive(int isActive, int id);
     }
 }
