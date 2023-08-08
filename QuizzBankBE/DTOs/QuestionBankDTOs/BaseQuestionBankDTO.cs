@@ -59,4 +59,17 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
             Tags = _mapper.Map<List<TagDTO>>(tags);
         }
     }
+
+    public class ListQuestionBank
+    {
+        public int Id { get; set; }
+
+        public string Questionstype { get; set; }
+
+        public string Name { get; set; }
+
+        public string AuthorName { get; set; }
+
+        public List<TagDTO> Tags { get; set; }
+    }
 }
