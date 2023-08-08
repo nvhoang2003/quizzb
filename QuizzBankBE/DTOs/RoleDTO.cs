@@ -22,6 +22,8 @@ namespace QuizzBankBE.DTOs
         public DateTime? UpdateDate { get; set; }
 
         public int IsDeleted { get; set; }
+
+        public sbyte? AcceptChange { get; set; }
     }
 
     public class CreateRoleDTO {
