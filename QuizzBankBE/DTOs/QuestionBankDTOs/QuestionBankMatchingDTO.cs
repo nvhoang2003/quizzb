@@ -38,6 +38,8 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
 
     public class MatchSubQuestionBankDTO : CreateMatchSubQuestionBankDTO
     {
+        [Required]
+        [IdExistValidation<MatchSubQuestionBank>("Id")]
         public int Id { get; set; }
     }
 

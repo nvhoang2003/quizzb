@@ -1,4 +1,5 @@
-﻿using QuizzBankBE.FormValidator;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.QuestionDTOs
@@ -20,14 +21,11 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public string Questionstype { get; set; }
     }
 
-    public class MatchSubQuestionResponseDTO
+    public class MatchSubQuestionResponseDTO : CreateMatchSubQuestionDTO
     {
+        [Required]
+        [IdExistValidation<MatchSubQuestion>("Id")]
         public int Id { get; set; }
-        public string QuestionText { get; set; }
-
-        public string AnswerText { get; set; }
-
-        public int QuestionId { get; set; }
     }
 
     public class CreateMatchSubQuestionDTO

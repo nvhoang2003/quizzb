@@ -1,5 +1,6 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,6 +22,6 @@ namespace QuizzBankBE.DTOs
         [Required]
         [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
         public override string Questionstype { get; set; }
-        public virtual List<MatchSubQuestionBankDTO> MatchSubs { get; set; }
+        public virtual List<MatchSubQuestionResponseDTO> MatchSubs { get; set; }
     }
 }

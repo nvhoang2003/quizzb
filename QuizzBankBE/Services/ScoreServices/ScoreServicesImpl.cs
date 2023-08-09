@@ -5,6 +5,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using System.Reflection;
@@ -13,7 +14,7 @@ namespace QuizzBankBE.Services.ScoreServices
 {
     public class ScoreServicesImpl : IScoreServicesImpl
     {
-        public DataContext _dataContext;
+        public static DataContext _dataContext;
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
@@ -33,7 +34,8 @@ namespace QuizzBankBE.Services.ScoreServices
         public async Task<ServiceResponse<float>> doQuestion<T>(T doQuestionDTO) where T : DoQuestionDTO
         {
             var servicesResponse = new ServiceResponse<float>();
-            var scoreSvcType = typeof(ScoreServicesImpl);
+            var scoreSvcs = new ScoreServicesImpl();
+            var scoreSvcType = scoreSvcs.GetType();
 
             var questionType = doQuestionDTO.GetType();
 
@@ -55,7 +57,7 @@ namespace QuizzBankBE.Services.ScoreServices
             var quesID = (int)quesPropertyInfo.GetValue(doQuestionDTO);
             var question = await _dataContext.Questions.FirstOrDefaultAsync(e => e.Id == quesID);
 
-            var score = (float)scoreMethod.Invoke(null, new object[] { doQuestionDTO, question });
+            var score = await (Task<float>)scoreMethod.Invoke(scoreSvcs, new object[] { doQuestionDTO, question });
 
             servicesResponse.Message = "OK";
 
@@ -112,18 +114,18 @@ namespace QuizzBankBE.Services.ScoreServices
 
             var mark = await scoreMatchQuestions(doQuestionDTO.MatchSubs, (float)question.DefaultMark);
 
-            await saveMark<MatchSubQuestionBankDTO>(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
+            await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
 
             return mark;
         }
 
-        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionBankDTO> matchSubDtos, float defaultMark)
+        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionResponseDTO> matchSubDtos, float defaultMark)
         {
             var markMatchSub = defaultMark / matchSubDtos.Count;
 
             foreach (var matchSubDto in matchSubDtos)
             {
-                var matchSubCorrect = await _dataContext.MatchSubQuestionBanks.FirstOrDefaultAsync(e => e.Id == matchSubDto.Id);
+                var matchSubCorrect = await _dataContext.MatchSubQuestions.FirstOrDefaultAsync(e => e.Id == matchSubDto.Id);
 
                 if (!matchSubCorrect.AnswerText.Equals(matchSubDto.AnswerText))
                 {

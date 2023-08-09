@@ -37,7 +37,7 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<float>>> DoMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var hasQuizAccess = await HasQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
+            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
 
             if (!hasQuizAccess)
             {
@@ -65,7 +65,7 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-        private async Task<bool> HasQuizAccess(int quizAcessID, int userID, int quizID)
+        private async Task<bool> HaveQuizAccess(int quizAcessID, int userID, int quizID)
         {
             var quizAccess = await _dataContext.QuizAccesses.FirstOrDefaultAsync(e => e.Id == quizAcessID && e.UserId == userID && e.QuizId == quizID);
 
