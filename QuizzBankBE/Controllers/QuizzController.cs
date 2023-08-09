@@ -35,23 +35,6 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("CreateNewQuizz")]
-        public async Task<ActionResult<ServiceResponse<QuizResponseDTO>>> createNewQizz(
-        [FromBody] CreateQuizDTO createQuizDTO)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
-
-            if (!CheckPermission.check(userIdLogin, permissionName))
-            {
-                return new StatusCodeResult(403);
-            }
-
-            var response = await _quizServices.createNewQuiz(createQuizDTO);
-
-            return Ok(response);
-        }
-
         [HttpGet("getListAllQuizz")]
         public async Task<ActionResult<ServiceResponse<PageList<QuizDTO>>>> getListQuizz(
         [FromQuery] OwnerParameter ownerParameters)
@@ -76,6 +59,39 @@ namespace QuizzBankBE.Controllers
             };
 
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return Ok(response);
+        }
+
+        [HttpPost("CreateNewQuizz")]
+        public async Task<ActionResult<ServiceResponse<QuizResponseDTO>>> createNewQizz(
+        [FromBody] CreateQuizDTO createQuizDTO)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _quizServices.createNewQuiz(createQuizDTO);
+
+            return Ok(response);
+        }
+
+        [HttpPost("AddQuestion")]
+        public async Task<ActionResult<ServiceResponse<QuizQuestionDTO>>> addQuizQuestion([FromQuery]CreateQuizQuestionDTO createQuizQuestionDTO)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _quizServices.addQuestionIntoQuiz(createQuizQuestionDTO);
+
             return Ok(response);
         }
 

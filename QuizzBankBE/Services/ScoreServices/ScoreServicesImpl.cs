@@ -30,33 +30,15 @@ namespace QuizzBankBE.Services.ScoreServices
         {
         }
 
-        public async Task<ServiceResponse<float>> doQuestion<T>(T doQuestionDTO)
+        public async Task<ServiceResponse<float>> doQuestion<T>(T doQuestionDTO) where T : DoQuestionDTO
         {
             var servicesResponse = new ServiceResponse<float>();
             var scoreSvcType = typeof(ScoreServicesImpl);
 
-            if (doQuestionDTO == null)
-            {
-                servicesResponse.updateResponse(500, "Where params ?");
-                return servicesResponse;
-            }
-
             var questionType = doQuestionDTO.GetType();
-
-            if (!(doQuestionDTO is DoQuestionDTO))
-            {
-                servicesResponse.updateResponse(500, questionType.Name + " is not correct type !");
-                return servicesResponse;
-            }
 
             var qtPN = "Questionstype";
             var qtPi = questionType.GetProperty(qtPN);
-
-            if (qtPi == null)
-            {
-                servicesResponse.updateResponse(500, "Wherer property: " + qtPN);
-                return servicesResponse;
-            }
 
             var qtV = (String)qtPi.GetValue(doQuestionDTO);
 
@@ -65,8 +47,7 @@ namespace QuizzBankBE.Services.ScoreServices
 
             if (scoreMethod == null)
             {
-                servicesResponse.updateResponse(500, "Wherer method: " + scoreMethodName);
-                return servicesResponse;
+                throw new ArgumentException("Wherer method: " + scoreMethodName);
             }
 
             var quesPName = "QuestionID";

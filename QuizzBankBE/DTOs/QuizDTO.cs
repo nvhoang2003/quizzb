@@ -1,6 +1,7 @@
 ﻿using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
+using ServiceStack.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
 {
@@ -29,6 +30,13 @@ namespace QuizzBankBE.DTOs
         public int? QuestionId { get; set; }
 
         [IdExistValidation<Quiz>("Id")]
+        public int? QuizzId { get; set; }
+    }
+
+    public class QuizQuestionDTO
+    {
+        public int Id { get; set; }
+        public int? QuestionId { get; set; }
         public int? QuizzId { get; set; }
     }
 }

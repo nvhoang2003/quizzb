@@ -94,9 +94,16 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizQuestion>> addQuestionIntoQuiz (CreateQuizQuestionDTO createQuizQuestionDTO)
+        public async Task<ServiceResponse<QuizQuestionDTO>> addQuestionIntoQuiz (CreateQuizQuestionDTO createQuizQuestionDTO)
         {
-            var serviceResponse = new ServiceResponse<QuizQuestion>();
+            var serviceResponse = new ServiceResponse<QuizQuestionDTO>();
+            var qzQSaved = _mapper.Map<QuizQuestion>(createQuizQuestionDTO);
+
+            _dataContext.QuizQuestions.Add(qzQSaved);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Message = "Tạo thành công";
+            serviceResponse.Data = _mapper.Map<QuizQuestionDTO>(qzQSaved);
 
             return serviceResponse;
         }

@@ -43,6 +43,10 @@ namespace QuizzBankBE
             CreateMap<CreateQuizDTO, QuizDTO>().ReverseMap();
             CreateMap<CreateQuizDTO, Quiz>();
             CreateMap<CreateQuizDTO, Quiz>().ReverseMap();
+            CreateMap<CreateQuizQuestionDTO, QuizQuestion>();
+            CreateMap<CreateQuizQuestionDTO, QuizQuestion>().ReverseMap();
+            CreateMap<QuizQuestionDTO, QuizQuestion>();
+            CreateMap<QuizQuestionDTO, QuizQuestion>().ReverseMap();
             CreateMap<QuizResponseDTO, Quiz>();
             CreateMap<QuizResponseDTO, Quiz>().ReverseMap();
             CreateMap<Category, CategoryDTO>();
