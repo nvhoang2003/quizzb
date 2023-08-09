@@ -18,6 +18,7 @@ namespace QuizzBankBE.DTOs
 
     public class DoMatchingDTO : DoQuestionDTO
     {
+        [Required]
         [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
         public override string Questionstype { get; set; }
         public virtual List<MatchSubQuestionBankDTO> MatchSubs { get; set; }
