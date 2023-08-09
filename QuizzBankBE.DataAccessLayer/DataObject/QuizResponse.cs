@@ -10,7 +10,7 @@ public partial class QuizResponse : IAuditedEntityBase
 
     public int? AccessId { get; set; }
 
-    public int? Mark { get; set; }
+    public float? Mark { get; set; }
 
     public string? Status { get; set; }
 

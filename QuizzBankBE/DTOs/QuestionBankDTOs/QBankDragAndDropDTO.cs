@@ -14,7 +14,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
 
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 
-        public string Questionstype { get; set; }
+        public override string Questionstype { get; set; }
     }
 
     public class CreateQBankDragAndDropDTO

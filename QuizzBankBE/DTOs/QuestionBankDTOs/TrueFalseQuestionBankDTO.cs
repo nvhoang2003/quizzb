@@ -18,7 +18,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         public List<Tag> Tags { get; set; }
 
         [RegularExpression("^TrueFalse$", ErrorMessage = "The Question Type must be equal to 'TrueFalse'")]
-        public string Questionstype { get; set; }
+        public override string Questionstype { get; set; }
 
     }
 
@@ -27,7 +27,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 
         [RegularExpression("^TrueFalse", ErrorMessage = "The Question Type must be equal to 'TrueFalse'")]
-        public string Questionstype { get; set; }
+        public override string Questionstype { get; set; }
         public bool RightAnswer { get; set; }
     }
 }
