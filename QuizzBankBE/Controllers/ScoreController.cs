@@ -33,13 +33,29 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("{quizID}/doMatchQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> DoMatchQuestion(DoMatchingDTO doQuestionDTO, int quizID)
+        [HttpPost("{quizID}/doMatchQuestion")]
+        public async Task<ActionResult<ServiceResponse<float>>> DoMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var hasQuizAccess = await HasQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
 
             if (!hasQuizAccess)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _scoreServices.doQuestion(doQuestionDTO);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{quizID}/test/doMatchQuestion")]
+        public async Task<ActionResult<ServiceResponse<float>>> TestMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:CHECK_QUIZ").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }

@@ -33,7 +33,7 @@ namespace QuizzBankBE.Services.QuizService
         public async Task<ServiceResponse<QuizResponseDTO>> createNewQuiz(CreateQuizDTO createQuizDTO)
         {
             var serviceResponse = new ServiceResponse<QuizResponseDTO>();
-            Quiz quizSaved = _mapper.Map<Quiz>(createQuizDTO);
+            var quizSaved = _mapper.Map<Quiz>(createQuizDTO);
 
             _dataContext.Quizzes.Add(quizSaved);
             await _dataContext.SaveChangesAsync();
@@ -55,32 +55,23 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<BaseQuizDTO>> updateQuizz(BaseQuizDTO updateQuizDTO, int id)
+        public async Task<ServiceResponse<QuizResponseDTO>> updateQuizz(CreateQuizDTO updateQuizDTO, int id)
         {
-            var serviceResponse = new ServiceResponse<BaseQuizDTO>();
+            var serviceResponse = new ServiceResponse<QuizResponseDTO>();
             var dbQuiz = await _dataContext.Quizzes.FirstOrDefaultAsync(q => q.Id == id);
+
             if (dbQuiz == null)
             {
                 serviceResponse.updateResponse(400, "quizz không tồn tại");
                 return serviceResponse;
             }
 
-            dbQuiz.Name = updateQuizDTO.Name;
-            dbQuiz.CourseId = updateQuizDTO.Courseid;
-            dbQuiz.Description = updateQuizDTO.Description;
-            dbQuiz.TimeOpen = updateQuizDTO.TimeOpen;
-            dbQuiz.TimeClose = updateQuizDTO.TimeClose;
-            dbQuiz.TimeLimit = updateQuizDTO.TimeLimit;
-            dbQuiz.Overduehanding = updateQuizDTO.Overduehanding;
-            dbQuiz.PreferedBehavior = updateQuizDTO.PreferedBehavior;
-            dbQuiz.PointToPass = updateQuizDTO.PointToPass;
-            dbQuiz.MaxPoint = updateQuizDTO.MaxPoint;
-            dbQuiz.NaveMethod = updateQuizDTO.NaveMethod;
-            dbQuiz.IsPublic = updateQuizDTO.IsPublic;
-            _dataContext.Quizzes.Update(dbQuiz);
+            var quizSaved = _mapper.Map(updateQuizDTO, dbQuiz);
 
             await _dataContext.SaveChangesAsync();
-            serviceResponse.updateResponse(200, "Update thành công");
+
+            serviceResponse.Message = "Update thành công";
+            serviceResponse.Data = _mapper.Map<QuizResponseDTO>(quizSaved);
 
             return serviceResponse;
         }
@@ -98,8 +89,15 @@ namespace QuizzBankBE.Services.QuizService
             dbQuiz.IsDeleted = 1;
             _dataContext.Quizzes.Update(dbQuiz);
             await _dataContext.SaveChangesAsync();
-            
+
             serviceResponse.updateResponse(200, "Delete thành công");
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<QuizQuestion>> addQuestionIntoQuiz (CreateQuizQuestionDTO createQuizQuestionDTO)
+        {
+            var serviceResponse = new ServiceResponse<QuizQuestion>();
+
             return serviceResponse;
         }
     }
