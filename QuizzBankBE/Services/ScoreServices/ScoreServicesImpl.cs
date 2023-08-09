@@ -47,12 +47,12 @@ namespace QuizzBankBE.Services.ScoreServices
 
             if (scoreMethod == null)
             {
-                throw new ArgumentException("Wherer method: " + scoreMethodName);
+                throw new ArgumentException("Wherer method: " + scoreMethodName , nameof(scoreMethod));
             }
 
-            var quesPName = "QuestionID";
-            var quesPi = questionType.GetProperty(quesPName);
-            var quesID = (int)quesPi.GetValue(doQuestionDTO);
+            var quesPropertyName = "QuestionID";
+            var quesPropertyInfo = questionType.GetProperty(quesPropertyName);
+            var quesID = (int)quesPropertyInfo.GetValue(doQuestionDTO);
             var question = await _dataContext.Questions.FirstOrDefaultAsync(e => e.Id == quesID);
 
             var score = (float)scoreMethod.Invoke(null, new object[] { doQuestionDTO, question });
