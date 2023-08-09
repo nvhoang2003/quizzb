@@ -62,7 +62,7 @@ namespace QuizzBankBE.Services.ScoreServices
             return servicesResponse;
         }
 
-        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer)
+        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer) where T : class
         {
             var quizRes = new QuizResponse();
 
@@ -74,7 +74,7 @@ namespace QuizzBankBE.Services.ScoreServices
             return await saveQuizRes(quizRes);
         }
 
-        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, List<T> Answer)
+        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, List<T> Answer) where T : class
         {
             var quizRes = new QuizResponse();
 
@@ -109,35 +109,29 @@ namespace QuizzBankBE.Services.ScoreServices
         public async Task<float> doMatchQuestion(DoMatchingDTO doQuestionDTO, Question question)
         {
             var servicesResponse = new ServiceResponse<float>();
-            float mark;
 
-            var isCorrect = await scoreMatchQuestion(doQuestionDTO.MatchSubs);
-
-            if (!isCorrect)
-            {
-                mark = 0;
-            }
-
-            mark = (float) question.DefaultMark;
+            var mark = await scoreMatchQuestions(doQuestionDTO.MatchSubs, (float)question.DefaultMark);
 
             await saveMark<MatchSubQuestionBankDTO>(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
 
             return mark;
         }
 
-        public async Task<bool> scoreMatchQuestion(List<MatchSubQuestionBankDTO> matchSubDtos)
+        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionBankDTO> matchSubDtos, float defaultMark)
         {
+            var markMatchSub = defaultMark / matchSubDtos.Count;
+
             foreach (var matchSubDto in matchSubDtos)
             {
                 var matchSubCorrect = await _dataContext.MatchSubQuestionBanks.FirstOrDefaultAsync(e => e.Id == matchSubDto.Id);
 
                 if (!matchSubCorrect.AnswerText.Equals(matchSubDto.AnswerText))
                 {
-                    return false;
+                    defaultMark -= markMatchSub;
                 }
             }
 
-            return true;
+            return defaultMark;
         }
     }
 }
