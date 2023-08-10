@@ -17,7 +17,7 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
     {
         public List<CreateMatchSubQuestionDTO> MatchSubQuestion { get; set; }
 
-        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
+        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match'")]
         public string Questionstype { get; set; }
     }
 

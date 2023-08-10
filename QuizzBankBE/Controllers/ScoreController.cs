@@ -33,8 +33,64 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet("{accessID}")]
+        public async Task<ActionResult<ServiceResponse<float>>> GetScore(int accessID)
+        {
+            var response = await _scoreServices.getScore(accessID);
+
+            return Ok(response);
+        }
+
         [HttpPost("{quizID}/doMatchQuestion")]
         public async Task<ActionResult<ServiceResponse<float>>> DoMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
+
+            if (!hasQuizAccess)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _scoreServices.doQuestion(doQuestionDTO);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{quizID}/doMultipeQuestion")]
+        public async Task<ActionResult<ServiceResponse<float>>> DoMultipeQuestion([FromBody] DoMultipleDTO doQuestionDTO, int quizID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
+
+            if (!hasQuizAccess)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _scoreServices.doQuestion(doQuestionDTO);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{quizID}/doTrueFalseQuestion")]
+        public async Task<ActionResult<ServiceResponse<float>>> DoTrueFalseQuestion([FromBody] DoTrueFalseDTO doQuestionDTO, int quizID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
+
+            if (!hasQuizAccess)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _scoreServices.doQuestion(doQuestionDTO);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{quizID}/doShortAnswerQuestion")]
+        public async Task<ActionResult<ServiceResponse<float>>> DoShortAnswerQuestion([FromBody] DoShortDTO doQuestionDTO, int quizID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
