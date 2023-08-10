@@ -36,7 +36,7 @@ namespace QuizzBankBE.Controllers
         [HttpGet("{accessID}")]
         public async Task<ActionResult<ServiceResponse<float>>> GetScore(int accessID)
         {
-            var response = await _scoreServices.getScore(accessID);
+            var response = await _scoreServices.GetScore(accessID);
 
             return Ok(response);
         }
