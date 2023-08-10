@@ -725,6 +725,9 @@ namespace QuizzBankBE.DataAccessLayer.Data
                         .HasMaxLength(255)
                         .HasColumnName("firstName");
                     entity.Property(e => e.Gender).HasColumnName("gender");
+                    entity.Property(e => e.IsActive)
+                        .HasDefaultValueSql("'1'")
+                        .HasColumnName("isActive");
                     entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
                     entity.Property(e => e.LastName)
                         .HasMaxLength(255)

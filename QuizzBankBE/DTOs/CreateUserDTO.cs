@@ -22,7 +22,5 @@ namespace QuizzBankBE.DTOs
         //Mật khẩu phải có ít nhất 8 ký tự và chứa ít nhất 3 trong 4 ký tự sau: chữ hoa (AZ), chữ thường (az), số (0 -9) và ký tự đặc biệt (ví dụ !@#$%^&*)")
 
         public string Password { get; set; }
-
-
     }
 }

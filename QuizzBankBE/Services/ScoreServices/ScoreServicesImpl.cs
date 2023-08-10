@@ -96,7 +96,7 @@ namespace QuizzBankBE.Services.ScoreServices
 
             return quizRes;
         }
-
+        
         public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer) where T : class
         {
             var quizRes = new QuizResponse();
