@@ -12,8 +12,6 @@ public partial class UserCourse : IAuditedEntityBase
 
     public int? CoursesId { get; set; }
 
-    public string Role { get; set; } = null!;
-
     public int? CreateBy { get; set; }
 
     public int? UpdateBy { get; set; }

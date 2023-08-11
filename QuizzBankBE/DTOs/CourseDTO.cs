@@ -25,7 +25,7 @@ namespace QuizzBankBE.DTOs
         public int IsDeleted { get; set; }
     }
 
-    public class UserCourseDTO
+    public class UserCourseDTO : IValidatableObject
     {
         public UserCourseDTO(int userId, int coursesId)
         {
@@ -33,48 +33,21 @@ namespace QuizzBankBE.DTOs
             CoursesId = coursesId;
         }
 
-        public UserCourseDTO (int userId, int coursesId, string role)
-        {
-            UserId = userId;
-            CoursesId = coursesId;
-            Role = role;
-        }
-
         [Required]
-        [IdExistValidation<User>("userId")]
+        [IdExistValidation<User>("Id")]
         public int UserId { get; set; }
 
         [Required]
-        [IdExistValidation<Course>("coursesId")]
+        [IdExistValidation<Course>("Id")]
         public int CoursesId { get; set; }
-        
-        [Required]
-        [EnumDataType(typeof(UserCourseRole))]
-        public string Role { get; set; } = null!;
 
-        public enum UserCourseRole
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            Admin,
-            Teacher,
-            Student
-        }
-
-        public enum PowerfullUserCourseRole
-        {
-            Admin,
-            Teacher
-        }
-
-        public static bool checkPowerfullUserCourseRole(string role)
-        {
-            string[] powerfullUserCourseRoles = Enum.GetNames(typeof(PowerfullUserCourseRole));
-
-            if (powerfullUserCourseRoles.Contains(role))
+            DataContext _dataContext = new DataContext();
+            if (_dataContext.UserCourses.Any(c => c.UserId == UserId && c.CoursesId == CoursesId))
             {
-                return true;
+                yield return new ValidationResult("Học sinh đã được thêm vào trước đây", new[] { "student" });
             }
-
-            return false;
         }
     }
 }
