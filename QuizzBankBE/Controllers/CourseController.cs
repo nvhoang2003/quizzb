@@ -135,13 +135,6 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var accessRoleResponse = await accessRole(courseID, userIdLogin);
-
-            if (accessRoleResponse.Status == false)
-            {
-                return new StatusCodeResult(403);
-            }
-
             var response = await _courseServices.updateCourse(updateCourseDTO, courseID);
 
             if (response.Status == false)
@@ -178,13 +171,6 @@ namespace QuizzBankBE.Controllers
                 });
             }
 
-            var accessRoleResponse = await accessRole(courseID, userIdLogin);
-
-            if (accessRoleResponse.Status == false )
-            {
-                return new StatusCodeResult(403);
-            }
-
             var response = await _courseServices.deleteCourse(courseID, checkCourseResponse.Data);
 
             if (response.Status == false)
@@ -197,21 +183,6 @@ namespace QuizzBankBE.Controllers
             }
 
             return Ok(response);
-        }
-
-        private async Task<ServiceResponse<CourseDTO>> accessRole(int courseID, int userID)
-        {
-            var serviceResponse = new ServiceResponse<CourseDTO>();
-            var userInCourse = await _dataContext.UserCourses.FirstOrDefaultAsync(c => c.UserId == userID && c.CoursesId == courseID);
-
-            if (UserCourseDTO.checkPowerfullUserCourseRole(userInCourse?.Role) == false)
-            {
-                serviceResponse.updateResponse(403, "Không có quyền!");
-
-                return serviceResponse;
-            }
-
-            return serviceResponse;
         }
 
         private ServiceResponse<PageList<CourseDTO>> SettingsPagination (ServiceResponse<PageList<CourseDTO>> courseResponsePagedList)

@@ -806,9 +806,6 @@ namespace QuizzBankBE.DataAccessLayer.Data
                         .HasColumnType("date")
                         .HasColumnName("createDate");
                     entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-                    entity.Property(e => e.Role)
-                        .HasMaxLength(45)
-                        .HasColumnName("role");
                     entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
                     entity.Property(e => e.UpdateDate)
                         .HasColumnType("date")
