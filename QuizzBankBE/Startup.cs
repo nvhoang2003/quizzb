@@ -25,6 +25,7 @@ using QuizzBankBE.Services.QuizService;
 using QuizzBankBE.Services.QuestionServices;
 using QuizzBankBE.Services.ListQuestionServices;
 using QuizzBankBE.Services.ScoreServices;
+using QuizzBankBE.Services.UserCoursesServices;
 //using QuizzBankBE.Services.QuestionServices;
 //using QuizzBankBE.Services.CourseServices;
 //using QuizzBankBE.Services.KeywordServices;
@@ -81,6 +82,7 @@ namespace QuizzBankBE
             services.AddScoped<Services.QuestionServices.IShortAnswerQuestionServices, ShortAnswerQuestionServicesIpml>();
             services.AddScoped<IQuestionBankList, QuestionBankListServicesImpl>();
             services.AddScoped<IScoreServicesImpl, ScoreServicesImpl>();
+            services.AddScoped<IUserCoursesServices, UserCoursesServicesIpml>();
             //services.AddScoped<IGmcServices, GmcServicesImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();

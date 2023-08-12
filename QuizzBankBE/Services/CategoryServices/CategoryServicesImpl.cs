@@ -36,8 +36,7 @@ namespace QuizzBankBE.Services.CategoryServices
             var categoryDTO  = dbCategory.Select(u => _mapper.Map<CategoryDTO>(u)).ToList();
             
             serviceResponse.Data = PageList<CategoryDTO>.ToPageList(
-            categoryDTO.AsEnumerable<CategoryDTO>(),
-           
+            categoryDTO.AsEnumerable<CategoryDTO>(),    
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
             return serviceResponse;

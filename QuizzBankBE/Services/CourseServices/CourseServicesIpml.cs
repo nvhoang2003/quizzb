@@ -134,7 +134,7 @@ namespace QuizzBankBE.Services.CourseServices
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
 
-            var studentRespone = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID && UserCourseRole.Student.Equals(x.Role)).ToListAsync();
+            var studentRespone = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID ).ToListAsync();
 
             if (studentRespone.Any())
             {
@@ -156,7 +156,7 @@ namespace QuizzBankBE.Services.CourseServices
 
         public async Task<UserCourse> createUserCourse(int userID, int courseID)
         {
-            UserCourseDTO userCourseDto = new UserCourseDTO(userID, courseID, UserCourseRole.Admin.ToString());
+            UserCourseDTO userCourseDto = new UserCourseDTO(userID, courseID);
 
             UserCourse userCourseSaved = _mapper.Map<UserCourse>(userCourseDto);
             _dataContext.UserCourses.Add(userCourseSaved);

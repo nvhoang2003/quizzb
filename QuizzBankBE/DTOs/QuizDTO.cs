@@ -1,7 +1,9 @@
-﻿using QuizzBankBE.DataAccessLayer.DataObject;
+﻿using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.FormValidator;
 using ServiceStack.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
 {
