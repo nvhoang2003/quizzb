@@ -105,6 +105,22 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
+        [HttpPost("{quizID}/doDragAndDropIntoTextQuestion")]
+        public async Task<ActionResult<ServiceResponse<float>>> DoDragAndDropIntoTextQuestion([FromBody] DoDragDropTextDTO doDragDropTextDTO, int quizID)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var hasQuizAccess = await HaveQuizAccess(doDragDropTextDTO.QuizAccessID, userIdLogin, quizID);
+
+            if (!hasQuizAccess)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _scoreServices.doQuestion(doDragDropTextDTO);
+
+            return Ok(response);
+        }
+
         [HttpPost("{quizID}/test/doMatchQuestion")]
         public async Task<ActionResult<ServiceResponse<float>>> TestMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
         {
@@ -123,7 +139,7 @@ namespace QuizzBankBE.Controllers
 
         private async Task<bool> HaveQuizAccess(int quizAcessID, int userID, int quizID)
         {
-            var quizAccess = await _dataContext.QuizAccesses.FirstOrDefaultAsync(e => e.Id == quizAcessID && e.UserId == userID && e.QuizId == quizID);
+            var quizAccess = await _dataContext.QuizAccesses.FirstOrDefaultAsync(e => e.Id == quizAcessID && e.UserId == userID && e.QuizId == quizID && e.Status.Equals("Doing"));
 
             if (quizAccess == null)
             {

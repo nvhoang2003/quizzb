@@ -8,6 +8,7 @@ using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using System.Linq;
 using System.Reflection;
 
 namespace QuizzBankBE.Services.ScoreServices
@@ -35,8 +36,6 @@ namespace QuizzBankBE.Services.ScoreServices
         {
             var servicesResponse = new ServiceResponse<DoQuizResponseDTO>();
             var doQuizResponseDTO = new DoQuizResponseDTO();
-
-
 
             servicesResponse.Data = doQuizResponseDTO;
             servicesResponse.Message = "OK";
@@ -96,7 +95,7 @@ namespace QuizzBankBE.Services.ScoreServices
 
             return quizRes;
         }
-        
+
         public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer) where T : class
         {
             var quizRes = new QuizResponse();
@@ -121,8 +120,9 @@ namespace QuizzBankBE.Services.ScoreServices
             return await saveQuizRes(quizRes);
         }
 
-        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionResponseDTO> matchSubDtos, float defaultMark)
+        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionResponseDTO> matchSubDtos, Question question)
         {
+            var defaultMark = (float)question.DefaultMark;
             var markMatchSub = defaultMark / matchSubDtos.Count;
 
             matchSubDtos.ForEach(async matchSubDto =>
@@ -142,24 +142,28 @@ namespace QuizzBankBE.Services.ScoreServices
         {
             var servicesResponse = new ServiceResponse<float>();
 
-            var mark = await scoreMatchQuestions(doQuestionDTO.MatchSubs, (float)question.DefaultMark);
+            var mark = await scoreMatchQuestions(doQuestionDTO.MatchSubs, question);
 
             await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
 
             return mark;
         }
 
-        public async Task<float> scoreMultiChoiceQuestions(List<DoMultipleAnswerDTO> doMultipleAnswers, int questionID)
+        public async Task<float> scoreMultiChoiceQuestions(List<DoMultipleAnswerDTO> doMultipleAnswers, Question question)
         {
             float sumFraction = 0;
 
             doMultipleAnswers.ForEach(async doMultipleAnswer =>
             {
-                var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doMultipleAnswer.AnswerId && e.QuestionId == questionID);
+                var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doMultipleAnswer.AnswerId && e.QuestionId == question.Id);
 
                 if (answerCorrect.Fraction != 0)
                 {
-                    sumFraction += answerCorrect.Fraction;
+                    sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
+                } else
+                {
+                    sumFraction = 0;
+                    return;
                 }
             });
 
@@ -170,20 +174,20 @@ namespace QuizzBankBE.Services.ScoreServices
         {
             var servicesResponse = new ServiceResponse<float>();
 
-            var mark = await scoreMultiChoiceQuestions(doQuestionDTO.Answers, question.Id);
+            var mark = await scoreMultiChoiceQuestions(doQuestionDTO.Answers, question);
 
             await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.Answers);
 
             return mark;
         }
 
-        public async Task<float> scoreTrueFalseQuestions(DoTrueFalseAnswerDTO doTrueFalseAnswer, int questionID)
+        public async Task<float> scoreTrueFalseQuestion(DoTrueFalseAnswerDTO doTrueFalseAnswer, Question question)
         {
             float sumFraction = 0;
 
-            var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doTrueFalseAnswer.AnswerId && e.QuestionId == questionID);
+            var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doTrueFalseAnswer.AnswerId && e.QuestionId == question.Id);
 
-            sumFraction += answerCorrect.Fraction;
+            sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
 
             return sumFraction;
         }
@@ -192,22 +196,22 @@ namespace QuizzBankBE.Services.ScoreServices
         {
             var servicesResponse = new ServiceResponse<float>();
 
-            var mark = await scoreTrueFalseQuestions(doTrueFalseDTO.Answers, question.Id);
+            var mark = await scoreTrueFalseQuestion(doTrueFalseDTO.Answers, question);
 
             await saveMark(doTrueFalseDTO.QuestionID, doTrueFalseDTO.QuizAccessID, mark, doTrueFalseDTO.Answers);
 
             return mark;
         }
 
-        public async Task<float> scoreShortAnswerQuestions(DoShortAnswerDTO doShortAnswer, int questionID)
+        public async Task<float> scoreShortAnswerQuestion(DoShortAnswerDTO doShortAnswerDTO, Question question)
         {
             float sumFraction = 0;
 
-            var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doShortAnswer.AnswerId && e.QuestionId == questionID && e.Content.Equals(doShortAnswer.Content));
+            var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doShortAnswerDTO.AnswerId && e.QuestionId == question.Id && e.Content.Equals(doShortAnswerDTO.Content));
 
             if (answerCorrect != null)
             {
-                sumFraction += answerCorrect.Fraction;
+                sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
             }
 
             return sumFraction;
@@ -217,9 +221,41 @@ namespace QuizzBankBE.Services.ScoreServices
         {
             var servicesResponse = new ServiceResponse<float>();
 
-            var mark = await scoreShortAnswerQuestions(doShortDTO.Answers, question.Id);
+            var mark = await scoreShortAnswerQuestion(doShortDTO.Answers, question);
 
             await saveMark(doShortDTO.QuestionID, doShortDTO.QuizAccessID, mark, doShortDTO.Answers);
+
+            return mark;
+        }
+
+        public async Task<float> scoreDragAndDropIntoTextQuestion(List<DoDragDropChoiceDTO> doDragDropChoiceDtos, Question question)
+        {
+            float sumFraction = 0;
+            var defaultMark = (float)question.DefaultMark;
+            var dragDropChoices = _dataContext.QuestionAnswers.Where(e => e.QuestionId == question.Id).ToList();
+            var markMatchSub = defaultMark / dragDropChoices.Count;
+
+            doDragDropChoiceDtos.ForEach(async doDragDropChoiceDto =>
+            {
+                var answerCorrect = dragDropChoices.ElementAtOrDefault(doDragDropChoiceDto.Position);
+
+                if (answerCorrect != null && answerCorrect.Id.Equals(doDragDropChoiceDto.AnswerId))
+                {
+                    sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
+                }
+
+            });
+
+            return sumFraction;
+        }
+
+        public async Task<float> doDragAndDropIntoTextQuestion(DoDragDropTextDTO doDragDropTextDTO, Question question)
+        {
+            var servicesResponse = new ServiceResponse<float>();
+
+            var mark = await scoreDragAndDropIntoTextQuestion(doDragDropTextDTO.Answers, question);
+
+            await saveMark(doDragDropTextDTO.QuestionID, doDragDropTextDTO.QuizAccessID, mark, doDragDropTextDTO.Answers);
 
             return mark;
         }

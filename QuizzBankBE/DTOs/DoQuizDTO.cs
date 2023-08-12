@@ -9,13 +9,8 @@ namespace QuizzBankBE.DTOs
     public class DoQuizResponseDTO
     {
         public int AccessId { get; set; }
-        public DateTime TimeStartQuiz { get; set; }
-        public DateTime TimeEndQuiz { get; set; }
-        public DateTime TimeCompleteQuiz { get; set; }
-
         public float SumMark { get; set; }
         public float PointToPass { get; set; }
-
         public float MaxPoint { get; set; }
     }
 
@@ -61,6 +56,13 @@ namespace QuizzBankBE.DTOs
         public override string Questionstype { get; set; }
         public DoShortAnswerDTO Answers { get; set; }
     }
+    public class DoDragDropTextDTO : DoQuestionDTO
+    {
+        [Required]
+        [RegularExpression("^DragAndDropIntoText$", ErrorMessage = "The Question Type must be equal to 'DragAndDropIntoText'")]
+        public override string Questionstype { get; set; }
+        public List<DoDragDropChoiceDTO> Answers { get; set; }
+    }
 
     public class DoMultipleAnswerDTO
     {
@@ -83,5 +85,14 @@ namespace QuizzBankBE.DTOs
         public int AnswerId { get; set; }
         [Required]
         public string Content { get; set; }
+    }
+
+    public class DoDragDropChoiceDTO
+    {
+        public int Position { get; set; }
+
+        [Required]
+        [IdExistValidation<QuestionAnswer>("Id")]
+        public int AnswerId { get; set; }
     }
 }

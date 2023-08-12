@@ -59,7 +59,7 @@ namespace QuizzBankBE
             //services.AddScoped<IQuestionServices, QuestionServicesIpml>();
             services.AddScoped<ICourseServices, CourseServicesIpml>();
             services.AddScoped<IRoleServices, RoleServices>();
-            services.AddScoped<ITrueFalseQuestionBankService, TrueFalseQuestionBankService>();            
+            services.AddScoped<ITrueFalseQuestionBankService, TrueFalseQuestionBankService>();
             services.AddScoped<Services.QuestionBankServices.IShortAnswerQuestionServices, ShortAnswerQuestionBankServicesIpml>();
             services.AddScoped<IQuizService, QuizServiceIpml>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
@@ -73,7 +73,7 @@ namespace QuizzBankBE
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IRolePermissionServices, RolePermissionServicesIpml>();
-            services.AddScoped<IQuizzAccessService,QuizzAccessService>();
+            services.AddScoped<IQuizzAccessService, QuizzAccessService>();
             services.AddScoped<IDragAndDropQuestion, QuestionDragAndDropServicesIpml>();
             services.AddScoped<ITrueFalseQuestionService, TrueFalseQuestionService>();
             services.AddScoped<IMatchingQuestionServices, MatchingQuestionServicesImpl>();
