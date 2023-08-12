@@ -152,20 +152,22 @@ namespace QuizzBankBE.Services.ScoreServices
         public async Task<float> scoreMultiChoiceQuestions(List<DoMultipleAnswerDTO> doMultipleAnswers, Question question)
         {
             float sumFraction = 0;
+            bool correctAll = true;
 
             doMultipleAnswers.ForEach(async doMultipleAnswer =>
             {
                 var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doMultipleAnswer.AnswerId && e.QuestionId == question.Id);
 
-                if (answerCorrect.Fraction != 0)
+                if (answerCorrect.Fraction == 0)
                 {
-                    sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
-                } else
-                {
-                    sumFraction = 0;
-                    return;
+                    correctAll = false;
                 }
             });
+
+            if (correctAll)
+            {
+                sumFraction = (float)question.DefaultMark;
+            }
 
             return sumFraction;
         }
