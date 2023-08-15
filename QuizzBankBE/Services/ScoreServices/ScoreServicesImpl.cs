@@ -5,15 +5,17 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using System.Linq;
 using System.Reflection;
 
 namespace QuizzBankBE.Services.ScoreServices
 {
     public class ScoreServicesImpl : IScoreServicesImpl
     {
-        public DataContext _dataContext;
+        public static DataContext _dataContext;
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
@@ -30,10 +32,22 @@ namespace QuizzBankBE.Services.ScoreServices
         {
         }
 
+        public async Task<ServiceResponse<DoQuizResponseDTO>> GetScore(int accessID)
+        {
+            var servicesResponse = new ServiceResponse<DoQuizResponseDTO>();
+            var doQuizResponseDTO = new DoQuizResponseDTO();
+
+            servicesResponse.Data = doQuizResponseDTO;
+            servicesResponse.Message = "OK";
+
+            return servicesResponse;
+        }
+
         public async Task<ServiceResponse<float>> doQuestion<T>(T doQuestionDTO) where T : DoQuestionDTO
         {
             var servicesResponse = new ServiceResponse<float>();
-            var scoreSvcType = typeof(ScoreServicesImpl);
+            var scoreSvcs = new ScoreServicesImpl();
+            var scoreSvcType = scoreSvcs.GetType();
 
             var questionType = doQuestionDTO.GetType();
 
@@ -47,7 +61,7 @@ namespace QuizzBankBE.Services.ScoreServices
 
             if (scoreMethod == null)
             {
-                throw new ArgumentException("Wherer method: " + scoreMethodName , nameof(scoreMethod));
+                throw new ArgumentException("Wherer method: " + scoreMethodName, nameof(scoreMethod));
             }
 
             var quesPropertyName = "QuestionID";
@@ -55,11 +69,31 @@ namespace QuizzBankBE.Services.ScoreServices
             var quesID = (int)quesPropertyInfo.GetValue(doQuestionDTO);
             var question = await _dataContext.Questions.FirstOrDefaultAsync(e => e.Id == quesID);
 
-            var score = (float)scoreMethod.Invoke(null, new object[] { doQuestionDTO, question });
+            var score = await (Task<float>)scoreMethod.Invoke(scoreSvcs, new object[] { doQuestionDTO, question });
 
             servicesResponse.Message = "OK";
 
             return servicesResponse;
+        }
+
+        public async Task<QuizResponse> saveQuizRes(QuizResponse quizRes)
+        {
+
+            var quizExs = await _dataContext.QuizResponses.FirstOrDefaultAsync(e => e.QuestionId == quizRes.QuestionId && e.AccessId == quizRes.AccessId);
+
+            if (quizExs == null)
+            {
+                _dataContext.QuizResponses.Add(quizRes);
+            }
+            else
+            {
+
+                _dataContext.QuizResponses.Update(quizRes);
+            }
+
+            await _dataContext.SaveChangesAsync();
+
+            return quizRes;
         }
 
         public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer) where T : class
@@ -86,52 +120,146 @@ namespace QuizzBankBE.Services.ScoreServices
             return await saveQuizRes(quizRes);
         }
 
-        public async Task<QuizResponse> saveQuizRes (QuizResponse quizRes)
+        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionResponseDTO> matchSubDtos, Question question)
         {
+            var defaultMark = (float)question.DefaultMark;
+            var markMatchSub = defaultMark / matchSubDtos.Count;
 
-            var quizExs = await _dataContext.QuizResponses.FirstOrDefaultAsync(e => e.QuestionId == quizRes.QuestionId && e.AccessId == quizRes.AccessId);
-
-            if (quizExs == null)
+            matchSubDtos.ForEach(async matchSubDto =>
             {
-                _dataContext.QuizResponses.Add(quizRes);
-            }
-            else
-            {
+                var matchSubCorrect = await _dataContext.MatchSubQuestions.FirstOrDefaultAsync(e => e.Id == matchSubDto.Id);
 
-                _dataContext.QuizResponses.Update(quizRes);
-            }
+                if (!matchSubCorrect.AnswerText.Equals(matchSubDto.AnswerText))
+                {
+                    defaultMark -= markMatchSub;
+                }
+            });
 
-            await _dataContext.SaveChangesAsync();
-
-            return quizRes;
+            return defaultMark;
         }
 
         public async Task<float> doMatchQuestion(DoMatchingDTO doQuestionDTO, Question question)
         {
             var servicesResponse = new ServiceResponse<float>();
 
-            var mark = await scoreMatchQuestions(doQuestionDTO.MatchSubs, (float)question.DefaultMark);
+            var mark = await scoreMatchQuestions(doQuestionDTO.MatchSubs, question);
 
-            await saveMark<MatchSubQuestionBankDTO>(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
+            await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.MatchSubs);
 
             return mark;
         }
 
-        public async Task<float> scoreMatchQuestions(List<MatchSubQuestionBankDTO> matchSubDtos, float defaultMark)
+        public async Task<float> scoreMultiChoiceQuestions(List<DoMultipleAnswerDTO> doMultipleAnswers, Question question)
         {
-            var markMatchSub = defaultMark / matchSubDtos.Count;
+            float sumFraction = 0;
+            bool correctAll = true;
 
-            foreach (var matchSubDto in matchSubDtos)
+            doMultipleAnswers.ForEach(async doMultipleAnswer =>
             {
-                var matchSubCorrect = await _dataContext.MatchSubQuestionBanks.FirstOrDefaultAsync(e => e.Id == matchSubDto.Id);
+                var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doMultipleAnswer.AnswerId && e.QuestionId == question.Id);
 
-                if (!matchSubCorrect.AnswerText.Equals(matchSubDto.AnswerText))
+                if (answerCorrect.Fraction == 0)
                 {
-                    defaultMark -= markMatchSub;
+                    correctAll = false;
                 }
+            });
+
+            if (correctAll)
+            {
+                sumFraction = (float)question.DefaultMark;
             }
 
-            return defaultMark;
+            return sumFraction;
+        }
+
+        public async Task<float> doMultiChoiceQuestion(DoMultipleDTO doQuestionDTO, Question question)
+        {
+            var servicesResponse = new ServiceResponse<float>();
+
+            var mark = await scoreMultiChoiceQuestions(doQuestionDTO.Answers, question);
+
+            await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.Answers);
+
+            return mark;
+        }
+
+        public async Task<float> scoreTrueFalseQuestion(DoTrueFalseAnswerDTO doTrueFalseAnswer, Question question)
+        {
+            float sumFraction = 0;
+
+            var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doTrueFalseAnswer.AnswerId && e.QuestionId == question.Id);
+
+            sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
+
+            return sumFraction;
+        }
+
+        public async Task<float> doTrueFalseQuestion(DoTrueFalseDTO doTrueFalseDTO, Question question)
+        {
+            var servicesResponse = new ServiceResponse<float>();
+
+            var mark = await scoreTrueFalseQuestion(doTrueFalseDTO.Answers, question);
+
+            await saveMark(doTrueFalseDTO.QuestionID, doTrueFalseDTO.QuizAccessID, mark, doTrueFalseDTO.Answers);
+
+            return mark;
+        }
+
+        public async Task<float> scoreShortAnswerQuestion(DoShortAnswerDTO doShortAnswerDTO, Question question)
+        {
+            float sumFraction = 0;
+
+            var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doShortAnswerDTO.AnswerId && e.QuestionId == question.Id && e.Content.Equals(doShortAnswerDTO.Content));
+
+            if (answerCorrect != null)
+            {
+                sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
+            }
+
+            return sumFraction;
+        }
+
+        public async Task<float> doShortAnswerQuestion(DoShortDTO doShortDTO, Question question)
+        {
+            var servicesResponse = new ServiceResponse<float>();
+
+            var mark = await scoreShortAnswerQuestion(doShortDTO.Answers, question);
+
+            await saveMark(doShortDTO.QuestionID, doShortDTO.QuizAccessID, mark, doShortDTO.Answers);
+
+            return mark;
+        }
+
+        public async Task<float> scoreDragAndDropIntoTextQuestion(List<DoDragDropChoiceDTO> doDragDropChoiceDtos, Question question)
+        {
+            float sumFraction = 0;
+            var defaultMark = (float)question.DefaultMark;
+            var dragDropChoices = _dataContext.QuestionAnswers.Where(e => e.QuestionId == question.Id).ToList();
+            var markMatchSub = defaultMark / dragDropChoices.Count;
+
+            doDragDropChoiceDtos.ForEach(async doDragDropChoiceDto =>
+            {
+                var answerCorrect = dragDropChoices.ElementAtOrDefault(doDragDropChoiceDto.Position);
+
+                if (answerCorrect != null && answerCorrect.Id.Equals(doDragDropChoiceDto.AnswerId))
+                {
+                    sumFraction += ((float)question.DefaultMark * answerCorrect.Fraction);
+                }
+
+            });
+
+            return sumFraction;
+        }
+
+        public async Task<float> doDragAndDropIntoTextQuestion(DoDragDropTextDTO doDragDropTextDTO, Question question)
+        {
+            var servicesResponse = new ServiceResponse<float>();
+
+            var mark = await scoreDragAndDropIntoTextQuestion(doDragDropTextDTO.Answers, question);
+
+            await saveMark(doDragDropTextDTO.QuestionID, doDragDropTextDTO.QuizAccessID, mark, doDragDropTextDTO.Answers);
+
+            return mark;
         }
     }
 }

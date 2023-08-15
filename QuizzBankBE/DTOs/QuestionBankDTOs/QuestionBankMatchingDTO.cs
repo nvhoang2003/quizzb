@@ -8,7 +8,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
     public class CreateQuestionBankMatchingDTO : BaseQuestionBankDTO
     {
-        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
+        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match'")]
         public override string Questionstype { get; set; }
 
         public virtual List<CreateMatchSubQuestionBankDTO> MatchSubs { get; set; }
@@ -21,7 +21,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         public List<MatchSubQuestionBankResponseDTO> MatchSubQuestions { get; set; }
         public List<String> MatchSubAnswers { get; set; }
 
-        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match$'")]
+        [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match'")]
         public override string Questionstype { get; set; }
     }
 
@@ -38,6 +38,8 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
 
     public class MatchSubQuestionBankDTO : CreateMatchSubQuestionBankDTO
     {
+        [Required]
+        [IdExistValidation<MatchSubQuestionBank>("Id")]
         public int Id { get; set; }
     }
 
