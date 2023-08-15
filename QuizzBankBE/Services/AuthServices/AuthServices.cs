@@ -55,6 +55,7 @@ namespace QuizzBankBE.Services.AuthServices
                 var token = _jwtProvider.CreateToken(userlogin);
                 serviceResponse.Message = "Đăng nhập thành công!";
                 serviceResponse.accessToken = token;
+                serviceResponse.UserId = user.Id;
                 return serviceResponse;
             }
             else
