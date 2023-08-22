@@ -77,6 +77,21 @@ namespace QuizzBankBE.Controllers
             return Ok(role);
         }
 
+        [HttpGet("GetRoleById/{id}")]
+        public async Task<ActionResult<ServiceResponse<PageList<RoleDTO>>>> getRoleById(int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_ROLE").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _roleService.getRoleByID(id);
+            return Ok(response);
+        }
+
         [HttpPut("updateRole/{id}")]
         public async Task<ActionResult<ServiceResponse<RoleDTO>>> updateRole(
         [FromBody] CreateRoleDTO updateRoleDTO, int id)

@@ -79,6 +79,22 @@ namespace QuizzBankBE.Services.RoleServices
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<RoleDTO>> getRoleByID(int id)
+        {
+            var serviceResponse = new ServiceResponse<RoleDTO>();
+            var dbRole = await _dataContext.Roles.ToListAsync();
+
+            var roleDTO = dbRole.Select(u => _mapper.Map<RoleDTO>(u)).Where(c => c.Id == id).FirstOrDefault();
+            if (roleDTO == null)
+            {
+                serviceResponse.updateResponse(404, "không tồn tại");
+                return serviceResponse;
+            }
+
+            serviceResponse.Data = roleDTO;
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<RoleDTO>> deleteRole(int id)
         {
             var serviceResponse = new ServiceResponse<RoleDTO>();
