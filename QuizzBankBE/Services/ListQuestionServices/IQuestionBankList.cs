@@ -8,7 +8,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
 {
     public interface IQuestionBankList
     {
-        Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int categoryId);
+        Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId);
         Task<ServiceResponse<PageList<ListQuestion>>> getListQuestion(OwnerParameter ownerParameters, int userLoginId);
     }
 }
