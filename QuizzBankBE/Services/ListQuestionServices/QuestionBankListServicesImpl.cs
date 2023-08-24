@@ -26,10 +26,12 @@ namespace QuizzBankBE.Services.ListQuestionServices
             _jwtProvider = jwtProvider;
             _configuration = configuration;
         }
-        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int categoryId)
+        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId)
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestionBank>>();
-            var dbQuizBanks = await _dataContext.QuizBanks.Where(c => (c.CreateBy == userLoginId || c.IsPublic == 1) && c.CategoryId == categoryId).ToListAsync();
+
+            var dbQuizBanks =categoryId != null ?  await _dataContext.QuizBanks.Where(c => (c.CreateBy == userLoginId || c.IsPublic == 1) && c.CategoryId == categoryId ).ToListAsync() :
+                await _dataContext.QuizBanks.Where(c => c.CreateBy == userLoginId || c.IsPublic == 1).ToListAsync();
 
             var quizBankList = dbQuizBanks.Select(u => _mapper.Map<ListQuestionBank>(u)).ToList();
 
