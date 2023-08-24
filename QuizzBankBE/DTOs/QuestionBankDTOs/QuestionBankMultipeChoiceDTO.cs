@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class CreateQuestionBankMultipeChoiceDTO : BaseQuestionBankDTO
+    public class CreateQuestionBankMultipeChoiceDTO : BaseCreateQuestionBankDTO
     {
         [RegularExpression("^MultiChoice$", ErrorMessage = "The Question Type must be equal to 'MultiChoice'")]
         public override string Questionstype { get; set; }

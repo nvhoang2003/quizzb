@@ -29,7 +29,9 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
     public class ListQuestion
     {
         public int Id { get; set; }
+        public string QuestionsType { get; set; }
         public string Name { get; set; }
         public string AuthorName { get; set; }
+        public float DefaultMark { get; set; }
     }
 }
