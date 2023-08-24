@@ -110,7 +110,7 @@ namespace QuizzBankBE.Services.CategoryServices
             }
             else
             {
-                if (tags != null) {
+                if (tags?.Count() != 0) {
                     serviceResponse.updateResponse(400,"Không thể xóa ");
                 }
                 else
