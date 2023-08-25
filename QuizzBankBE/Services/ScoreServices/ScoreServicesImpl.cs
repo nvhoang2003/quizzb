@@ -8,6 +8,7 @@ using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using System.Text.Json;
 using System.Linq;
 using System.Reflection;
 
@@ -32,11 +33,50 @@ namespace QuizzBankBE.Services.ScoreServices
         {
         }
 
-        public async Task<ServiceResponse<DoQuizResponseDTO>> GetScore(int accessID)
+        public async Task<ServiceResponse<AllQuizzResponseDTO>> GetScore(int accessID)
         {
-            var servicesResponse = new ServiceResponse<DoQuizResponseDTO>();
-            var doQuizResponseDTO = new DoQuizResponseDTO();
+            var servicesResponse = new ServiceResponse<AllQuizzResponseDTO>();
+            var doQuizResponseDTO = new AllQuizzResponseDTO();
 
+            var dbQuizzResponse = (from a in _dataContext.QuizAccesses
+                                   join u in _dataContext.Users on a.UserId equals u.Id
+                                   join q in _dataContext.Quizzes on a.QuizId equals q.Id
+                                   join c in _dataContext.Courses on q.CourseId equals c.Id
+                                   where a.Id == accessID
+                                   select new
+                                   {
+                                       quizzAccess = _mapper.Map<QuizAccessDTO>(a),
+                                       userDoQuizz = _mapper.Map<UserDTO>(u),
+                                       quiz = _mapper.Map<QuizDTO>(q),
+                                       course = _mapper.Map<CourseDTO>(c)
+                                   }).FirstOrDefault();
+
+            doQuizResponseDTO.quiz = dbQuizzResponse.quiz;
+            doQuizResponseDTO.quizzAccess = dbQuizzResponse.quizzAccess;
+            doQuizResponseDTO.userDoQuizz = dbQuizzResponse.userDoQuizz;
+            doQuizResponseDTO.course = dbQuizzResponse.course;
+
+            var quizResult = (from qr in _dataContext.QuizResponses
+                              join ques in _dataContext.Questions on qr.QuestionId equals ques.Id
+                              join qa in _dataContext.QuestionAnswers on ques.Id equals qa.QuestionId into qaGroup
+                              from qag in qaGroup.DefaultIfEmpty()
+                              join qm in _dataContext.MatchSubQuestions on ques.Id equals qm.QuestionId into qmGroup
+                              from qmg in qmGroup.DefaultIfEmpty()
+                              where qr.AccessId == accessID                       
+                              select new {qr, ques, qag, qmg}
+                             ).AsEnumerable().GroupBy(i => new { i.qr, i.ques }).Distinct().Select( i => new
+                             {
+                                   QuizzResponse = _mapper.Map<Do1QuizResponseDTO>(i.Key.qr),
+                                   Question = _mapper.Map<GeneralQuestionResultDTO>(i.Key.ques),
+                                   QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerDTO>(qa.qag)).ToList(),
+                                   MatchSubQuestion = i.Select(qm => _mapper.Map<MatchSubQuestionResponseDTO>(qm.qmg)).ToList()
+                             });
+
+            foreach (var item in quizResult)
+            {
+                item.QuizzResponse.AnswerToJson = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(item.QuizzResponse?.Answer);
+                doQuizResponseDTO.questionReults.Add(item);
+            }
             servicesResponse.Data = doQuizResponseDTO;
             servicesResponse.Message = "OK";
 
