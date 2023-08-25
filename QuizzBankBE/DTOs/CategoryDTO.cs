@@ -25,14 +25,12 @@ namespace QuizzBankBE.DTOs
 
     public class CreateCategoryDTO
     {
-
         [Required]
         [StringLength(Const.String)]
         public string Name { get; set; }
 
         [StringLength(Const.Text)]
         public string? Description { get; set; }
-
     }
   
 }

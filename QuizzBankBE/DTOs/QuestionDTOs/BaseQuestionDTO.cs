@@ -34,4 +34,10 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public string AuthorName { get; set; }
         public float DefaultMark { get; set; }
     }
+
+    public class GeneralQuestionResultDTO : BaseQuestionDTO
+    {
+        public int Id { get; set; }
+        public string Questionstype { get; set; }
+    }
 }
