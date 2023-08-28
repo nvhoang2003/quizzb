@@ -68,7 +68,7 @@ namespace QuizzBankBE.Services.ScoreServices
                              {
                                    QuizzResponse = _mapper.Map<Do1QuizResponseDTO>(i.Key.qr),
                                    Question = _mapper.Map<GeneralQuestionResultDTO>(i.Key.ques),
-                                   QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerDTO>(qa.qag)).ToList(),
+                                   QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerResultDTO>(qa.qag)).ToList(),
                                    MatchSubQuestion = i.Select(qm => _mapper.Map<MatchSubQuestionResponseDTO>(qm.qmg)).ToList()
                              });
 

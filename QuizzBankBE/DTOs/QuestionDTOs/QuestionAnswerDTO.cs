@@ -14,4 +14,12 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public int? IsDeleted { get; set; }
         public int QuestionId { get; set; }
     }
+
+    public class QuestionAnswerResultDTO{
+        public int Id {get; set;}
+        public string Content { get; set; }
+        public float Fraction { get; set; }
+        public int? IsDeleted { get; set; }
+        public int QuestionId { get; set; }
+    }
 }
