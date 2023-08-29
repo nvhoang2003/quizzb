@@ -7,6 +7,7 @@ using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using System.Security.Claims;
 
 namespace QuizzBankBE.Services.QuestionServices
 {
