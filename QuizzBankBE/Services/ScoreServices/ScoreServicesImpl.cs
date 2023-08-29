@@ -76,7 +76,11 @@ namespace QuizzBankBE.Services.ScoreServices
             {
                 item.QuizzResponse.AnswerToJson = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(item.QuizzResponse?.Answer);
                 doQuizResponseDTO.questionReults.Add(item);
+                doQuizResponseDTO.totalPoint += item.QuizzResponse.Mark;
             }
+
+            doQuizResponseDTO.status = doQuizResponseDTO.totalPoint >= doQuizResponseDTO.quiz.PointToPass ? "Pass" : "Failed";
+
             servicesResponse.Data = doQuizResponseDTO;
             servicesResponse.Message = "OK";
 
