@@ -218,11 +218,16 @@ namespace QuizzBankBE.Services.ScoreServices
 
         public async Task<float> doMultiChoiceQuestion(DoMultipleDTO doQuestionDTO, Question question)
         {
+            DataContext _context = new DataContext();
             var servicesResponse = new ServiceResponse<float>();
 
             var mark = await scoreMultiChoiceQuestions(doQuestionDTO.Answers, question);
 
-            await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.Answers);
+            List<int> listAnswerId = doQuestionDTO.Answers.Select(c => c.AnswerId).ToList();
+
+            doQuestionDTO.AnswerSave.AddRange(await _context.QuestionAnswers.Where(c => listAnswerId.Contains(c.Id)).ToListAsync());
+
+            await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.AnswerSave);
 
             return mark;
         }

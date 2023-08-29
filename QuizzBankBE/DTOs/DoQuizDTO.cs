@@ -39,6 +39,7 @@ namespace QuizzBankBE.DTOs
         [RegularExpression("^MultiChoice$", ErrorMessage = "The Question Type must be equal to 'MultiChoice'")]
         public override string Questionstype { get; set; }
         public List<DoMultipleAnswerDTO> Answers { get; set; }
+        public List<object> AnswerSave { get; set; } = new List<object>();
     }
 
     public class DoTrueFalseDTO : DoQuestionDTO
