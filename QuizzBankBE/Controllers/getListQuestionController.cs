@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
@@ -35,7 +36,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("getListQuestionBank")]
         public async Task<ActionResult<ServiceResponse<PageList<ListQuestionBank>>>> getListQuestionBank(
-            [FromQuery] OwnerParameter ownerParameters, int? categoryId)
+            [FromQuery] OwnerParameter ownerParameters, int? categoryId, string? name, string? author, string? questionType, string? tag, DateTime? startDate, DateTime? endDate )
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
@@ -45,7 +46,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.getListQuestionBank(ownerParameters, userIdLogin, categoryId);
+            var response = await _questionListServices.getListQuestionBank(ownerParameters, userIdLogin, categoryId, name, author,  questionType, tag, startDate, endDate);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -61,7 +62,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("getListQuestion")]
         public async Task<ActionResult<ServiceResponse<PageList<ListQuestionBank>>>> getListQuestion(
-            [FromQuery] OwnerParameter ownerParameters)
+            [FromQuery] OwnerParameter ownerParameters, string? name, string? author, string? questionType, DateTime? startDate, DateTime? endDate)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUESTION").Value;
@@ -71,7 +72,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.getListQuestion(ownerParameters, userIdLogin);
+            var response = await _questionListServices.getListQuestion(ownerParameters, userIdLogin, name, author, questionType, startDate, endDate);
             var metadata = new
             {
                 response.Data.TotalCount,

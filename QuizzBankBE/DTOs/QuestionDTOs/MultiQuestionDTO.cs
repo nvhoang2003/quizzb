@@ -18,6 +18,6 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         [RegularExpression("^MultiChoice$", ErrorMessage = "The Question Type must be equal to 'MultiChoice'")]
         public string Questionstype { get; set; }
 
-        public virtual ICollection<QuestionAnswerDTO> Answers { get; set; }
+        public virtual ICollection<QuestionAnswerDTO> QuestionAnswers { get; set; }
     }
 }

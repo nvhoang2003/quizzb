@@ -8,6 +8,7 @@ using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
+using System.Linq;
 
 namespace QuizzBankBE.Services.ListQuestionServices
 {
@@ -26,12 +27,28 @@ namespace QuizzBankBE.Services.ListQuestionServices
             _jwtProvider = jwtProvider;
             _configuration = configuration;
         }
-        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId)
+        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? authorName, string? questionType, string? tag, DateTime? startDate, DateTime? endDate)
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestionBank>>();
-            var dbQuizBanks = await _dataContext.QuizBanks.Where(c => (c.CreateBy == userLoginId || c.IsPublic == 1) && (categoryId == null || c.CategoryId == categoryId)).ToListAsync();
+
+            var listTag = tag == null ? new List<string>() : tag.Split(", ").
+                Select(x => x.TrimStart()).
+                ToList();
+
+            HashSet<string> inputHashet = new HashSet<string>(listTag);
+
+            var dbQuizBanks = await _dataContext.QuizBanks.
+                Where(c => (c.CreateBy == userLoginId || c.IsPublic == 1) &&
+                        (categoryId == null || c.CategoryId == categoryId) &&
+                        (name == null || c.Name == name) &&
+                        (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
+                        (questionType == null || c.QuestionsType == questionType) &&
+                        (startDate == null || endDate == null || (c.CreateDate >= startDate && c.CreateDate <= endDate))).
+                ToListAsync();
 
             var quizBankList = dbQuizBanks.Select(u => _mapper.Map<ListQuestionBank>(u)).ToList();
+
+            var listAfterSearch = new List<ListQuestionBank>();
 
             foreach (var item in quizBankList)
             {
@@ -40,25 +57,42 @@ namespace QuizzBankBE.Services.ListQuestionServices
                 item.AuthorName = author.FirstName + author.LastName;
 
                 var dbTags = (from q in _dataContext.QuizBanks
-                              join qt in _dataContext.QbTags on q.Id equals qt.QbId
-                              join t in _dataContext.Tags on qt.TagId equals t.Id
-                              where q.Id == item.Id
-                              select t).Distinct().ToList();
+                                join qt in _dataContext.QbTags on q.Id equals qt.QbId
+                                join t in _dataContext.Tags on qt.TagId equals t.Id
+                                where q.Id == item.Id
+                                select t).Distinct().ToList();
+
+                var listTagName = dbTags.Select(c => c.Name).ToList();
+
+                HashSet<string> listTagNameHashet = new HashSet<string>(listTagName);
+
                 item.Tags = _mapper.Map<List<TagDTO>>(dbTags);
+
+
+                if (inputHashet.IsSubsetOf(listTagNameHashet))
+                {
+                    listAfterSearch.Add(item);
+                }
             }
 
             serviceResponse.Data = PageList<ListQuestionBank>.ToPageList(
-            quizBankList.AsEnumerable(),
+            listAfterSearch.AsEnumerable(),
 
             ownerParameters.pageIndex,
             ownerParameters.pageSize);
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<ListQuestion>>> getListQuestion(OwnerParameter ownerParameters, int userLoginId)
+            public async Task<ServiceResponse<PageList<ListQuestion>>> getListQuestion(OwnerParameter ownerParameters, int userLoginId, string? name, string? authorName, string? questionType, DateTime? startDate, DateTime? endDate)
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestion>>();
-            var dbQuestions = await _dataContext.Questions.Where(c => c.CreateBy == userLoginId).ToListAsync();
+            var dbQuestions = await _dataContext.Questions.
+                 Where(c => (c.CreateBy == userLoginId) &&
+                        (name == null || c.Name == name) &&
+                        (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
+                        (questionType == null || c.QuestionsType == questionType) &&
+                        (startDate == null || endDate == null || (c.CreateDate >= startDate && c.CreateDate <= endDate))).
+                ToListAsync();
 
             var questionList = dbQuestions.Select(u => _mapper.Map<ListQuestion>(u)).ToList();
 
