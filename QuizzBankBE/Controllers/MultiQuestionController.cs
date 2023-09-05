@@ -33,7 +33,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpPost("CreateNewQuesstion")]
         public async Task<ActionResult<ServiceResponse<MultiQuestionDTO>>> createNewQuestionBank(
-               [FromBody] CreateMultiQuestionDTO createQuestionDTO)
+               [FromBody] List<CreateMultiQuestionDTO> createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
@@ -43,7 +43,11 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            createQuestionDTO.AuthorId = userIdLogin;
+            foreach(var item in createQuestionDTO)
+            {
+                item.AuthorId = userIdLogin;
+            }
+
             var response = await _multiQuestionServices.createNewMultipeQuestion(createQuestionDTO);
 
             return Ok(response);

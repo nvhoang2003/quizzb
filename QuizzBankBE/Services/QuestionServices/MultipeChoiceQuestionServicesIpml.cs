@@ -30,20 +30,23 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<MultiQuestionDTO>> createNewMultipeQuestion(CreateMultiQuestionDTO createQuestionDTO)
+        public async Task<ServiceResponse<MultiQuestionDTO>> createNewMultipeQuestion(List<CreateMultiQuestionDTO> createQuestionDTO)
         {
             var serviceResponse = new ServiceResponse<MultiQuestionDTO>();
 
-            Question quesSaved = _mapper.Map<Question>(createQuestionDTO);
-            _dataContext.Questions.Add(quesSaved);
+            List<Question> quesSaved = _mapper.Map<List<Question>>(createQuestionDTO);
+            _dataContext.Questions.AddRange(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            foreach (var item in createQuestionDTO.Answers)
+           /* var selectResult = createQuestionDTO.SelectMany(s => s.Answers);
+
+            foreach (var item in selectResult)
             {
-                createAnswer(item, quesSaved.Id);
-            }
+                createAnswer(item.Result, item.Id);
+            }*/
 
-            await _dataContext.SaveChangesAsync();
+           // await _dataContext.SaveChangesAsync();
+
             serviceResponse.updateResponse(200, "Tạo câu hỏi thành công");
 
             return serviceResponse;
@@ -69,14 +72,13 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public QuestionAnswer createAnswer(QuestionAnswerDTO answer, int quizBankId)
+        public QuestionAnswer createAnswer(QuestionAnswer answer, int quizBankId)
         {
             answer.QuestionId = quizBankId;
 
             QuestionAnswer answerSave = _mapper.Map<QuestionAnswer>(answer);
-            _dataContext.QuestionAnswers.Add(answerSave);
-
-            return answerSave;
+            _dataContext.QuestionAnswers.Add(answer);
+            return answer;
         }
 
         public async Task<bool> deleteAnswer(int questionId )
