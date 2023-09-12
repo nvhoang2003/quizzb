@@ -113,6 +113,9 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         public string AuthorName { get; set; }
 
         public List<TagDTO> Tags { get; set; }
+
         public float DefaultMark { get; set; }
+
+        public string CategoryName { get; set; }
     }
 }

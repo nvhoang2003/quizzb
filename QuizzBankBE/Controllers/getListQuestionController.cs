@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.ListQuestionServices;
@@ -61,7 +62,7 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpGet("getListQuestion")]
-        public async Task<ActionResult<ServiceResponse<PageList<ListQuestionBank>>>> getListQuestion(
+        public async Task<ActionResult<ServiceResponse<PageList<ListQuestion>>>> getListQuestion(
             [FromQuery] OwnerParameter ownerParameters, string? name, string? author, string? questionType, DateTime? startDate, DateTime? endDate)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);

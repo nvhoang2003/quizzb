@@ -53,8 +53,9 @@ namespace QuizzBankBE.Services.ListQuestionServices
             foreach (var item in quizBankList)
             {
                 var quizBank = dbQuizBanks.First(c => c.Id == item.Id);
-                var author = await _dataContext.Users.FirstOrDefaultAsync(c => c.Id == quizBank.CreateBy);
-                item.AuthorName = author.FirstName + author.LastName;
+                item.AuthorName = await _dataContext.Users.Where(c => c.Id == quizBank.CreateBy).Select(c => c.FirstName + " " + c.LastName).FirstOrDefaultAsync();
+
+                item.CategoryName = await _dataContext.Categories.Where(c => c.Id == quizBank.CategoryId).Select(c => c.Name).FirstOrDefaultAsync();
 
                 var dbTags = (from q in _dataContext.QuizBanks
                                 join qt in _dataContext.QbTags on q.Id equals qt.QbId
