@@ -1,6 +1,7 @@
 ﻿using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.BaseDTO;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.FormValidator;
 using ServiceStack.DataAnnotations;
 using System.ComponentModel.DataAnnotations;
@@ -10,8 +11,8 @@ namespace QuizzBankBE.DTOs
     public class QuizDTO : BaseQuizDTO
     {
         public int ID { get; set; }
+        public bool IsValid { get; set; }
         public DateTime? CreateDate { get; set; }
-
         public DateTime? UpdateDate { get; set; }
     }
     public class QuizResponseDTO
@@ -21,6 +22,16 @@ namespace QuizzBankBE.DTOs
         public string Status { get; set; }
         public int Version { get; set; }
         public int? IsDeleted { get; set; }
+    }
+
+    public class QuizDetailResponseDTO : BaseQuizDTO
+    {
+        public int ID { get; set; }
+        public bool IsValid { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+
+        public List<ListQuestion> listQuestion = new List<ListQuestion>();
     }
     public class CreateQuizDTO : BaseQuizDTO
     {

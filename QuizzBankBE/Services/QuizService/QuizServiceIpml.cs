@@ -47,6 +47,11 @@ namespace QuizzBankBE.Services.QuizService
             var dbQuiz = await _dataContext.Quizzes.ToListAsync();
             var quizDTO = dbQuiz.Select(u => _mapper.Map<QuizDTO>(u)).ToList();
 
+            foreach(var item in quizDTO)
+            {
+                item.IsValid = item.MaxPoint > item.PointToPass ? true : false;
+            }
+
             serviceResponse.Data = PageList<QuizDTO>.ToPageList(
             quizDTO.AsEnumerable<QuizDTO>(),
             ownerParameters.pageIndex,
@@ -117,6 +122,26 @@ namespace QuizzBankBE.Services.QuizService
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.Message = "Tạo thành công";
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<QuizDetailResponseDTO>> getQuizById(int id)
+        {
+            ServiceResponse<QuizDetailResponseDTO> serviceResponse = new ServiceResponse<QuizDetailResponseDTO>();
+
+            QuizDetailResponseDTO quizDetail = _dataContext.Quizzes.
+                Where(q => q.Id == id).
+                Select(u => _mapper.Map<QuizDetailResponseDTO>(u)).
+                FirstAsync().
+                Result;
+
+            if (quizDetail == null)
+            {
+                serviceResponse.updateResponse(400, "không tồn tại");
+                return serviceResponse;
+            }
+
+            serviceResponse.Data = quizDetail;
             return serviceResponse;
         }
     }
