@@ -97,14 +97,26 @@ namespace QuizzBankBE.Services.QuizService
         public async Task<ServiceResponse<QuizQuestionDTO>> addQuestionIntoQuiz (CreateQuizQuestionDTO createQuizQuestionDTO)
         {
             var serviceResponse = new ServiceResponse<QuizQuestionDTO>();
-            var qzQSaved = _mapper.Map<QuizQuestion>(createQuizQuestionDTO);
+            List<QuizQuestion> quizQuestionsSaved = new List<QuizQuestion>();
+            QuizQuestion oneQuizQuestionSaved = new QuizQuestion();
+            int? quizId = createQuizQuestionDTO.QuizzId;
 
-            _dataContext.QuizQuestions.Add(qzQSaved);
+            foreach (var item in createQuizQuestionDTO.questionAddeds)
+            {
+                oneQuizQuestionSaved.QuizzId = quizId;
+                oneQuizQuestionSaved.QuestionId = item.QuestionId;
+                oneQuizQuestionSaved.Point = item.Point;
+
+                quizQuestionsSaved.Add(oneQuizQuestionSaved);
+            }
+
+            Quiz dbQuiz = await _dataContext.Quizzes.FirstOrDefaultAsync(q => q.Id.Equals(quizId));
+            dbQuiz.MaxPoint = createQuizQuestionDTO.questionAddeds.Select(c => c.Point).Sum();
+            _dataContext.Quizzes.Update(dbQuiz);
+            _dataContext.QuizQuestions.AddRange(quizQuestionsSaved);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.Message = "Tạo thành công";
-            serviceResponse.Data = _mapper.Map<QuizQuestionDTO>(qzQSaved);
-
             return serviceResponse;
         }
     }

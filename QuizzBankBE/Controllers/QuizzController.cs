@@ -80,7 +80,7 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpPost("AddQuestion")]
-        public async Task<ActionResult<ServiceResponse<QuizQuestionDTO>>> addQuizQuestion([FromQuery]CreateQuizQuestionDTO createQuizQuestionDTO)
+        public async Task<ActionResult<ServiceResponse<QuizQuestionDTO>>> addQuizQuestion([FromBody] CreateQuizQuestionDTO createQuizQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;

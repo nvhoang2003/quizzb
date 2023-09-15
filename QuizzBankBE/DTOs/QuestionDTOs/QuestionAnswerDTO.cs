@@ -21,5 +21,6 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public float Fraction { get; set; }
         public int? IsDeleted { get; set; }
         public int QuestionId { get; set; }
+        public bool? isChosen { get; set; }   
     }
 }

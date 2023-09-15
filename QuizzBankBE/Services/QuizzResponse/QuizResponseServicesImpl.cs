@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
@@ -10,6 +11,7 @@ using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace QuizzBankBE.Services.QuizzResponse
 {
@@ -65,6 +67,21 @@ namespace QuizzBankBE.Services.QuizzResponse
             foreach (var item in quizResult)
             {
                 item.QuizzResponse.AnswerToJson = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(item.QuizzResponse?.Answer);
+                var arrayQuestionResponse = JArray.Parse(item.QuizzResponse?.Answer);
+                List<int> answerChosenId = new List<int>();
+                foreach (var oneRes in arrayQuestionResponse)
+                {
+                    var idToken = oneRes["Id"];
+                    if (idToken != null)
+                    {
+                        int id = idToken.ToObject<int>();
+                        answerChosenId.Add(id);
+                    }
+                }
+                foreach(var answer in item.QuestionAnswer)
+                {
+                    answer.isChosen = answerChosenId.Contains(answer.Id) ? true : false;
+                }
                 doQuizResponseDTO.questionReults.Add(item);
                 doQuizResponseDTO.totalPoint += item.QuizzResponse.Mark;
             }

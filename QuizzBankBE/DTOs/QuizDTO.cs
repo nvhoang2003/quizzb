@@ -28,11 +28,9 @@ namespace QuizzBankBE.DTOs
 
     public class CreateQuizQuestionDTO
     {
-        [IdExistValidation<Question>("Id")]
-        public int? QuestionId { get; set; }
-
         [IdExistValidation<Quiz>("Id")]
         public int? QuizzId { get; set; }
+        public List<QuestionAdded> questionAddeds { get; set; }
     }
 
     public class QuizQuestionDTO
@@ -40,5 +38,14 @@ namespace QuizzBankBE.DTOs
         public int Id { get; set; }
         public int? QuestionId { get; set; }
         public int? QuizzId { get; set; }
+    }
+
+    public class QuestionAdded
+    {
+        [IdExistValidation<Question>("Id")]
+        public int? QuestionId { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public float Point { get; set; }
     }
 }
