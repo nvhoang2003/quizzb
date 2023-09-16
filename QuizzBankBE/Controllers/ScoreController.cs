@@ -7,6 +7,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
+using QuizzBankBE.Services.QuizService;
 using QuizzBankBE.Services.ScoreServices;
 using QuizzBankBE.Utility;
 using System.Security.Claims;
@@ -24,13 +25,15 @@ namespace QuizzBankBE.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
+        private readonly IValidateScore _validateScoreServices;
 
-        public ScoreController(IScoreServicesImpl scoreServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public ScoreController(IScoreServicesImpl scoreServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration, IValidateScore validateScoreServices)
         {
             _scoreServices = scoreServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
+            _validateScoreServices = validateScoreServices;
         }
 
         [HttpGet("{accessID}")]
@@ -39,114 +42,46 @@ namespace QuizzBankBE.Controllers
             var response = await _scoreServices.GetScore(accessID);
 
             return Ok(response);
-        }
-        
-        [HttpPost("{quizID}/doMatchQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> DoMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
+        }      
+
+        [HttpPost("SubmitQuizz")]
+        public async Task<ActionResult<ServiceResponse<bool>>> SubmitTheQuiz<T>(
+            [FromBody] int accessID, List<T> ListQuestionSubmit) where T : DoQuestionDTO
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
 
-            if (!hasQuizAccess)
+            var permissionCheckQuiz = _configuration.GetSection("Permission:CHECK_QUIZ").Value;
+            var permissionDoQuiz = _configuration.GetSection("Permission:DO_QUIZ").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionCheckQuiz) && !CheckPermission.check(userIdLogin, permissionDoQuiz))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _scoreServices.doQuestion(doQuestionDTO);
-
-            return Ok(response);
-        }
-
-        [HttpPost("{quizID}/doMultipeQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> DoMultipeQuestion([FromBody] DoMultipleDTO doQuestionDTO, int quizID)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
-
-            if (!hasQuizAccess)
+            Dictionary<string, List<string>> errors = await _validateScoreServices.checkAccessId(accessID, userIdLogin);
+            if(errors.Count() != 0)
             {
-                return new StatusCodeResult(403);
+                return StatusCode(StatusCodes.Status400BadRequest, errors);
             }
 
-            var response = await _scoreServices.doQuestion(doQuestionDTO);
-
-            return Ok(response);
+            return Ok(true);
         }
 
-        [HttpPost("{quizID}/doTrueFalseQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> DoTrueFalseQuestion([FromBody] DoTrueFalseDTO doQuestionDTO, int quizID)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
+      //  [HttpPost("CreateNewQuizz")]
+      //  public async Task<ActionResult<ServiceResponse<QuizResponseDTO>>> createNewQizz(
+      //[FromBody] CreateQuizDTO createQuizDTO)
+      //  {
+      //      var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+      //      var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
 
-            if (!hasQuizAccess)
-            {
-                return new StatusCodeResult(403);
-            }
+      //      if (!CheckPermission.check(userIdLogin, permissionName))
+      //      {
+      //          return new StatusCodeResult(403);
+      //      }
 
-            var response = await _scoreServices.doQuestion(doQuestionDTO);
+      //      var response = await _quizServices.createNewQuiz(createQuizDTO);
 
-            return Ok(response);
-        }
-
-        [HttpPost("{quizID}/doShortAnswerQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> DoShortAnswerQuestion([FromBody] DoShortDTO doQuestionDTO, int quizID)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var hasQuizAccess = await HaveQuizAccess(doQuestionDTO.QuizAccessID, userIdLogin, quizID);
-
-            if (!hasQuizAccess)
-            {
-                return new StatusCodeResult(403);
-            }
-
-            var response = await _scoreServices.doQuestion(doQuestionDTO);
-
-            return Ok(response);
-        }
-
-        [HttpPost("{quizID}/doDragAndDropIntoTextQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> DoDragAndDropIntoTextQuestion([FromBody] DoDragDropTextDTO doDragDropTextDTO, int quizID)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var hasQuizAccess = await HaveQuizAccess(doDragDropTextDTO.QuizAccessID, userIdLogin, quizID);
-
-            if (!hasQuizAccess)
-            {
-                return new StatusCodeResult(403);
-            }
-
-            var response = await _scoreServices.doQuestion(doDragDropTextDTO);
-
-            return Ok(response);
-        }
-
-        [HttpPost("{quizID}/test/doMatchQuestion")]
-        public async Task<ActionResult<ServiceResponse<float>>> TestMatchQuestion([FromBody] DoMatchingDTO doQuestionDTO, int quizID)
-        {
-            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permissionName = _configuration.GetSection("Permission:CHECK_QUIZ").Value;
-
-            if (!CheckPermission.check(userIdLogin, permissionName))
-            {
-                return new StatusCodeResult(403);
-            }
-
-            var response = await _scoreServices.doQuestion(doQuestionDTO);
-
-            return Ok(response);
-        }
-
-        private async Task<bool> HaveQuizAccess(int quizAcessID, int userID, int quizID)
-        {
-            var quizAccess = await _dataContext.QuizAccesses.FirstOrDefaultAsync(e => e.Id == quizAcessID && e.UserId == userID && e.QuizId == quizID && e.Status.Equals("Doing"));
-
-            if (quizAccess == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
+      //      return Ok(response);
+      //  }
     }
 }

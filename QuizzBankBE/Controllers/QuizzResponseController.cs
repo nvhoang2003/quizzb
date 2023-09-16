@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
@@ -40,7 +41,17 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             
             var response = await _quizResponseServices.getListResponseForDoQuiz(ownerParameter, userIdLogin, quizId, courseId);
+            var metadata = new
+            {
+                response.Data.TotalCount,
+                response.Data.PageSize,
+                response.Data.CurrentPage,
+                response.Data.TotalPages,
+                response.Data.HasNext,
+                response.Data.HasPrevious
+            };
 
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(response);
         }
 
@@ -56,7 +67,17 @@ namespace QuizzBankBE.Controllers
             }
 
             var response = await _quizResponseServices.getListResponseForWriteQuiz(ownerParameter, quizId, courseId, name);
+            var metadata = new
+            {
+                response.Data.TotalCount,
+                response.Data.PageSize,
+                response.Data.CurrentPage,
+                response.Data.TotalPages,
+                response.Data.HasNext,
+                response.Data.HasPrevious
+            };
 
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(response);
         }
 

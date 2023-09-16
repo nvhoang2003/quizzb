@@ -85,7 +85,7 @@ namespace QuizzBankBE
             services.AddScoped<IScoreServicesImpl, ScoreServicesImpl>();
             services.AddScoped<IUserCoursesServices, UserCoursesServicesIpml>();
             services.AddScoped<IQuizResponseServices, QuizResponseServicesImpl>();
-            //services.AddScoped<IGmcServices, GmcServicesImpl>();
+            services.AddScoped<IValidateScore, ValidateScoreImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
             services.AddAutoMapper(typeof(Startup));
