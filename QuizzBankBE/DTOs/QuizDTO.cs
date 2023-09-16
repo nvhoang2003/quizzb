@@ -31,7 +31,7 @@ namespace QuizzBankBE.DTOs
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
 
-        public List<ListQuestion> listQuestion = new List<ListQuestion>();
+        public List<ListQuestion> listQuestion { get; set; } = new List<ListQuestion>();
     }
     public class CreateQuizDTO : BaseQuizDTO
     {

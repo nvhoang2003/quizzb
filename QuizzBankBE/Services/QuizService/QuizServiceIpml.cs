@@ -4,6 +4,7 @@ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.DTOs.BaseDTO;
+using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
@@ -129,17 +130,22 @@ namespace QuizzBankBE.Services.QuizService
         {
             ServiceResponse<QuizDetailResponseDTO> serviceResponse = new ServiceResponse<QuizDetailResponseDTO>();
 
-            QuizDetailResponseDTO quizDetail = _dataContext.Quizzes.
-                Where(q => q.Id == id).
-                Select(u => _mapper.Map<QuizDetailResponseDTO>(u)).
-                FirstAsync().
-                Result;
+            var quizDbDetail = (from qi in _dataContext.Quizzes
+                                join qq in _dataContext.QuizQuestions on qi.Id equals qq.QuizzId
+                                join qe in _dataContext.Questions on qq.QuestionId equals qe.Id
+                                where qi.Id == id
+                                select new { qi,qe }
+                                ).ToList();
+
+            QuizDetailResponseDTO quizDetail = _mapper.Map<QuizDetailResponseDTO>(quizDbDetail.First().qi);
 
             if (quizDetail == null)
             {
                 serviceResponse.updateResponse(400, "không tồn tại");
                 return serviceResponse;
             }
+
+            quizDetail.listQuestion = _mapper.Map<List<ListQuestion>>(quizDbDetail.Select(c => c.qe).ToList());
 
             serviceResponse.Data = quizDetail;
             return serviceResponse;
