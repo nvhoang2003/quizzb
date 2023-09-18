@@ -71,7 +71,6 @@ namespace QuizzBankBE
             services.AddScoped<IMultipeChoiceQuizBankServices, MultipeChoiceQuestionbankServicesIpml>();
             services.AddScoped<IMatchingQuestionBankServices, MatchingQuestionBankServicesImpl>();
             services.AddScoped<IDragAndDropQuestionBank, QuestionBankDragAndDropServicesIpml>();
-            ////services.AddScoped<IRoleServices, RoleServicesImpl>();
             ////services.AddScoped<IPermissionServices, PermissionServicesImpl>();
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IRolePermissionServices, RolePermissionServicesIpml>();
@@ -85,7 +84,6 @@ namespace QuizzBankBE
             services.AddScoped<IScoreServicesImpl, ScoreServicesImpl>();
             services.AddScoped<IUserCoursesServices, UserCoursesServicesIpml>();
             services.AddScoped<IQuizResponseServices, QuizResponseServicesImpl>();
-            services.AddScoped<IValidateScore, ValidateScoreImpl>();
             //services.AddScoped<ISaleServices, SaleServicesImpl>();
             //services.AddScoped<IWebconfigServices, WebconfigServicesImpl>();
             services.AddAutoMapper(typeof(Startup));

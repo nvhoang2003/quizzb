@@ -150,5 +150,20 @@ namespace QuizzBankBE.Controllers
             var response = await _quizServices.getQuizById(id);
             return Ok(response);
         }
+
+        [HttpGet("getQuizForTest/{id}")]
+        public async Task<ActionResult<QuizDetailResponseDTO>> getQuizForTest(int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:DO_QUIZZ").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _quizServices.showQuizForTest(id);
+            return Ok(response);
+        }
     }
 }

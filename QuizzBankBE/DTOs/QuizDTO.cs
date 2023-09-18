@@ -59,4 +59,11 @@ namespace QuizzBankBE.DTOs
         [System.ComponentModel.DataAnnotations.Required]
         public float Point { get; set; }
     }
+
+    public class QuizResponseForTest
+    {
+        public QuizDTO quiz { get; set;  }
+
+        public List<object> questionReults { get; set; } = new List<object>();
+    }
 }

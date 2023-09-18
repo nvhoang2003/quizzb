@@ -35,10 +35,17 @@ namespace QuizzBankBE.DTOs
 
     public class DoMultipleDTO : DoQuestionDTO
     {
+        public DoMultipleDTO(int QuizAccessID, int QuestionID, List<int> AnswerIds)
+        {
+            this.QuizAccessID = QuizAccessID;
+            this.QuestionID = QuestionID;
+            this.Questionstype = "MultiChoice";
+            this.AnswerId = AnswerIds;
+        }
         [Required]
         [RegularExpression("^MultiChoice$", ErrorMessage = "The Question Type must be equal to 'MultiChoice'")]
         public override string Questionstype { get; set; }
-        public List<DoMultipleAnswerDTO> Answers { get; set; }
+        public List<int> AnswerId { get; set; }
         public List<object> AnswerSave { get; set; } = new List<object>();
     }
 
