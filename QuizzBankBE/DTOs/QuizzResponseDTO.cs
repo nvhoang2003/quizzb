@@ -1,8 +1,16 @@
-﻿using QuizzBankBE.DTOs.QuestionDTOs;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs.QuestionDTOs;
+using QuizzBankBE.FormValidator;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
 namespace QuizzBankBE.DTOs
 {
+    public enum AnswerStatus
+    {
+        Right,
+        Wrong
+    }
     public class AllQuizzResponseDTO
     {
         public UserDTO userDoQuizz { get; set; }
@@ -36,5 +44,22 @@ namespace QuizzBankBE.DTOs
 
         public String Answer { get; set; }
         public JsonElement AnswerToJson { get; set; }
+    }
+
+    public class NewQuizResponse
+    {
+        public int? AccessId { get; set; }
+
+        public float? Mark { get; set; }
+
+        [Required]
+        [EnumDataType(typeof(AnswerStatus))] 
+        public string? Status { get; set; }
+
+        [Required]
+        [IdExistValidation<Question>("Id")]
+        public int? QuestionId { get; set; }
+
+        public string? Answer { get; set; }
     }
 }

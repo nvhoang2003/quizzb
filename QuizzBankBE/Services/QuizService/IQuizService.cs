@@ -13,5 +13,6 @@ namespace QuizzBankBE.Services.QuizService
         Task<ServiceResponse<QuizDTO>> deleteQuizz(int id);
         Task<ServiceResponse<QuizResponseDTO>> updateQuizz(CreateQuizDTO updateQuizDTO, int id);
         Task<ServiceResponse<QuizQuestionDTO>> addQuestionIntoQuiz(CreateQuizQuestionDTO createQuizQuestionDTO);
+        Task<ServiceResponse<QuizResponseForTest>> showQuizForTest(int id);
     }
 }

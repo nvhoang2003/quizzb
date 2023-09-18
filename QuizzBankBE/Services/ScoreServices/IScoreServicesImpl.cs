@@ -5,7 +5,7 @@ namespace QuizzBankBE.Services.ScoreServices
 {
     public interface IScoreServicesImpl
     {
-        Task<ServiceResponse<float>> doQuestion<T>(T doQuestionDTO) where T : DoQuestionDTO;
+        Task<ServiceResponse<float>> doQuestion(List<NewQuizResponse> newQuizResponses);
         Task<ServiceResponse<AllQuizzResponseDTO>> GetScore(int accessID);
     }
 }

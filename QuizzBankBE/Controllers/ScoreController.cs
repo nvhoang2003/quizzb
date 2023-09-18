@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
@@ -10,7 +11,11 @@ using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.QuizService;
 using QuizzBankBE.Services.ScoreServices;
 using QuizzBankBE.Utility;
+using System.Dynamic;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace QuizzBankBE.Controllers
 {
@@ -25,15 +30,13 @@ namespace QuizzBankBE.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
-        private readonly IValidateScore _validateScoreServices;
 
-        public ScoreController(IScoreServicesImpl scoreServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration, IValidateScore validateScoreServices)
+        public ScoreController(IScoreServicesImpl scoreServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
         {
             _scoreServices = scoreServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
-            _validateScoreServices = validateScoreServices;
         }
 
         [HttpGet("{accessID}")]
@@ -45,43 +48,19 @@ namespace QuizzBankBE.Controllers
         }      
 
         [HttpPost("SubmitQuizz")]
-        public async Task<ActionResult<ServiceResponse<bool>>> SubmitTheQuiz<T>(
-            [FromBody] int accessID, List<T> ListQuestionSubmit) where T : DoQuestionDTO
+        public async Task<ActionResult<ServiceResponse<bool>>> SubmitTheQuiz(
+            [FromBody] List<NewQuizResponse> ListQuestionSubmit, int accessID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:DO_QUIZZ").Value;
 
-            var permissionCheckQuiz = _configuration.GetSection("Permission:CHECK_QUIZ").Value;
-            var permissionDoQuiz = _configuration.GetSection("Permission:DO_QUIZ").Value;
-
-            if (!CheckPermission.check(userIdLogin, permissionCheckQuiz) && !CheckPermission.check(userIdLogin, permissionDoQuiz))
+            if (!CheckPermission.check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            Dictionary<string, List<string>> errors = await _validateScoreServices.checkAccessId(accessID, userIdLogin);
-            if(errors.Count() != 0)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, errors);
-            }
-
-            return Ok(true);
+            _scoreServices.doQuestion(ListQuestionSubmit);
+            return Ok();
         }
-
-      //  [HttpPost("CreateNewQuizz")]
-      //  public async Task<ActionResult<ServiceResponse<QuizResponseDTO>>> createNewQizz(
-      //[FromBody] CreateQuizDTO createQuizDTO)
-      //  {
-      //      var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-      //      var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
-
-      //      if (!CheckPermission.check(userIdLogin, permissionName))
-      //      {
-      //          return new StatusCodeResult(403);
-      //      }
-
-      //      var response = await _quizServices.createNewQuiz(createQuizDTO);
-
-      //      return Ok(response);
-      //  }
     }
 }

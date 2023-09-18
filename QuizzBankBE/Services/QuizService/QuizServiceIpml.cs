@@ -150,5 +150,46 @@ namespace QuizzBankBE.Services.QuizService
             serviceResponse.Data = quizDetail;
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<QuizResponseForTest>> showQuizForTest(int id)
+        {
+            ServiceResponse<QuizResponseForTest> serviceResponse = new ServiceResponse<QuizResponseForTest>();
+            QuizResponseForTest quizResponseForTest = new QuizResponseForTest();
+            
+            var dbQuiz = await _dataContext.Quizzes.ToListAsync();
+
+            quizResponseForTest.quiz = dbQuiz.Where(c => c.Id == id).Select(u => _mapper.Map<QuizDTO>(u)).FirstOrDefault();
+
+            var quizResult = (from qi in _dataContext.Quizzes
+                              join qq in _dataContext.QuizQuestions on qi.Id equals qq.QuizzId
+                              join ques in _dataContext.Questions on qq.QuestionId equals ques.Id
+                              join qa in _dataContext.QuestionAnswers on ques.Id equals qa.QuestionId into qaGroup
+                              from qag in qaGroup.DefaultIfEmpty()
+                              join qm in _dataContext.MatchSubQuestions on ques.Id equals qm.QuestionId into qmGroup
+                              from qmg in qmGroup.DefaultIfEmpty()
+                              where qi.Id == id
+                              select new { qi, ques, qag, qmg }
+                          ).AsEnumerable().GroupBy(i => new { i.qi, i.ques }).Distinct().Select(i => new
+                          {
+                              Question = _mapper.Map<GeneralQuestionResultDTO>(i.Key.ques),
+                              QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerResultDTO>(qa.qag)).ToList(),
+                              MatchSubQuestion = i.Select(qm => _mapper.Map<MatchSubQuestionResponseDTO>(qm.qmg)).ToList()
+                          });
+
+            if (quizResult == null)
+            {
+                serviceResponse.updateResponse(400, "không tồn tại");
+                return serviceResponse;
+            }
+
+            foreach(var item in quizResult)
+            {
+                quizResponseForTest.questionReults.Add(item);
+            }
+
+            serviceResponse.Data = quizResponseForTest;
+
+            return serviceResponse;
+        }
     }
 }

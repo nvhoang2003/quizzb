@@ -125,6 +125,7 @@ namespace QuizzBankBE
             CreateMap<GeneralQuestionResultDTO, Question>().ReverseMap();
             CreateMap<QuestionAnswer, QuestionAnswerResultDTO>().ReverseMap();
             CreateMap<Quiz, QuizDetailResponseDTO>().ReverseMap();
+            CreateMap<NewQuizResponse, QuizResponse>().ReverseMap();
         }
     }
 }
