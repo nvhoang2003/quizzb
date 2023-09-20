@@ -42,11 +42,14 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters)
+        public async Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic)
         {
             var serviceResponse = new ServiceResponse<PageList<QuizDTO>>();
             var dbQuiz = await _dataContext.Quizzes.ToListAsync();
-            var quizDTO = dbQuiz.Select(u => _mapper.Map<QuizDTO>(u)).ToList();
+            var quizDTO = dbQuiz.Where(q =>(name == null || q.Name.Contains(name)) && 
+            (timeStart == null || timeEnd == null || (q.TimeOpen >= timeStart && q.TimeOpen <= timeEnd && q.TimeClose >= timeStart && q.TimeClose <= timeEnd)) &&
+            (isPublic == null || q.IsPublic == Convert.ToSByte(isPublic) ))
+            .Select(u => _mapper.Map<QuizDTO>(u)).ToList();
 
             foreach(var item in quizDTO)
             {
@@ -151,7 +154,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizResponseForTest>> showQuizForTest(int id)
+        public async Task<ServiceResponse<QuizResponseForTest>> showQuizForTest(int id, string userName)
         {
             ServiceResponse<QuizResponseForTest> serviceResponse = new ServiceResponse<QuizResponseForTest>();
             QuizResponseForTest quizResponseForTest = new QuizResponseForTest();
@@ -159,6 +162,8 @@ namespace QuizzBankBE.Services.QuizService
             var dbQuiz = await _dataContext.Quizzes.ToListAsync();
 
             quizResponseForTest.quiz = dbQuiz.Where(c => c.Id == id).Select(u => _mapper.Map<QuizDTO>(u)).FirstOrDefault();
+            quizResponseForTest.userName = userName;
+            quizResponseForTest.courseName = _dataContext.Courses.Where(c => c.Id == quizResponseForTest.quiz.Courseid).Select(c => c.FullName).FirstOrDefaultAsync().Result;
 
             var quizResult = (from qi in _dataContext.Quizzes
                               join qq in _dataContext.QuizQuestions on qi.Id equals qq.QuizzId

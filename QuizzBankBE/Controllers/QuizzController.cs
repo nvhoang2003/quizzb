@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
@@ -37,7 +38,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("getListAllQuizz")]
         public async Task<ActionResult<ServiceResponse<PageList<QuizDTO>>>> getListQuizz(
-        [FromQuery] OwnerParameter ownerParameters)
+        [FromQuery] OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZZ").Value;
@@ -47,7 +48,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _quizServices.getAllQuiz(ownerParameters);
+            var response = await _quizServices.getAllQuiz(ownerParameters, name, timeStart, timeEnd, isPublic);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -151,18 +152,22 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-        [HttpGet("getQuizForTest/{id}")]
-        public async Task<ActionResult<QuizDetailResponseDTO>> getQuizForTest(int id)
+        [HttpGet("getQuizForTest/{accessId}")]
+        public async Task<ActionResult<QuizDetailResponseDTO>> getQuizForTest(int accessId)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:DO_QUIZZ").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            var quizAccess = await _dataContext.QuizAccesses.Where(q => q.Id == accessId).FirstOrDefaultAsync();
+
+            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != quizAccess.UserId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _quizServices.showQuizForTest(id);
+            string userName = await _dataContext.Users.Where(q => q.Id == userIdLogin).Select(q => q.FirstName + " " + q.LastName).FirstOrDefaultAsync();
+
+            var response = await _quizServices.showQuizForTest((int)quizAccess.QuizId, userName);
             return Ok(response);
         }
     }

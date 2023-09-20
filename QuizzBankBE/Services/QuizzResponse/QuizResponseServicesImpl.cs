@@ -94,7 +94,7 @@ namespace QuizzBankBE.Services.QuizzResponse
             return servicesResponse;
         }
 
-        public async Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForDoQuiz(OwnerParameter ownerParameters, int userIdLogin, int? quizId, int? courseId)
+        public async Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForDoQuiz(OwnerParameter ownerParameters, int userIdLogin, int? quizId, int? courseId, DateTime? timeStart, DateTime? timeEnd)
         {
             var serviceResponse = new ServiceResponse<PageList<AllQuizzResponseDTO>>();
             var doQuizResponseDTO = new List<AllQuizzResponseDTO>();
@@ -103,7 +103,7 @@ namespace QuizzBankBE.Services.QuizzResponse
                                        join u in _dataContext.Users on a.UserId equals u.Id
                                        join q in _dataContext.Quizzes on a.QuizId equals q.Id
                                        join c in _dataContext.Courses on q.CourseId equals c.Id
-                                       where a.UserId == userIdLogin && (quizId == null || a.QuizId == quizId) && (courseId == null || c.Id == courseId)
+                                       where a.UserId == userIdLogin && (quizId == null || a.QuizId == quizId) && (courseId == null || c.Id == courseId) && (timeStart == null || timeStart == null || (c.CreateDate >= timeStart && c.CreateDate <= timeStart))
                                        let totalPoint = a.QuizResponses.Sum(x => x.Mark)
                                        select new AllQuizzResponseDTO
                                        {

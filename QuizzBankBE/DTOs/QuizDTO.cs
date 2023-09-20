@@ -62,6 +62,9 @@ namespace QuizzBankBE.DTOs
 
     public class QuizResponseForTest
     {
+        public string  userName{ get; set; }
+        public string courseName { get; set; }
+
         public QuizDTO quiz { get; set;  }
 
         public List<object> questionReults { get; set; } = new List<object>();

@@ -36,11 +36,11 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpGet("listResponseForPeopleDoQuiz")]
-        public async Task<ActionResult<PageList<AllQuizzResponseDTO>>> listResponseForPeopleDoQuiz([FromQuery] OwnerParameter ownerParameter, int? quizId, int? courseId)
+        public async Task<ActionResult<PageList<AllQuizzResponseDTO>>> listResponseForPeopleDoQuiz([FromQuery] OwnerParameter ownerParameter, int? quizId, int? courseId, DateTime timeStart, DateTime timeEnd)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             
-            var response = await _quizResponseServices.getListResponseForDoQuiz(ownerParameter, userIdLogin, quizId, courseId);
+            var response = await _quizResponseServices.getListResponseForDoQuiz(ownerParameter, userIdLogin, quizId, courseId, timeStart, timeEnd);
             var metadata = new
             {
                 response.Data.TotalCount,

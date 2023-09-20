@@ -10,7 +10,7 @@ namespace QuizzBankBE.Services.QuizzResponse
     {
         Task<ServiceResponse<AllQuizzResponseDTO>> GetResponseDetail(int accessID);
 
-        Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForDoQuiz(OwnerParameter ownerParameter, int userIdLogin, int? quizId, int? courseId);
+        Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForDoQuiz(OwnerParameter ownerParameter, int userIdLogin, int? quizId, int? courseId, DateTime? timeStart, DateTime? timeEnd);
 
         Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForWriteQuiz(OwnerParameter ownerParameter, int? quizId, int? courseId, string? name);
     }

@@ -40,7 +40,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             var dbQuizBanks = await _dataContext.QuizBanks.
                 Where(c => (c.CreateBy == userLoginId || c.IsPublic == 1) &&
                         (categoryId == null || c.CategoryId == categoryId) &&
-                        (name == null || c.Name == name) &&
+                        (name == null || c.Name.Contains(name)) &&
                         (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
                         (questionType == null || c.QuestionsType == questionType) &&
                         (startDate == null || endDate == null || (c.CreateDate >= startDate && c.CreateDate <= endDate))).
