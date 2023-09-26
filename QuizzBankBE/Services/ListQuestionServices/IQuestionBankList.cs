@@ -10,5 +10,6 @@ namespace QuizzBankBE.Services.ListQuestionServices
     {
         Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? author, string? questionType, string? tag, DateTime? startDate, DateTime? endDate);
         Task<ServiceResponse<PageList<ListQuestion>>> getListQuestion(OwnerParameter ownerParameters, int userLoginId, string? name, string? author, string? questionType, DateTime? startDate, DateTime? endDate);
+        Task<ServiceResponse<Boolean>> createMultiQuestions(List<int> ids, int authorID);
     }
 }

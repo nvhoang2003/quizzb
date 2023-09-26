@@ -48,8 +48,6 @@ namespace QuizzBankBE.DTOs
 
     public class NewQuizResponse
     {
-        public int? AccessId { get; set; }
-
         public float? Mark { get; set; }
 
         [Required]

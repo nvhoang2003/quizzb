@@ -86,5 +86,22 @@ namespace QuizzBankBE.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(response);
         }
+
+        [HttpPost("AddMultiQuestions")]
+        public async Task<ActionResult<ServiceResponse<Boolean>>>addMultiQuestion(List<int> ids)
+        {
+
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
+
+            if (!CheckPermission.check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _questionListServices.createMultiQuestions(ids, userIdLogin);
+
+            return Ok(response);
+        }
     }
 }

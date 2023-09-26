@@ -87,12 +87,15 @@ namespace QuizzBankBE.Services.ScoreServices
             return servicesResponse;
         }
 
-        public async Task<ServiceResponse<float>> doQuestion(List<NewQuizResponse> newQuizResponses)
+        public async Task<ServiceResponse<float>> doQuestion(List<NewQuizResponse> newQuizResponses,int accessId)
         {
             var servicesResponse = new ServiceResponse<float>();
            
             List<QuizResponse> quizResponseSave = newQuizResponses.Select(u => _mapper.Map<QuizResponse>(u)).ToList();
-
+            foreach(var item in quizResponseSave)
+            {
+                item.AccessId = accessId;
+            }
             _dataContext.QuizResponses.AddRange(quizResponseSave);
             await _dataContext.SaveChangesAsync();
 

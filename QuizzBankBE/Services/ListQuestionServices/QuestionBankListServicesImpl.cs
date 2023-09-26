@@ -111,5 +111,40 @@ namespace QuizzBankBE.Services.ListQuestionServices
             ownerParameters.pageSize);
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<Boolean>> createMultiQuestions(List<int> ids, int authorId)
+        {
+            ServiceResponse<Boolean> service = new ServiceResponse<bool>();
+
+            var ques = (from q in _dataContext.QuizBanks
+                        join qa in _dataContext.QuizbankAnswers on q.Id equals qa.QuizBankId
+                        where ids.Contains(q.Id)
+                        select new
+                        {
+                            Question = q,
+                            Answer = qa
+                        }).GroupBy(i => i.Question).Select(g => new
+                        {
+                            Question = g.Key,
+                            Answers = g.Select(i => i.Answer)
+                        })
+                        .ToList();
+
+            foreach(var item in ques)
+            {
+                Question quesSaved = _mapper.Map<Question>(item.Question);
+                quesSaved.Id = 0;
+                item.Question.AuthorId = authorId;
+                _dataContext.Questions.Add(quesSaved);
+                await _dataContext.SaveChangesAsync();
+                List<QuestionAnswer> answerSaved = _mapper.Map<List<QuestionAnswer>>(item.Answers);
+                answerSaved.ForEach(obj => { obj.QuestionId = quesSaved.Id; obj.Id = 0; });
+                _dataContext.QuestionAnswers.AddRange(answerSaved);
+                await _dataContext.SaveChangesAsync();
+            }
+
+            service.Data = true;
+            return service;
+        }
     }
 }

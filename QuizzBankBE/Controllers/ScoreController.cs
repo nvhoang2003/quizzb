@@ -59,7 +59,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            _scoreServices.doQuestion(ListQuestionSubmit);
+            _scoreServices.doQuestion(ListQuestionSubmit, accessID);
             return Ok();
         }
     }

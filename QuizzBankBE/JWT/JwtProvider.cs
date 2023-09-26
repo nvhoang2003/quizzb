@@ -32,7 +32,7 @@ namespace QuizzBankBE.JWT
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(3),
+                Expires = DateTime.Now.AddMonths(1),
                 SigningCredentials = creds,
             };
 
