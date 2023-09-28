@@ -35,7 +35,8 @@ namespace QuizzBankBE.Services.QuizService
 
             _dataContext.QuizAccesses.Add(quizSaved);
             await _dataContext.SaveChangesAsync();
-            serviceResponse.updateResponse(200, "Tạo thành công");
+            serviceResponse.Message = "Tạo thành công";
+            serviceResponse.Data = _mapper.Map<QuizAccessDTO>(quizSaved);
             return serviceResponse;
         }
 

@@ -107,11 +107,17 @@ namespace QuizzBankBE.Services.QuizService
         {
             var serviceResponse = new ServiceResponse<QuizQuestionDTO>();
             List<QuizQuestion> quizQuestionsSaved = new List<QuizQuestion>();
-            QuizQuestion oneQuizQuestionSaved = new QuizQuestion();
             int? quizId = createQuizQuestionDTO.QuizzId;
+
+            var quizQuestions = _dataContext.QuizQuestions.Where(qq => qq.QuizzId == quizId).ToList();
+            quizQuestions.ForEach(qq => qq.IsDeleted = 1);
+            _dataContext.QuizQuestions.UpdateRange(quizQuestions);
+
 
             foreach (var item in createQuizQuestionDTO.questionAddeds)
             {
+                QuizQuestion oneQuizQuestionSaved = new QuizQuestion();
+
                 oneQuizQuestionSaved.QuizzId = quizId;
                 oneQuizQuestionSaved.QuestionId = item.QuestionId;
                 oneQuizQuestionSaved.Point = item.Point;

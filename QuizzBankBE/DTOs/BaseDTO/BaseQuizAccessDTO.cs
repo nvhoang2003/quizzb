@@ -10,10 +10,9 @@ namespace QuizzBankBE.DTOs.BaseDTO
         public int UserId { get; set; }
 
         [Required]
-        //[IdExistValidation<Quiz>("Id")]
+        [IdExistValidation<Quiz>("Id")]
         public int QuizId { get; set; }
 
-        [Required]
         [DataType(DataType.DateTime)]
         public DateTime? TimeStartQuiz { get; set; }
         public enum Status { 
