@@ -48,6 +48,7 @@ namespace QuizzBankBE.Controllers
             }
 
             var response = await _questionListServices.getListQuestionBank(ownerParameters, userIdLogin, categoryId, name, author,  questionType, tags, startDate, endDate);
+            
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -90,7 +91,6 @@ namespace QuizzBankBE.Controllers
         [HttpPost("AddMultiQuestions")]
         public async Task<ActionResult<ServiceResponse<Boolean>>>addMultiQuestion(List<int> ids)
         {
-
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
 
@@ -99,8 +99,92 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.createMultiQuestions(ids, userIdLogin);
+            var response = await _questionListServices.createMultiQuestions(ids);
 
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteQuestionBank/{id}")]
+        public async Task<ActionResult<Boolean>> deleteQuestionBank(int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
+
+            var ques = (from q in _dataContext.QuizBanks
+                        join qa in _dataContext.QuizbankAnswers on q.Id equals qa.QuizBankId into qaGroup
+                        from qa in qaGroup.DefaultIfEmpty()
+                        join mq in _dataContext.MatchSubQuestionBanks on q.Id equals mq.QuestionBankId into mqGroup
+                        from mq in mqGroup.DefaultIfEmpty()
+                        where id == q.Id
+                        select new
+                        {
+                            Question = q,
+                            Answer = qa,
+                            MatchAnswer = mq
+                        }).GroupBy(i => i.Question).Select(g => new GeneralQuestionBankDTO
+                        {
+                            Question = g.Key,
+                            Answers = g.Select(i => i.Answer),
+                            MatchAnswers = g.Select(i => i.MatchAnswer)
+                        })
+                       .FirstOrDefault();
+
+            if (!CheckPermission.isAdmin(userIdLogin) || (!CheckPermission.check(userIdLogin, permissionName) && userIdLogin != ques.Question.AuthorId))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _questionListServices.deleteQuestionBank(ques);
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteQuestion/{id}")]
+        public async Task<ActionResult<Boolean>> deleteQuestion(int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
+
+            var ques = (from q in _dataContext.Questions
+                        join qa in _dataContext.QuestionAnswers on q.Id equals qa.QuestionId into qaGroup
+                        from qa in qaGroup.DefaultIfEmpty()
+                        join mq in _dataContext.MatchSubQuestions on q.Id equals mq.QuestionId into mqGroup
+                        from mq in mqGroup.DefaultIfEmpty()
+                        where id == q.Id
+                        select new
+                        {
+                            Question = q,
+                            Answer = qa,
+                            MatchAnswer = mq
+                        }).GroupBy(i => i.Question).Select(g => new GeneralQuestionDTO
+                        {
+                            Question = g.Key,
+                            Answers = g.Select(i => i.Answer),
+                            MatchAnswers = g.Select(i => i.MatchAnswer)
+                        })
+                       .FirstOrDefault();
+
+            if (!CheckPermission.isAdmin(userIdLogin) || (!CheckPermission.check(userIdLogin, permissionName) && userIdLogin != ques.Question.AuthorId))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _questionListServices.deleteQuestion(ques);
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
             return Ok(response);
         }
     }

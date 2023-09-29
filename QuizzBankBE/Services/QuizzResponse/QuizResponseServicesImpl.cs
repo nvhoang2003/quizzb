@@ -67,16 +67,34 @@ namespace QuizzBankBE.Services.QuizzResponse
             foreach (var item in quizResult)
             {
                 item.QuizzResponse.AnswerToJson = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(item.QuizzResponse?.Answer);
-                var arrayQuestionResponse = JArray.Parse(item.QuizzResponse?.Answer);
+                JArray arrayQuestionResponse = new JArray();
+                if (item.QuizzResponse.AnswerToJson.ValueKind == JsonValueKind.Array)
+                {
+                    arrayQuestionResponse = JArray.Parse(item.QuizzResponse?.Answer);
+                }
+                else
+                {
+                    arrayQuestionResponse.Add(item.QuizzResponse?.Answer);
+                }
                 List<int> answerChosenId = new List<int>();
                 foreach (var oneRes in arrayQuestionResponse)
                 {
-                    var idToken = oneRes["Id"];
-                    if (idToken != null)
+                    if (oneRes.Type == JTokenType.Object)
                     {
-                        int id = idToken.ToObject<int>();
-                        answerChosenId.Add(id);
+                        var idToken = oneRes["id"];
+                        // ... tiếp tục xử lý
+                        if (idToken != null)
+                        {
+                            int id = idToken.ToObject<int>();
+                            answerChosenId.Add(id);
+                        }
                     }
+                    //var idToken = oneRes["id"];
+                    //if (idToken != null)
+                    //{
+                    //    int id = idToken.ToObject<int>();
+                    //    answerChosenId.Add(id);
+                    //}
                 }
                 foreach(var answer in item.QuestionAnswer)
                 {

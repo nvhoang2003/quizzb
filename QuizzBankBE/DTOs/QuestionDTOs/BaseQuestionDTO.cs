@@ -40,4 +40,11 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public int Id { get; set; }
         public string Questionstype { get; set; }
     }
+
+    public class GeneralQuestionDTO
+    {
+        public Question Question { get; set; }
+        public IEnumerable<QuestionAnswer> Answers { get; set; }
+        public IEnumerable<MatchSubQuestion> MatchAnswers { get; set; }
+    }
 }

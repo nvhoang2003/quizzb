@@ -5,6 +5,7 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using QuizzBankBE.Services.ListQuestionServices;
 
 namespace QuizzBankBE.Services.QuestionBankServices
 {
@@ -14,13 +15,15 @@ namespace QuizzBankBE.Services.QuestionBankServices
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
+        private readonly IQuestionBankList _qestionBanlListService;
 
-        public MatchingQuestionBankServicesImpl(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public MatchingQuestionBankServicesImpl(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider, IQuestionBankList questionBankList)
         {
             _dataContext = dataContext;
             _mapper = mapper;
             _jwtProvider = jwtProvider;
             _configuration = configuration;
+            _qestionBanlListService = questionBankList;
         }
 
         public MatchingQuestionBankServicesImpl()
@@ -46,6 +49,8 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             questionMatchingResDto.MatchSubQuestions = _mapper.Map<List<MatchSubQuestionBankResponseDTO>>(matchSubs);
             questionMatchingResDto.MatchSubAnswers = swapToMatchAnswerRes(matchSubDtos);
+
+            await _qestionBanlListService.createMultiQuestions(new List<int>{ quesSaved.Id });
 
             serviceResponse.Message = "Tạo câu hỏi thành công";
             serviceResponse.Data = questionMatchingResDto;

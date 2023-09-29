@@ -6,6 +6,7 @@ using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using QuizzBankBE.Services.ListQuestionServices;
 using static QuizzBankBE.DTOs.QuestionBankDTOs.BaseQuestionBankDTO;
 
 namespace QuizzBankBE.Services.QuestionBankServices
@@ -16,13 +17,15 @@ namespace QuizzBankBE.Services.QuestionBankServices
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
+        private readonly IQuestionBankList _qestionBanlListService;
 
-        public TrueFalseQuestionBankService(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public TrueFalseQuestionBankService(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider, IQuestionBankList qestionBanlListService)
         {
             _dataContext = dataContext;
             _mapper = mapper;
             _jwtProvider = jwtProvider;
             _configuration = configuration;
+            _qestionBanlListService = qestionBanlListService;
         }
 
         public TrueFalseQuestionBankService()
@@ -40,6 +43,9 @@ namespace QuizzBankBE.Services.QuestionBankServices
             createAnswer(createQuestionTFDTO, quesSaved.Id);
 
             await _dataContext.SaveChangesAsync();
+
+            await _qestionBanlListService.createMultiQuestions(new List<int> { quesSaved.Id });
+
             serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
 
             return serviceResponse;

@@ -118,4 +118,11 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
 
         public string CategoryName { get; set; }
     }
+
+    public class GeneralQuestionBankDTO
+    {
+        public QuizBank Question { get; set; }
+        public IEnumerable<QuizbankAnswer> Answers { get; set; }
+        public IEnumerable<MatchSubQuestionBank> MatchAnswers { get; set; }
+    }
 }

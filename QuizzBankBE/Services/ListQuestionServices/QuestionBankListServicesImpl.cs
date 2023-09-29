@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
@@ -8,7 +9,9 @@ using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
-using System.Linq;
+using QuizzBankBE.Utility;
+using System.Security.Claims;
+
 
 namespace QuizzBankBE.Services.ListQuestionServices
 {
@@ -18,14 +21,16 @@ namespace QuizzBankBE.Services.ListQuestionServices
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         //private readonly IQuestionServices _questionServices;
 
-        public QuestionBankListServicesImpl(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public QuestionBankListServicesImpl(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider, IHttpContextAccessor httpContextAccessor)
         {
             _dataContext = dataContext;
             _mapper = mapper;
             _jwtProvider = jwtProvider;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? authorName, string? questionType, string? tag, DateTime? startDate, DateTime? endDate)
         {
@@ -35,10 +40,12 @@ namespace QuizzBankBE.Services.ListQuestionServices
                 Select(x => x.TrimStart()).
                 ToList();
 
+            var userId = int.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
             HashSet<string> inputHashet = new HashSet<string>(listTag);
 
             var dbQuizBanks = await _dataContext.QuizBanks.
-                Where(c => (c.CreateBy == userLoginId || c.IsPublic == 1) &&
+                Where(c =>(CheckPermission.isAdmin(userId) || (c.CreateBy == userLoginId || c.IsPublic == 1)) &&
                         (categoryId == null || c.CategoryId == categoryId) &&
                         (name == null || c.Name.Contains(name)) &&
                         (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
@@ -112,21 +119,26 @@ namespace QuizzBankBE.Services.ListQuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Boolean>> createMultiQuestions(List<int> ids, int authorId)
+        public async Task<ServiceResponse<Boolean>> createMultiQuestions(List<int> ids)
         {
             ServiceResponse<Boolean> service = new ServiceResponse<bool>();
 
             var ques = (from q in _dataContext.QuizBanks
-                        join qa in _dataContext.QuizbankAnswers on q.Id equals qa.QuizBankId
+                        join qa in _dataContext.QuizbankAnswers on q.Id equals qa.QuizBankId into qaGroup
+                        from qa in qaGroup.DefaultIfEmpty()
+                        join mq in _dataContext.MatchSubQuestionBanks on q.Id equals mq.QuestionBankId into mqGroup
+                        from mq in mqGroup.DefaultIfEmpty()
                         where ids.Contains(q.Id)
                         select new
                         {
                             Question = q,
-                            Answer = qa
+                            Answer = qa,
+                            MatchAnswer = mq
                         }).GroupBy(i => i.Question).Select(g => new
                         {
                             Question = g.Key,
-                            Answers = g.Select(i => i.Answer)
+                            Answers = g.Select(i => i.Answer),
+                            MatchAnswers = g.Select(i => i.MatchAnswer)
                         })
                         .ToList();
 
@@ -134,16 +146,89 @@ namespace QuizzBankBE.Services.ListQuestionServices
             {
                 Question quesSaved = _mapper.Map<Question>(item.Question);
                 quesSaved.Id = 0;
-                item.Question.AuthorId = authorId;
+                item.Question.AuthorId = item.Question.CreateBy;
+
                 _dataContext.Questions.Add(quesSaved);
                 await _dataContext.SaveChangesAsync();
+
                 List<QuestionAnswer> answerSaved = _mapper.Map<List<QuestionAnswer>>(item.Answers);
-                answerSaved.ForEach(obj => { obj.QuestionId = quesSaved.Id; obj.Id = 0; });
-                _dataContext.QuestionAnswers.AddRange(answerSaved);
+                List<MatchSubQuestion>matchSubQuestionsSaved = _mapper.Map<List<MatchSubQuestion>>(item.MatchAnswers);
+
+                if(quesSaved.QuestionsType == "Match")
+                {
+                    matchSubQuestionsSaved.ForEach(obj => { obj.QuestionId = quesSaved.Id; obj.Id = 0; });
+                    _dataContext.MatchSubQuestions.AddRange(matchSubQuestionsSaved);
+                }
+                else
+                {
+                    answerSaved.ForEach(obj => { obj.QuestionId = quesSaved.Id; obj.Id = 0; });
+                    _dataContext.QuestionAnswers.AddRange(answerSaved);
+                }
+
                 await _dataContext.SaveChangesAsync();
             }
 
             service.Data = true;
+            return service;
+        }
+
+        public async Task<ServiceResponse<Boolean>> deleteQuestionBank(GeneralQuestionBankDTO ques)
+        {
+            ServiceResponse<Boolean> service = new ServiceResponse<bool>();
+            ques.Question.IsDeleted = 1;
+            _dataContext.QuizBanks.Update(ques.Question);
+
+            if (ques.Question.QuestionsType == "Match")
+            {
+                foreach (var item in ques.MatchAnswers)
+                {
+                    item.IsDeleted = 1;
+                }
+
+                _dataContext.MatchSubQuestionBanks.UpdateRange(ques.MatchAnswers);
+            }
+            else
+            {
+                foreach (var item in ques.Answers)
+                {
+                    item.IsDeleted = 1;
+                }
+
+                _dataContext.QuizbankAnswers.UpdateRange(ques.Answers);
+            }
+            await _dataContext.SaveChangesAsync();
+            service.Data = true;
+
+            return service;
+        }
+
+        public async Task<ServiceResponse<bool>> deleteQuestion(GeneralQuestionDTO ques)
+        {
+            ServiceResponse<Boolean> service = new ServiceResponse<bool>();
+            ques.Question.IsDeleted = 1;
+            _dataContext.Questions.Update(ques.Question);
+
+            if (ques.Question.QuestionsType == "Match")
+            {
+                foreach (var item in ques.MatchAnswers)
+                {
+                    item.IsDeleted = 1;
+                }
+
+                _dataContext.MatchSubQuestions.UpdateRange(ques.MatchAnswers);
+            }
+            else
+            {
+                foreach (var item in ques.Answers)
+                {
+                    item.IsDeleted = 1;
+                }
+
+                _dataContext.QuestionAnswers.UpdateRange(ques.Answers);
+            }
+            await _dataContext.SaveChangesAsync();
+            service.Data = true;
+
             return service;
         }
     }

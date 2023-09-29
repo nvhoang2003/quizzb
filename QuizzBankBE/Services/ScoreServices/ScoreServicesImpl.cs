@@ -90,63 +90,86 @@ namespace QuizzBankBE.Services.ScoreServices
         public async Task<ServiceResponse<float>> doQuestion(List<NewQuizResponse> newQuizResponses,int accessId)
         {
             var servicesResponse = new ServiceResponse<float>();
-           
-            List<QuizResponse> quizResponseSave = newQuizResponses.Select(u => _mapper.Map<QuizResponse>(u)).ToList();
-            foreach(var item in quizResponseSave)
+
+            List<QuizResponse> quizResponseSave = _mapper.Map<List<QuizResponse>>(newQuizResponses);
+            foreach (var item in quizResponseSave)
             {
                 item.AccessId = accessId;
-            }
-            _dataContext.QuizResponses.AddRange(quizResponseSave);
-            await _dataContext.SaveChangesAsync();
+            }    
 
-            servicesResponse.Message = "OK";
+            using (var context = new DataContext())
+            {
+                // Sử dụng các thực thể context ở đây
+                context.QuizResponses.AddRange(quizResponseSave);
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Đã xảy ra lỗi: " + ex.ToString());
+                    throw ex;
+                }
+            }
+            //try
+            //{
+            //    await _dataContext.SaveChangesAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("Đã xảy ra lỗi: " + ex.ToString());
+            //    throw ex;
+            //}
+
+
+            servicesResponse.Data = 15;
 
             return servicesResponse;
         }
 
-        public async Task<QuizResponse> saveQuizRes(QuizResponse quizRes)
-        {
+        //public async Task<QuizResponse> saveQuizRes(QuizResponse quizRes)
+        //{
 
-            var quizExs = await _dataContext.QuizResponses.FirstOrDefaultAsync(e => e.QuestionId == quizRes.QuestionId && e.AccessId == quizRes.AccessId);
+        //    var quizExs = await _dataContext.QuizResponses.FirstOrDefaultAsync(e => e.QuestionId == quizRes.QuestionId && e.AccessId == quizRes.AccessId);
 
-            if (quizExs == null)
-            {
-                _dataContext.QuizResponses.Add(quizRes);
-            }
-            else
-            {
+        //    if (quizExs == null)
+        //    {
+        //        _dataContext.QuizResponses.Add(quizRes);
+        //    }
+        //    else
+        //    {
 
-                _dataContext.QuizResponses.Update(quizRes);
-            }
+        //        _dataContext.QuizResponses.Update(quizRes);
+        //    }
 
-            await _dataContext.SaveChangesAsync();
+        //    await _dataContext.SaveChangesAsync();
 
-            return quizRes;
-        }
+        //    return quizRes;
+        //}
 
-        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer) where T : class
-        {
-            var quizRes = new QuizResponse();
+        //public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, T Answer) where T : class
+        //{
+        //    var quizRes = new QuizResponse();
 
-            quizRes.AccessId = quizAccessID;
-            quizRes.Mark = mark;
-            quizRes.QuestionId = questionID;
-            quizRes.Answer = JsonConvert.SerializeObject(Answer);
+        //    quizRes.AccessId = quizAccessID;
+        //    quizRes.Mark = mark;
+        //    quizRes.QuestionId = questionID;
+        //    quizRes.Answer = JsonConvert.SerializeObject(Answer);
 
-            return await saveQuizRes(quizRes);
-        }
+        //    return await saveQuizRes(quizRes);
+        //}
 
-        public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, List<T> Answer) where T : class
-        {
-            var quizRes = new QuizResponse();
+        //public async Task<QuizResponse> saveMark<T>(int questionID, int quizAccessID, float mark, List<T> Answer) where T : class
+        //{
+        //    var quizRes = new QuizResponse();
 
-            quizRes.AccessId = quizAccessID;
-            quizRes.Mark = mark;
-            quizRes.QuestionId = questionID;
-            quizRes.Answer = JsonConvert.SerializeObject(Answer);
+        //    quizRes.AccessId = quizAccessID;
+        //    quizRes.Mark = mark;
+        //    quizRes.QuestionId = questionID;
+        //    quizRes.Answer = JsonConvert.SerializeObject(Answer);
 
-            return await saveQuizRes(quizRes);
-        }
+        //    return await saveQuizRes(quizRes);
+        //}
 
         //public async Task<float> scoreMatchQuestions(List<MatchSubQuestionResponseDTO> matchSubDtos, Question question)
         //{
@@ -177,42 +200,42 @@ namespace QuizzBankBE.Services.ScoreServices
         //    return mark;
         //}
 
-        public async Task<float> scoreMultiChoiceQuestions(List<int> doMultipleAnswers, Question question)
-        {
-            float sumFraction = 0;
-            bool correctAll = true;
+        //public async Task<float> scoreMultiChoiceQuestions(List<int> doMultipleAnswers, Question question)
+        //{
+        //    float sumFraction = 0;
+        //    bool correctAll = true;
 
-            doMultipleAnswers.ForEach(async doMultipleAnswer =>
-            {
-                var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doMultipleAnswer && e.QuestionId == question.Id);
+        //    doMultipleAnswers.ForEach(async doMultipleAnswer =>
+        //    {
+        //        var answerCorrect = await _dataContext.QuestionAnswers.FirstOrDefaultAsync(e => e.Id == doMultipleAnswer && e.QuestionId == question.Id);
 
-                if (answerCorrect.Fraction == 0)
-                {
-                    correctAll = false;
-                }
-            });
+        //        if (answerCorrect.Fraction == 0)
+        //        {
+        //            correctAll = false;
+        //        }
+        //    });
 
-            if (correctAll)
-            {
-                sumFraction = (float)question.DefaultMark;
-            }
+        //    if (correctAll)
+        //    {
+        //        sumFraction = (float)question.DefaultMark;
+        //    }
 
-            return sumFraction;
-        }
+        //    return sumFraction;
+        //}
 
-        public async Task<float> doMultiChoiceQuestion(DoMultipleDTO doQuestionDTO, Question question)
-        {
-            DataContext _context = new DataContext();
-            var servicesResponse = new ServiceResponse<float>();
+        //public async Task<float> doMultiChoiceQuestion(DoMultipleDTO doQuestionDTO, Question question)
+        //{
+        //    DataContext _context = new DataContext();
+        //    var servicesResponse = new ServiceResponse<float>();
 
-            var mark = await scoreMultiChoiceQuestions(doQuestionDTO.AnswerId, question);
+        //    var mark = await scoreMultiChoiceQuestions(doQuestionDTO.AnswerId, question);
 
-            doQuestionDTO.AnswerSave.AddRange(await _context.QuestionAnswers.Where(c => doQuestionDTO.AnswerId.Contains(c.Id)).ToListAsync());
+        //    doQuestionDTO.AnswerSave.AddRange(await _context.QuestionAnswers.Where(c => doQuestionDTO.AnswerId.Contains(c.Id)).ToListAsync());
 
-            await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.AnswerSave);
+        //    await saveMark(doQuestionDTO.QuestionID, doQuestionDTO.QuizAccessID, mark, doQuestionDTO.AnswerSave);
 
-            return mark;
-        }
+        //    return mark;
+        //}
 
         //public async Task<float> scoreTrueFalseQuestion(DoTrueFalseAnswerDTO doTrueFalseAnswer, Question question)
         //{

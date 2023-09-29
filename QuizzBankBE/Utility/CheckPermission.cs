@@ -16,5 +16,15 @@ namespace QuizzBankBE.Utility
                     where p.Name == permissionName
                     select p).FirstOrDefault() != null;
         }
+
+        public static bool isAdmin(int userIdLogin)
+        {
+            DataContext _dataContext = new DataContext();
+
+            return (from u in _dataContext.Users
+                    join r in _dataContext.Roles on u.RoleId equals r.Id
+                    where u.Id == userIdLogin
+                    select r).Select(r => r.Name).FirstOrDefault() == "admin";
+        }
     }
 }

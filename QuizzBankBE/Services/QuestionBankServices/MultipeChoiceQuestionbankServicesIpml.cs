@@ -6,6 +6,7 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.QuestionBankDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using QuizzBankBE.Services.ListQuestionServices;
 using QuizzBankBE.Services.TagServices;
 
 namespace QuizzBankBE.Services.QuestionBankServices
@@ -16,13 +17,15 @@ namespace QuizzBankBE.Services.QuestionBankServices
         public IMapper _mapper;
         public IConfiguration _configuration;
         public readonly IjwtProvider _jwtProvider;
+        private readonly IQuestionBankList _qestionBanlListService;
 
-        public MultipeChoiceQuestionbankServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider)
+        public MultipeChoiceQuestionbankServicesIpml(DataContext dataContext, IMapper mapper, IConfiguration configuration, IjwtProvider jwtProvider, IQuestionBankList questionBankList)
         {
             _dataContext = dataContext;
             _mapper = mapper;
             _jwtProvider = jwtProvider;
             _configuration = configuration;
+            _qestionBanlListService = questionBankList;
         }
 
         public MultipeChoiceQuestionbankServicesIpml()
@@ -43,6 +46,9 @@ namespace QuizzBankBE.Services.QuestionBankServices
             }
 
             await _dataContext.SaveChangesAsync();
+
+            await _qestionBanlListService.createMultiQuestions(new List<int> { quesSaved.Id });
+
             serviceResponse.updateResponse(200, "Tạo câu hỏi thành công");
 
             return serviceResponse;

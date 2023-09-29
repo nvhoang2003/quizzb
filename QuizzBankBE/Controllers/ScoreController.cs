@@ -47,7 +47,7 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }      
 
-        [HttpPost("SubmitQuizz")]
+        [HttpPost("SubmitQuizz/{accessID}")]
         public async Task<ActionResult<ServiceResponse<bool>>> SubmitTheQuiz(
             [FromBody] List<NewQuizResponse> ListQuestionSubmit, int accessID)
         {
