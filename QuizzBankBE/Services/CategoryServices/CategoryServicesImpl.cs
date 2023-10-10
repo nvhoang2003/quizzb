@@ -28,7 +28,7 @@ namespace QuizzBankBE.Services.CategoryServices
         public CategoryServicesImpl()
         {
         }
-        public async Task<ServiceResponse<PageList<CategoryDTO>>> getAllCategory(OwnerParameter ownerParameters)
+        public async Task<ServiceResponse<PageList<CategoryDTO>>> GetAllCategory(OwnerParameter ownerParameters)
         {
             var serviceResponse = new ServiceResponse<PageList<CategoryDTO>>();
             var dbCategory = await _dataContext.Categories.ToListAsync();
@@ -42,7 +42,7 @@ namespace QuizzBankBE.Services.CategoryServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CategoryDTO>> getCategoryByID(int categoryID)
+        public async Task<ServiceResponse<CategoryDTO>> GetCategoryByID(int categoryID)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             var dbCategory = await _dataContext.Categories.ToListAsync();
@@ -58,7 +58,7 @@ namespace QuizzBankBE.Services.CategoryServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CategoryDTO>> createNewCategory(CreateCategoryDTO createCategory)
+        public async Task<ServiceResponse<CategoryDTO>> CreateNewCategory(CreateCategoryDTO createCategory)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
 
@@ -73,7 +73,7 @@ namespace QuizzBankBE.Services.CategoryServices
 
         //get List chờ có api với user course
 
-        public async Task<ServiceResponse<CategoryDTO>> updateCategory(int id, CreateCategoryDTO createCategory)
+        public async Task<ServiceResponse<CategoryDTO>> UpdateCategory(int id, CreateCategoryDTO createCategory)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             var categoryDb = _dataContext.Categories.FirstOrDefaultAsync(q => q.Id == id).Result;
@@ -96,7 +96,7 @@ namespace QuizzBankBE.Services.CategoryServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CategoryDTO>> deleteCategory(int id)
+        public async Task<ServiceResponse<CategoryDTO>> DeleteCategory(int id)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             var categoryDb = _dataContext.Categories.FirstOrDefaultAsync(q => q.Id== id).Result;

@@ -32,7 +32,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? authorName, string? questionType, string? tag, DateTime? startDate, DateTime? endDate, bool? isPublic)
+        public async Task<ServiceResponse<PageList<ListQuestionBank>>> GetListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? authorName, string? questionType, string? tag, DateTime? startDate, DateTime? endDate, bool? isPublic)
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestionBank>>();
 
@@ -45,7 +45,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             HashSet<string> inputHashet = new HashSet<string>(listTag);
 
             var dbQuizBanks = await _dataContext.QuizBanks.
-                Where(c =>(CheckPermission.isAdmin(userId) || (c.CreateBy == userLoginId || c.IsPublic == 1)) &&
+                Where(c =>(CheckPermission.IsAdmin(userId) || (c.CreateBy == userLoginId || c.IsPublic == 1)) &&
                         (categoryId == null || c.CategoryId == categoryId) &&
                         (name == null || c.Name.Contains(name)) &&
                         (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
@@ -92,7 +92,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             return serviceResponse;
         }
 
-            public async Task<ServiceResponse<PageList<ListQuestion>>> getListQuestion(OwnerParameter ownerParameters, int userLoginId, string? name, string? authorName, string? questionType, DateTime? startDate, DateTime? endDate)
+            public async Task<ServiceResponse<PageList<ListQuestion>>> GetListQuestion(OwnerParameter ownerParameters, int userLoginId, string? name, string? authorName, string? questionType, DateTime? startDate, DateTime? endDate)
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestion>>();
             var dbQuestions = await _dataContext.Questions.
@@ -120,7 +120,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Boolean>> createMultiQuestions(List<int> ids)
+        public async Task<ServiceResponse<Boolean>> CreateMultiQuestions(List<int> ids)
         {
             ServiceResponse<Boolean> service = new ServiceResponse<bool>();
 
@@ -173,7 +173,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             return service;
         }
 
-        public async Task<ServiceResponse<Boolean>> deleteQuestionBank(GeneralQuestionBankDTO ques)
+        public async Task<ServiceResponse<Boolean>> DeleteQuestionBank(GeneralQuestionBankDTO ques)
         {
             ServiceResponse<Boolean> service = new ServiceResponse<bool>();
             ques.Question.IsDeleted = 1;
@@ -203,7 +203,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             return service;
         }
 
-        public async Task<ServiceResponse<bool>> deleteQuestion(GeneralQuestionDTO ques)
+        public async Task<ServiceResponse<bool>> DeleteQuestion(GeneralQuestionDTO ques)
         {
             ServiceResponse<Boolean> service = new ServiceResponse<bool>();
             ques.Question.IsDeleted = 1;

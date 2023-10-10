@@ -33,36 +33,36 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("createNewTrueFalseQuestionBank")]
+        [HttpPost("CreateNewTrueFalseQuestionBank")]
         public async Task<ActionResult<ServiceResponse<TrueFalseQuestionBankDTO>>> createNewTrueFalseQuestionBank(
               [FromBody] CreateTrueFalseQuestionDTO createTFQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
             createTFQuestionDTO.AuthorId = userIdLogin;
-            var response = await _trueFalseQuestionBankService.createNewTrueFalseQuestionBank(createTFQuestionDTO);
+            var response = await _trueFalseQuestionBankService.CreateNewTrueFalseQuestionBank(createTFQuestionDTO);
 
             return Ok(response);
         }
 
-        [HttpGet("getTrueFalseQuestionBankById/{Id}")]
+        [HttpGet("GetTrueFalseQuestionBankById/{Id}")]
         public async Task<ActionResult<ServiceResponse<TrueFalseQuestionBankDTO>>> getTrueFalseQuestionBankById(int Id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _trueFalseQuestionBankService.getTrueFalseQuestionBankById(Id);
+            var response = await _trueFalseQuestionBankService.GetTrueFalseQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -76,36 +76,36 @@ namespace QuizzBankBE.Controllers
         }
 
 
-        [HttpPut("updateTrueFalseQuestionBank/{id}")]
+        [HttpPut("UpdateTrueFalseQuestionBank/{id}")]
         public async Task<ActionResult<ServiceResponse<TrueFalseQuestionBankService>>> updateTrueFalseQuestionBank(
                [FromBody] CreateTrueFalseQuestionDTO updateQuestionDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _trueFalseQuestionBankService.getTrueFalseQuestionBankById(id);
+            var updateQuestion = await _trueFalseQuestionBankService.GetTrueFalseQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _trueFalseQuestionBankService.updateTrueFalseQuestionBank(updateQuestionDTO, id);
+            var response = await _trueFalseQuestionBankService.UpdateTrueFalseQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
-        [HttpDelete("deleteTrueFalseQuestionBank/{id}")]
+        [HttpDelete("DeleteTrueFalseQuestionBank/{id}")]
         public async Task<ActionResult<ServiceResponse<TrueFalseQuestionBankDTO>>> deleteTrueFalseQuestionBank(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _trueFalseQuestionBankService.getTrueFalseQuestionBankById(id);
+            var deleteQuestion = await _trueFalseQuestionBankService.GetTrueFalseQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _trueFalseQuestionBankService.deleteTrueFalseQuestionBank(id);
+            var response = await _trueFalseQuestionBankService.DeleteTrueFalseQuestionBank(id);
             return Ok(response);
         }
     }

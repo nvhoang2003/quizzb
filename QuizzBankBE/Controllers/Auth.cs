@@ -31,12 +31,12 @@ namespace QuizzBankBE.Controllers
         }
 
         
-        [HttpPost("login")]
+        [HttpPost("Login")]
         [AllowAnonymous]
-        public async Task<ActionResult<LoginResponse>> login(
+        public async Task<ActionResult<LoginResponse>> Login(
         [FromBody] LoginForm loginForm)
         {
-            var response = await _authenServices.login(loginForm);
+            var response = await _authenServices.Login(loginForm);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

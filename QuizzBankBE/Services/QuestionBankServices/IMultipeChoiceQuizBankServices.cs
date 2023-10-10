@@ -6,12 +6,12 @@ namespace QuizzBankBE.Services.QuestionBankServices
 {
     public interface IMultipeChoiceQuizBankServices
     {
-        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> createNewMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionBankDTO);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> CreateNewMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionBankDTO);
 
-        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> getMultipeQuestionBankById(int id);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> GetMultipeQuestionBankById(int id);
 
-        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> updateMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionDTO, int id);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> UpdateMultipeQuestionBank(CreateQuestionBankMultipeChoiceDTO createQuestionDTO, int id);
 
-        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> deleteMultipeQuestionBank(int id);
+        Task<ServiceResponse<QuestionBankMultipeChoiceResponseDTO>> DeleteMultipeQuestionBank(int id);
     }
 }

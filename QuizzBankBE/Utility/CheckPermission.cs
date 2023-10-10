@@ -4,7 +4,8 @@ namespace QuizzBankBE.Utility
 {
     public class CheckPermission
     {
-        public static bool check(int userIdLogin, string permissionName)
+        public static bool Check
+            (int userIdLogin, string permissionName)
         {
             DataContext _dataContext = new DataContext();
 
@@ -17,7 +18,7 @@ namespace QuizzBankBE.Utility
                     select p).FirstOrDefault() != null;
         }
 
-        public static bool isAdmin(int userIdLogin)
+        public static bool IsAdmin(int userIdLogin)
         {
             DataContext _dataContext = new DataContext();
 

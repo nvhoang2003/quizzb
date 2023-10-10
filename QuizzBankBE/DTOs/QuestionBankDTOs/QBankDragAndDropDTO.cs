@@ -60,8 +60,8 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         //    foreach (Match match in matches)
         //    {
         //        int value = int.Parse(match.Groups[1].Value);
-        //        bool check = Choice.Any(c => c.Position == value);
-        //        if(check == false)
+        //        bool Check = Choice.Any(c => c.Position == value);
+        //        if(Check == false)
         //        {
         //            yield return new ValidationResult("Câu trả lời [[" + value + "]] cần có nội dung.", new[] { "Choice.[" + value + "]" });
         //        }

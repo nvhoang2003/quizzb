@@ -38,30 +38,30 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _numericalQuestionService.createNumericalQuestionBank(createQuestionDTO);
+            var response = await _numericalQuestionService.CreateNumericalQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
 
 
-        [HttpGet("getNumericalQuestionBankById/{Id}")]
+        [HttpGet("GetNumericalQuestionBankById/{Id}")]
         public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> getNumericalQuestionBankById(int Id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.getNumericalQuestionBankById(Id);
+            var response = await _numericalQuestionService.GetNumericalQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -74,36 +74,36 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
-        [HttpPut("updateNumericalQuestionBank/{id}")]
+        [HttpPut("UpdateNumericalQuestionBank/{id}")]
         public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> updateTrueFalseQuestionBank(
               [FromBody] CreateNumericalQuestionDTO updateQuestionDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _numericalQuestionService.getNumericalQuestionBankById(id);
+            var updateQuestion = await _numericalQuestionService.GetNumericalQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.updateNumericalQuestionBank(updateQuestionDTO, id);
+            var response = await _numericalQuestionService.UpdateNumericalQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
-        [HttpDelete("deleteNumericalQuestionBank/{id}")]
+        [HttpDelete("DeleteNumericalQuestionBank/{id}")]
         public async Task<ActionResult<ServiceResponse<NumericalQuestionDTO>>> deleteNumericalQuestionBank(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _numericalQuestionService.getNumericalQuestionBankById(id);
+            var deleteQuestion = await _numericalQuestionService.GetNumericalQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _numericalQuestionService.deleteNumericalQuestionBank(id);
+            var response = await _numericalQuestionService.DeleteNumericalQuestionBank(id);
             return Ok(response);
         }
     }

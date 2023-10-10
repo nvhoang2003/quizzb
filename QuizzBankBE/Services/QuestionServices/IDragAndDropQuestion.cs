@@ -6,9 +6,9 @@ namespace QuizzBankBE.Services.QuestionServices
 {
     public interface IDragAndDropQuestion
     {
-        Task<ServiceResponse<DragAndDropQuestionDTO>> createDDQuestion(CreateDragAndDropDTO createQuestionBankMatchingDTO);
-        Task<ServiceResponse<DragAndDropQuestionDTO>> getDDQuestionById(int questionBankID);
-        Task<ServiceResponse<DragAndDropQuestionDTO>> updateDDQuestion(CreateDragAndDropDTO updateQuestionBankMatchingDTO, int questionBankID);
-        Task<ServiceResponse<DragAndDropQuestionDTO>> deleteDDQuestion(int questionBankID);
+        Task<ServiceResponse<DragAndDropQuestionDTO>> CreateDragDropQuestion(CreateDragAndDropDTO createQuestionBankMatchingDTO);
+        Task<ServiceResponse<DragAndDropQuestionDTO>> GetDragDropQuestionById(int questionBankID);
+        Task<ServiceResponse<DragAndDropQuestionDTO>> UpdateDragDropQuestion(CreateDragAndDropDTO updateQuestionBankMatchingDTO, int questionBankID);
+        Task<ServiceResponse<DragAndDropQuestionDTO>> DeleteDragDropQuestion(int questionBankID);
     }
 }

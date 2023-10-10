@@ -29,7 +29,7 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionDTO>> createNewTrueFalseQuestion(CreateQuestionTrueFalseDTO createQuestionTFDTO)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> CreateNewTrueFalseQuestion(CreateQuestionTrueFalseDTO createQuestionTFDTO)
         {
             var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
 
@@ -37,7 +37,7 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.Questions.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            createAnswer(createQuestionTFDTO, quesSaved.Id);
+            CreateAnswer(createQuestionTFDTO, quesSaved.Id);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
@@ -45,7 +45,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionDTO>> getTrueFalseQuestionById(int Id)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> GetTrueFalseQuestionById(int Id)
         {
             var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
             var question = await _dataContext.Questions.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "TrueFalse");
@@ -65,16 +65,16 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionDTO>> updateTrueFalseQuestion(CreateQuestionTrueFalseDTO updateQbTrueFalseDTO, int id)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> UpdateTrueFalseQuestion(CreateQuestionTrueFalseDTO updateQbTrueFalseDTO, int id)
         {
             var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
 
             var quesToUpdate = _dataContext.Questions.FirstOrDefault(c => c.Id == id);
             _mapper.Map(updateQbTrueFalseDTO, quesToUpdate);
 
-            await deleteAnswer(id);
+            await DeleteAnswer(id);
             await _dataContext.SaveChangesAsync();
-            createAnswer(updateQbTrueFalseDTO, id);
+            CreateAnswer(updateQbTrueFalseDTO, id);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Cập nhật câu hỏi thành công");
@@ -82,7 +82,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TrueFalseQuestionDTO>> deleteTrueFalseQuestion(int id)
+        public async Task<ServiceResponse<TrueFalseQuestionDTO>> DeleteTrueFalseQuestion(int id)
         {
             var serviceResponse = new ServiceResponse<TrueFalseQuestionDTO>();
 
@@ -92,14 +92,14 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.Questions.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteAnswer(id);
+            await DeleteAnswer(id);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
             return serviceResponse;
         }
 
-        public async Task<bool> deleteAnswer(int quizBankId)
+        public async Task<bool> DeleteAnswer(int quizBankId)
         {
             var dbAnswers = await _dataContext.QuestionAnswers.Where(c => c.QuestionId.Equals(quizBankId)).ToListAsync();
             foreach (var item in dbAnswers)
@@ -111,16 +111,16 @@ namespace QuizzBankBE.Services.QuestionServices
             return true;
         }
 
-        public  QuestionAnswer createAnswer(CreateQuestionTrueFalseDTO answer, int questionId)
+        public  QuestionAnswer CreateAnswer(CreateQuestionTrueFalseDTO answer, int questionId)
         {
             List<QuestionAnswer> qa = new List<QuestionAnswer>();
             QuestionAnswer rightAnswer =  new QuestionAnswer();
-            defineAnswer(rightAnswer, 1, answer.RightAnswer.ToString(), questionId);
+            DefineAnswer(rightAnswer, 1, answer.RightAnswer.ToString(), questionId);
             qa.Add(rightAnswer);
 
             string wrongAnswerContent = answer.RightAnswer == true ? "False" : "True";
             QuestionAnswer wrongAnswer = new QuestionAnswer();
-            defineAnswer(wrongAnswer, 0, wrongAnswerContent, questionId);
+            DefineAnswer(wrongAnswer, 0, wrongAnswerContent, questionId);
             qa.Add(wrongAnswer);
 
             _dataContext.QuestionAnswers.AddRange(qa);
@@ -128,7 +128,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return rightAnswer;
         }
 
-        public void defineAnswer(QuestionAnswer answer, int fraction, string content, int questionId)
+        public void DefineAnswer(QuestionAnswer answer, int fraction, string content, int questionId)
         {
             answer.Fraction = fraction;
             answer.Content = content;

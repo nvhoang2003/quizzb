@@ -7,10 +7,10 @@ namespace QuizzBankBE.Services.QuestionServices
 {
     public interface IMultipeChoiceQuestionServices
     {
-        Task<ServiceResponse<MultiQuestionDTO>> createNewMultipeQuestion(List<CreateMultiQuestionDTO> createQuestionDTO);
+        Task<ServiceResponse<MultiQuestionDTO>> CreateNewMultipeQuestion(List<CreateMultiQuestionDTO> createQuestionDTO);
 
-        Task<ServiceResponse<MultiQuestionDTO>> getMultipeQuestionById(int id);
+        Task<ServiceResponse<MultiQuestionDTO>> GetMultipeQuestionById(int id);
 
-        Task<ServiceResponse<MultiQuestionDTO>> deleteMultipeQuestion(int id);
+        Task<ServiceResponse<MultiQuestionDTO>> DeleteMultipeQuestion(int id);
     }
 }

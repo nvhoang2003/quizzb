@@ -39,12 +39,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_TAG").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _tagServices.createNewTag(createTagDTO);
+            var response = await _tagServices.CreateNewTag(createTagDTO);
             return Ok(response);
         }
 
@@ -55,12 +55,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_TAG").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _tagServices.getAllTagByCategoryID(ownerParameters,categoryID);
+            var response = await _tagServices.GetAllTagByCategoryID(ownerParameters,categoryID);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -80,43 +80,43 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_TAG").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _tagServices.getTagByID(id);
+            var response = await _tagServices.GetTagByID(id);
             return Ok(response);
         }
 
-        [HttpPut("updateTag/{id}")]
+        [HttpPut("UpdateTag/{id}")]
         public async Task<ActionResult<ServiceResponse<TagDTO>>> updateTag(
         [FromBody] CreateTagDTO updateTagDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_TAG").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _tagServices.updateTag(updateTagDTO, id);
+            var response = await _tagServices.UpdateTag(updateTagDTO, id);
             return Ok(response);
         }
 
-        [HttpDelete("deleteTag/{id}")]
+        [HttpDelete("DeleteTag/{id}")]
         public async Task<ActionResult<ServiceResponse<TagDTO>>> deleteTag(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_TAG").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _tagServices.deleteTag(id);
+            var response = await _tagServices.DeleteTag(id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

@@ -34,19 +34,19 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("getListUserInCourse/{id}")]
+        [HttpGet("GetListUserInCourse/{id}")]
         public async Task<ActionResult<ServiceResponse<PageList<UserDTO>>>> getCategoryById(
             [FromQuery] OwnerParameter ownerParameters, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_LIST_USER_IN_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _userCoursesServices.getListUserInCourse(ownerParameters,id);
+            var response = await _userCoursesServices.GetListUserInCourse(ownerParameters,id);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -67,12 +67,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_LIST_USER_IN_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _userCoursesServices.addListUserIntoCourse(userCourseDTO);
+            var response = await _userCoursesServices.AddListUserIntoCourse(userCourseDTO);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -90,12 +90,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_LIST_USER_IN_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _userCoursesServices.removeUserFromCourses(userId, courseID);
+            var response = await _userCoursesServices.RemoveUserFromCourses(userId, courseID);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

@@ -30,7 +30,7 @@ namespace QuizzBankBE.Services.CourseServices
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ServiceResponse<CourseDTO>> createCourse(CreateCourseDTO createCourseDto, int userIdLogin)
+        public async Task<ServiceResponse<CourseDTO>> CreateCourse(CreateCourseDTO createCourseDto, int userIdLogin)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
 
@@ -39,7 +39,7 @@ namespace QuizzBankBE.Services.CourseServices
             _dataContext.Courses.Add(courseSaved);
             await _dataContext.SaveChangesAsync();
 
-            var userCourseSaved = await createUserCourse(userIdLogin, courseSaved.Id);
+            var userCourseSaved = await CreateUserCourse(userIdLogin, courseSaved.Id);
 
             serviceResponse.Message = "Tạo thành công !";
             serviceResponse.Data = _mapper.Map<CourseDTO>(courseSaved);
@@ -47,7 +47,7 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<CourseDTO>>> getAllCourse(OwnerParameter ownerParameters)
+        public async Task<ServiceResponse<PageList<CourseDTO>>> GetAllCourse(OwnerParameter ownerParameters)
         {
             var serviceResponse = new ServiceResponse<PageList<CourseDTO>>();
             var courseDTOs = new List<CourseDTO>();
@@ -63,7 +63,7 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<CourseDTO>>> getAllCourseByUserID(OwnerParameter ownerParameters, int userID)
+        public async Task<ServiceResponse<PageList<CourseDTO>>> GetAllCourseByUserID(OwnerParameter ownerParameters, int userID)
         {
             var serviceResponse = new ServiceResponse<PageList<CourseDTO>>();
             var courseDTOs = new List<CourseDTO>();
@@ -83,7 +83,7 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Course>> getCourseByCourseID(int courseID)
+        public async Task<ServiceResponse<Course>> GetCourseByCourseID(int courseID)
         {
             var serviceResponse = new ServiceResponse<Course>();
             var dbCourse = await _dataContext.Courses.FirstOrDefaultAsync(c => c.Id == courseID);
@@ -100,11 +100,11 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CourseDTO>> updateCourse(CreateCourseDTO updateCourseDto, int courseID)
+        public async Task<ServiceResponse<CourseDTO>> UpdateCourse(CreateCourseDTO updateCourseDto, int courseID)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
 
-            var courseRespone = await getCourseByCourseID(courseID);
+            var courseRespone = await GetCourseByCourseID(courseID);
 
             if (courseRespone.Status == false)
             {
@@ -130,7 +130,7 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CourseDTO>> deleteCourse(int courseID, Course course)
+        public async Task<ServiceResponse<CourseDTO>> DeleteCourse(int courseID, Course course)
         {
             var serviceResponse = new ServiceResponse<CourseDTO>();
 
@@ -143,7 +143,7 @@ namespace QuizzBankBE.Services.CourseServices
                 return serviceResponse;
             }
 
-            await deleteRelationshipCourse(course.Id);
+            await DeleteRelationshipCourse(course.Id);
 
             course.IsDeleted = 1;
             _dataContext.Courses.Update(course);
@@ -154,7 +154,7 @@ namespace QuizzBankBE.Services.CourseServices
             return serviceResponse;
         }
 
-        public async Task<UserCourse> createUserCourse(int userID, int courseID)
+        public async Task<UserCourse> CreateUserCourse(int userID, int courseID)
         {
             UserCourseDTO userCourseDto = new UserCourseDTO(userID, courseID);
 
@@ -165,7 +165,7 @@ namespace QuizzBankBE.Services.CourseServices
             return userCourseSaved;
         }
 
-        private async Task deleteRelationshipCourse(int courseID)
+        private async Task DeleteRelationshipCourse(int courseID)
         {
             var userCourseByCourse = await _dataContext.UserCourses.Where(x => x.CoursesId == courseID).ToListAsync();
 

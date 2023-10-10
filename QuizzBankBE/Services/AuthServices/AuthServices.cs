@@ -33,7 +33,7 @@ namespace QuizzBankBE.Services.AuthServices
             return BCrypt.Net.BCrypt.Verify(password, storedpassword);
         }
 
-        public async Task<IPrincipal> createPrincipal(User user)
+        public async Task<IPrincipal> CreatePrincipal(User user)
         {
             var claims = new List<Claim>
             {
@@ -43,7 +43,7 @@ namespace QuizzBankBE.Services.AuthServices
             return new ClaimsPrincipal(identity);
         }
 
-        public async Task<LoginResponse> login(LoginForm loginForm)
+        public async Task<LoginResponse> Login(LoginForm loginForm)
         {
             var serviceResponse = new LoginResponse();
             var user = await _dataContext.Users.FirstOrDefaultAsync(x => x.UserName == loginForm.username);
@@ -51,7 +51,7 @@ namespace QuizzBankBE.Services.AuthServices
             {
                 serviceResponse.Status = true;
                 serviceResponse.StatusCode = 200;
-                IPrincipal userlogin = await createPrincipal(user);
+                IPrincipal userlogin = await CreatePrincipal(user);
                 var token = _jwtProvider.CreateToken(userlogin);
                 serviceResponse.Message = "Đăng nhập thành công!";
                 serviceResponse.accessToken = token;

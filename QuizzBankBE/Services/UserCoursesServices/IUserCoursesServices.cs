@@ -6,8 +6,8 @@ namespace QuizzBankBE.Services.UserCoursesServices
 {
     public interface IUserCoursesServices
     {
-        Task<ServiceResponse<PageList<UserDTO>>> getListUserInCourse(OwnerParameter ownerParameters, int courseId);
-        Task<ServiceResponse<UserCourseDTO>> addListUserIntoCourse(IEnumerable<UserCourseDTO> createUsersCourse);
-        Task<ServiceResponse<UserCourseDTO>> removeUserFromCourses(int userId, int coursesId);
+        Task<ServiceResponse<PageList<UserDTO>>> GetListUserInCourse(OwnerParameter ownerParameters, int courseId);
+        Task<ServiceResponse<UserCourseDTO>> AddListUserIntoCourse(IEnumerable<UserCourseDTO> createUsersCourse);
+        Task<ServiceResponse<UserCourseDTO>> RemoveUserFromCourses(int userId, int coursesId);
     }
 }

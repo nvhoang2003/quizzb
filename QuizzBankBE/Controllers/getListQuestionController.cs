@@ -42,12 +42,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.getListQuestionBank(ownerParameters, userIdLogin, categoryId, name, author,  questionType, tags, startDate, endDate, isPublic);
+            var response = await _questionListServices.GetListQuestionBank(ownerParameters, userIdLogin, categoryId, name, author,  questionType, tags, startDate, endDate, isPublic);
             
             var metadata = new
             {
@@ -69,12 +69,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUESTION").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.getListQuestion(ownerParameters, userIdLogin, name, author, questionType, startDate, endDate);
+            var response = await _questionListServices.GetListQuestion(ownerParameters, userIdLogin, name, author, questionType, startDate, endDate);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -94,12 +94,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.createMultiQuestions(ids);
+            var response = await _questionListServices.CreateMultiQuestions(ids);
 
             return Ok(response);
         }
@@ -129,12 +129,12 @@ namespace QuizzBankBE.Controllers
                         })
                        .FirstOrDefault();
 
-            if (!CheckPermission.isAdmin(userIdLogin) || (!CheckPermission.check(userIdLogin, permissionName) && userIdLogin != ques.Question.AuthorId))
+            if (!CheckPermission.IsAdmin(userIdLogin) || (!CheckPermission.Check(userIdLogin, permissionName) && userIdLogin != ques.Question.AuthorId))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.deleteQuestionBank(ques);
+            var response = await _questionListServices.DeleteQuestionBank(ques);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -171,12 +171,12 @@ namespace QuizzBankBE.Controllers
                         })
                        .FirstOrDefault();
 
-            if (!CheckPermission.isAdmin(userIdLogin) || (!CheckPermission.check(userIdLogin, permissionName) && userIdLogin != ques.Question.AuthorId))
+            if (!CheckPermission.IsAdmin(userIdLogin) || (!CheckPermission.Check(userIdLogin, permissionName) && userIdLogin != ques.Question.AuthorId))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.deleteQuestion(ques);
+            var response = await _questionListServices.DeleteQuestion(ques);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

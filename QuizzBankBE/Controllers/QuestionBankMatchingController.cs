@@ -38,13 +38,13 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
             createQuestionBankMatchingDTO.AuthorId = userIdLogin;
-            var response = await _matchingQuestionBankServices.createMatchingQuestionBank(createQuestionBankMatchingDTO);
+            var response = await _matchingQuestionBankServices.CreateMatchingQuestionBank(createQuestionBankMatchingDTO);
 
             return Ok(response);
         }
@@ -55,12 +55,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
+            var response = await _matchingQuestionBankServices.GetMatchSubsQuestionBankById(questionBankID);
             
             if (response.Status == false)
             {
@@ -80,7 +80,7 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
+            var updateQuestion = await _matchingQuestionBankServices.GetMatchSubsQuestionBankById(questionBankID);
 
             if (updateQuestion.Status == false)
             {
@@ -91,13 +91,13 @@ namespace QuizzBankBE.Controllers
                 });
             }
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
             updateQuestionDTO.AuthorId = userIdLogin;
-            var response = await _matchingQuestionBankServices.updateMatchSubsQuestionBank(updateQuestionDTO, questionBankID);
+            var response = await _matchingQuestionBankServices.UpdateMatchSubsQuestionBank(updateQuestionDTO, questionBankID);
             return Ok(response);
         }
 
@@ -106,7 +106,7 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _matchingQuestionBankServices.getMatchSubsQuestionBankById(questionBankID);
+            var deleteQuestion = await _matchingQuestionBankServices.GetMatchSubsQuestionBankById(questionBankID);
 
             if (deleteQuestion.Status == false)
             {
@@ -117,12 +117,12 @@ namespace QuizzBankBE.Controllers
                 });
             }
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || deleteQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || deleteQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _matchingQuestionBankServices.deleteMatchSubsQuestionBank(questionBankID);
+            var response = await _matchingQuestionBankServices.DeleteMatchSubsQuestionBank(questionBankID);
             return Ok(response);
         }
     }

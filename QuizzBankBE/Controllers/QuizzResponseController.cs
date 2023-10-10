@@ -40,7 +40,7 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             
-            var response = await _quizResponseServices.getListResponseForDoQuiz(ownerParameter, userIdLogin, quizId, courseId, timeStart, timeEnd);
+            var response = await _quizResponseServices.GetListResponseForDoQuiz(ownerParameter, userIdLogin, quizId, courseId, timeStart, timeEnd);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -61,12 +61,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZZ_RESPONSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _quizResponseServices.getListResponseForWriteQuiz(ownerParameter, quizId, courseId, name);
+            var response = await _quizResponseServices.GetListResponseForWriteQuiz(ownerParameter, quizId, courseId, name);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -92,7 +92,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(404);
             }
 
-            if (!CheckPermission.check(userIdLogin, permissionName) && userIdLogin != accessQuizz.UserId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) && userIdLogin != accessQuizz.UserId)
             {
                 return new StatusCodeResult(403);
             }

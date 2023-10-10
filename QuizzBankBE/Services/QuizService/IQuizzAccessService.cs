@@ -5,8 +5,8 @@ namespace QuizzBankBE.Services.QuizService
 {
     public interface IQuizzAccessService
     {
-        Task<ServiceResponse<QuizAccessDTO>> createQuizzAccess(CreateQuizAccessDTO createAccessDTO);
-        Task<ServiceResponse<QuizAccessDTO>> updateStatus(CreateQuizAccessDTO updateStatusDTO, int id);
+        Task<ServiceResponse<QuizAccessDTO>> CreateQuizzAccess(CreateQuizAccessDTO createAccessDTO);
+        Task<ServiceResponse<QuizAccessDTO>> UpdateStatus(CreateQuizAccessDTO updateStatusDTO, int id);
 
 
     }

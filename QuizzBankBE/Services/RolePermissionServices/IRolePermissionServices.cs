@@ -5,7 +5,7 @@ namespace QuizzBankBE.Services.RolePermissionServices
 {
     public interface IRolePermissionServices
     {
-        Task<ServiceResponse<RoleDetailPermissionsDTO>> getDetailRolePermissions(int roleID);
-        Task<ServiceResponse<RolePermissionDTO>> updatePermissions(List<PermissionDTO> permissionDTOs, int roleID);
+        Task<ServiceResponse<RoleDetailPermissionsDTO>> GetDetailRolePermissions(int roleID);
+        Task<ServiceResponse<RolePermissionDTO>> UpdatePermissions(List<PermissionDTO> permissionDTOs, int roleID);
     }
 }

@@ -6,6 +6,6 @@ namespace QuizzBankBE.Services.AuthServices
 {
     public interface IAuthServices
     {
-        Task<LoginResponse> login(LoginForm loginFrom);
+        Task<LoginResponse> Login(LoginForm loginFrom);
     }
 }
