@@ -41,12 +41,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_ROLE_PERMISSION").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _rolePermissionServices.getDetailRolePermissions(roleID);
+            var response = await _rolePermissionServices.GetDetailRolePermissions(roleID);
             
             if (response.Status == false)
             {
@@ -66,12 +66,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_ROLE_PERMISSION").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _rolePermissionServices.updatePermissions(permissionDTOs ,roleID);
+            var response = await _rolePermissionServices.UpdatePermissions(permissionDTOs ,roleID);
 
             return Ok(response);
         }

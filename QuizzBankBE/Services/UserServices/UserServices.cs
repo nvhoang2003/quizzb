@@ -22,7 +22,7 @@ namespace QuizzBankBE.Services.UserServices
             _configuration = configuration;
         }
 
-        public async Task<ServiceResponse<PageList<UserDTO>>> getAllUsers(OwnerParameter ownerParameters)
+        public async Task<ServiceResponse<PageList<UserDTO>>> GetAllUsers(OwnerParameter ownerParameters)
         {
             var serviceResponse = new ServiceResponse<PageList<UserDTO>>();
             var userDTOs = new List<UserDTO>();
@@ -37,7 +37,7 @@ namespace QuizzBankBE.Services.UserServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UserDTO>> getUserByUserID(int id )
+        public async Task<ServiceResponse<UserDTO>> GetUserByUserID(int id )
         {
             var serviceResponse = new ServiceResponse<UserDTO>();
             var dbUser = await _dataContext.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -55,7 +55,7 @@ namespace QuizzBankBE.Services.UserServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDTO)
+        public async Task<ServiceResponse<UserDTO>> CreateUsers(CreateUserDTO createUserDTO)
         {
             var serviceResponse = new ServiceResponse<UserDTO>();
 
@@ -72,7 +72,7 @@ namespace QuizzBankBE.Services.UserServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UpdateUserDTO>> updateUser(UpdateUserDTO updateDTO, int id)
+        public async Task<ServiceResponse<UpdateUserDTO>> UpdateUser(UpdateUserDTO updateDTO, int id)
         {
             var serviceResponse = new ServiceResponse<UpdateUserDTO>();
             var dbUser = await _dataContext.Users.FirstOrDefaultAsync(q => q.Id == id);
@@ -98,7 +98,7 @@ namespace QuizzBankBE.Services.UserServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UpdateUserDTO>> updatePwd(UpdatePwdDTO updateDTO)
+        public async Task<ServiceResponse<UpdateUserDTO>> UpdatePassword(UpdatePwdDTO updateDTO)
         {
             var serviceResponse = new ServiceResponse<UpdateUserDTO>();
 
@@ -123,7 +123,7 @@ namespace QuizzBankBE.Services.UserServices
             return BCrypt.Net.BCrypt.Verify(password, storedpassword);
         }
 
-        public async Task<ServiceResponse<UpdateUserDTO>> adminUpdateUser(CreateUserDTO updateDTO, int id)
+        public async Task<ServiceResponse<UpdateUserDTO>> AdminUpdateUser(CreateUserDTO updateDTO, int id)
         {
 
             var serviceResponse = new ServiceResponse<UpdateUserDTO>();
@@ -151,7 +151,7 @@ namespace QuizzBankBE.Services.UserServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UpdateUserDTO>> setActive(int isActive, int id)
+        public async Task<ServiceResponse<UpdateUserDTO>> SetActive(int isActive, int id)
         {
             var serviceResponse = new ServiceResponse<UpdateUserDTO>();
             var dbUser = await _dataContext.Users.FirstOrDefaultAsync(q => q.Id == id);

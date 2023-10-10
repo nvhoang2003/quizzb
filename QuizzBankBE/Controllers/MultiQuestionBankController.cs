@@ -38,13 +38,13 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _multipeChoiceQuizBankServices.createNewMultipeQuestionBank(createQuestionDTO);
+            var response = await _multipeChoiceQuizBankServices.CreateNewMultipeQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
@@ -55,12 +55,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(Id);
+            var response = await _multipeChoiceQuizBankServices.GetMultipeQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -79,14 +79,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
+            var updateQuestion = await _multipeChoiceQuizBankServices.GetMultipeQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin,permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin,permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multipeChoiceQuizBankServices.updateMultipeQuestionBank(updateQuestionDTO, id);
+            var response = await _multipeChoiceQuizBankServices.UpdateMultipeQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
@@ -95,14 +95,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _multipeChoiceQuizBankServices.getMultipeQuestionBankById(id);
+            var deleteQuestion = await _multipeChoiceQuizBankServices.GetMultipeQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multipeChoiceQuizBankServices.deleteMultipeQuestionBank(id);
+            var response = await _multipeChoiceQuizBankServices.DeleteMultipeQuestionBank(id);
             return Ok(response);
         }
     }

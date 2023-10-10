@@ -112,7 +112,7 @@ namespace QuizzBankBE.Services.QuizzResponse
             return servicesResponse;
         }
 
-        public async Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForDoQuiz(OwnerParameter ownerParameters, int userIdLogin, int? quizId, int? courseId, DateTime? timeStart, DateTime? timeEnd)
+        public async Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> GetListResponseForDoQuiz(OwnerParameter ownerParameters, int userIdLogin, int? quizId, int? courseId, DateTime? timeStart, DateTime? timeEnd)
         {
             var serviceResponse = new ServiceResponse<PageList<AllQuizzResponseDTO>>();
             var doQuizResponseDTO = new List<AllQuizzResponseDTO>();
@@ -141,7 +141,7 @@ namespace QuizzBankBE.Services.QuizzResponse
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> getListResponseForWriteQuiz(OwnerParameter ownerParameters, int? quizId, int? courseId, string? name)
+        public async Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> GetListResponseForWriteQuiz(OwnerParameter ownerParameters, int? quizId, int? courseId, string? name)
         {
             var serviceResponse = new ServiceResponse<PageList<AllQuizzResponseDTO>>();
             var doQuizResponseDTO = new List<AllQuizzResponseDTO>();

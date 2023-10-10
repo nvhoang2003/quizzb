@@ -26,7 +26,7 @@ namespace QuizzBankBE.Services.RolePermissionServices
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ServiceResponse<RoleDetailPermissionsDTO>> getDetailRolePermissions(int roleID)
+        public async Task<ServiceResponse<RoleDetailPermissionsDTO>> GetDetailRolePermissions(int roleID)
         {
             var serviceResponse = new ServiceResponse<RoleDetailPermissionsDTO>();
             var rolePersResDto = new RoleDetailPermissionsDTO();
@@ -61,7 +61,7 @@ namespace QuizzBankBE.Services.RolePermissionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<RolePermissionDTO>> updatePermissions(List<PermissionDTO> permissionDTOs, int roleID)
+        public async Task<ServiceResponse<RolePermissionDTO>> UpdatePermissions(List<PermissionDTO> permissionDTOs, int roleID)
         {
             var serviceResponse = new ServiceResponse<RolePermissionDTO>();
 

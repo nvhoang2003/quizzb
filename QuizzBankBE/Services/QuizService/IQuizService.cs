@@ -7,12 +7,12 @@ namespace QuizzBankBE.Services.QuizService
 {
     public interface IQuizService
     {
-        Task<ServiceResponse<QuizResponseDTO>> createNewQuiz(CreateQuizDTO createQuizDTO);
-        Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic, int? courseId);
-        Task<ServiceResponse<QuizDetailResponseDTO>> getQuizById(int id);
-        Task<ServiceResponse<QuizDTO>> deleteQuizz(int id);
-        Task<ServiceResponse<QuizResponseDTO>> updateQuizz(CreateQuizDTO updateQuizDTO, int id);
-        Task<ServiceResponse<QuizQuestionDTO>> addQuestionIntoQuiz(CreateQuizQuestionDTO createQuizQuestionDTO);
-        Task<ServiceResponse<QuizResponseForTest>> showQuizForTest(int id, string userName);
+        Task<ServiceResponse<QuizResponseDTO>> CreateNewQuiz(CreateQuizDTO createQuizDTO);
+        Task<ServiceResponse<PageList<QuizDTO>>> GetAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic, int? courseId);
+        Task<ServiceResponse<QuizDetailResponseDTO>> GetQuizById(int id);
+        Task<ServiceResponse<QuizDTO>> DeleteQuizz(int id);
+        Task<ServiceResponse<QuizResponseDTO>> UpdateQuizz(CreateQuizDTO updateQuizDTO, int id);
+        Task<ServiceResponse<QuizQuestionDTO>> AddQuestionIntoQuiz(CreateQuizQuestionDTO createQuizQuestionDTO);
+        Task<ServiceResponse<QuizResponseForTest>> ShowQuizForTest(int id, string userName);
     }
 }

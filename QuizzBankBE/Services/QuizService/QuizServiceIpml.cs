@@ -31,7 +31,7 @@ namespace QuizzBankBE.Services.QuizService
         {
         }
 
-        public async Task<ServiceResponse<QuizResponseDTO>> createNewQuiz(CreateQuizDTO createQuizDTO)
+        public async Task<ServiceResponse<QuizResponseDTO>> CreateNewQuiz(CreateQuizDTO createQuizDTO)
         {
             var serviceResponse = new ServiceResponse<QuizResponseDTO>();
             var quizSaved = _mapper.Map<Quiz>(createQuizDTO);
@@ -42,7 +42,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic, int? courseId)
+        public async Task<ServiceResponse<PageList<QuizDTO>>> GetAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic, int? courseId)
         {
             var serviceResponse = new ServiceResponse<PageList<QuizDTO>>();
             var dbQuiz = await _dataContext.Quizzes.ToListAsync();
@@ -65,7 +65,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizResponseDTO>> updateQuizz(CreateQuizDTO updateQuizDTO, int id)
+        public async Task<ServiceResponse<QuizResponseDTO>> UpdateQuizz(CreateQuizDTO updateQuizDTO, int id)
         {
             var serviceResponse = new ServiceResponse<QuizResponseDTO>();
             var dbQuiz = await _dataContext.Quizzes.FirstOrDefaultAsync(q => q.Id == id);
@@ -86,7 +86,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizDTO>> deleteQuizz(int id)
+        public async Task<ServiceResponse<QuizDTO>> DeleteQuizz(int id)
         {
             var serviceResponse = new ServiceResponse<QuizDTO>();
             var dbQuiz = await _dataContext.Quizzes.FirstOrDefaultAsync(q => q.Id == id);
@@ -104,7 +104,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizQuestionDTO>> addQuestionIntoQuiz (CreateQuizQuestionDTO createQuizQuestionDTO)
+        public async Task<ServiceResponse<QuizQuestionDTO>> AddQuestionIntoQuiz (CreateQuizQuestionDTO createQuizQuestionDTO)
         {
             var serviceResponse = new ServiceResponse<QuizQuestionDTO>();
             List<QuizQuestion> quizQuestionsSaved = new List<QuizQuestion>();
@@ -136,7 +136,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizDetailResponseDTO>> getQuizById(int id)
+        public async Task<ServiceResponse<QuizDetailResponseDTO>> GetQuizById(int id)
         {
             ServiceResponse<QuizDetailResponseDTO> serviceResponse = new ServiceResponse<QuizDetailResponseDTO>();
 
@@ -161,7 +161,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizResponseForTest>> showQuizForTest(int id, string userName)
+        public async Task<ServiceResponse<QuizResponseForTest>> ShowQuizForTest(int id, string userName)
         {
             ServiceResponse<QuizResponseForTest> serviceResponse = new ServiceResponse<QuizResponseForTest>();
             QuizResponseForTest quizResponseForTest = new QuizResponseForTest();

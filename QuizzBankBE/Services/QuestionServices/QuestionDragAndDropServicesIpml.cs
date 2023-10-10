@@ -23,12 +23,12 @@ namespace QuizzBankBE.Services.QuestionServices
             _jwtProvider = jwtProvider;
             _configuration = configuration;
         }
-        public async Task<ServiceResponse<DragAndDropQuestionDTO>> createDDQuestion(CreateDragAndDropDTO createQuestionBankMatchingDTO)
+        public async Task<ServiceResponse<DragAndDropQuestionDTO>> CreateDragDropQuestion(CreateDragAndDropDTO createQuestionBankMatchingDTO)
         {
             var serviceResponse = new ServiceResponse<DragAndDropQuestionDTO>();
 
             var sortedChoice = createQuestionBankMatchingDTO.Choice.OrderBy(c => c.Position).ToList();
-            updateContent(createQuestionBankMatchingDTO, sortedChoice);
+            UpdateContent(createQuestionBankMatchingDTO, sortedChoice);
 
             Question quesSaved = _mapper.Map<Question>(createQuestionBankMatchingDTO);
             _dataContext.Questions.Add(quesSaved);
@@ -36,7 +36,7 @@ namespace QuizzBankBE.Services.QuestionServices
 
             foreach (var item in sortedChoice)
             {
-                createAnswer(item, quesSaved.Id);
+                CreateAnswer(item, quesSaved.Id);
             }
 
             await _dataContext.SaveChangesAsync();
@@ -45,7 +45,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<DragAndDropQuestionDTO>> deleteDDQuestion(int questionBankID)
+        public async Task<ServiceResponse<DragAndDropQuestionDTO>> DeleteDragDropQuestion(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<DragAndDropQuestionDTO>();
 
@@ -55,14 +55,14 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.Questions.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteTagAndAnswer(questionBankID);
+            await DeleteTagAndAnswer(questionBankID);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<DragAndDropQuestionDTO>> getDDQuestionById(int questionBankID)
+        public async Task<ServiceResponse<DragAndDropQuestionDTO>> GetDragDropQuestionById(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<DragAndDropQuestionDTO>();
             var question = await _dataContext.Questions.Where(c => c.Id == questionBankID && c.QuestionsType == "DragAndDropIntoText").FirstOrDefaultAsync();
@@ -80,20 +80,20 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<DragAndDropQuestionDTO>> updateDDQuestion(CreateDragAndDropDTO updateQuestionBankMatchingDTO, int questionBankID)
+        public async Task<ServiceResponse<DragAndDropQuestionDTO>> UpdateDragDropQuestion(CreateDragAndDropDTO updateQuestionBankMatchingDTO, int questionBankID)
         {
             var serviceResponse = new ServiceResponse<DragAndDropQuestionDTO>();
             var sortedChoice = updateQuestionBankMatchingDTO.Choice.OrderBy(c => c.Position).ToList();
-            updateContent(updateQuestionBankMatchingDTO, sortedChoice);
+            UpdateContent(updateQuestionBankMatchingDTO, sortedChoice);
 
             var quesToUpdate = _dataContext.Questions.FirstOrDefault(c => c.Id == questionBankID);
             _mapper.Map(updateQuestionBankMatchingDTO, quesToUpdate);
 
-            await deleteTagAndAnswer(questionBankID);
+            await DeleteTagAndAnswer(questionBankID);
             await _dataContext.SaveChangesAsync();
             foreach (var item in sortedChoice)
             {
-                createAnswer(item, questionBankID);
+                CreateAnswer(item, questionBankID);
             }
 
             await _dataContext.SaveChangesAsync();
@@ -102,7 +102,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public QuestionAnswer createAnswer(QuestionChoice choice, int questionId)
+        public QuestionAnswer CreateAnswer(QuestionChoice choice, int questionId)
         {
             QuestionAnswerDTO answer = choice.Answer;
             answer.QuestionId = questionId;
@@ -113,7 +113,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return answerSave;
         }
 
-        public async Task<bool> deleteTagAndAnswer(int questionId)
+        public async Task<bool> DeleteTagAndAnswer(int questionId)
         {
             var dbAnswers = await _dataContext.QuestionAnswers.Where(c => c.QuestionId.Equals(questionId)).ToListAsync();
             foreach (var item in dbAnswers)
@@ -132,7 +132,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return true;
         }
 
-        public void updateContent(CreateDragAndDropDTO createQuestionBankMatchingDTO, List<QuestionChoice> sortedChoice)
+        public void UpdateContent(CreateDragAndDropDTO createQuestionBankMatchingDTO, List<QuestionChoice> sortedChoice)
         {
             for (int i = 0; i < sortedChoice.Count; i++)
             {

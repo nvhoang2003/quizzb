@@ -7,10 +7,10 @@ namespace QuizzBankBE.Services.CategoryServices
 {
     public interface ICategoryServices
     {
-        Task<ServiceResponse<PageList<CategoryDTO>>> getAllCategory(OwnerParameter ownerParameters);
-        Task<ServiceResponse<CategoryDTO>> getCategoryByID(int categoryID);
-        Task<ServiceResponse<CategoryDTO>> createNewCategory(CreateCategoryDTO createCategory);
-        Task<ServiceResponse<CategoryDTO>> updateCategory(int id, CreateCategoryDTO createCategory);
-        Task<ServiceResponse<CategoryDTO>> deleteCategory(int id);
+        Task<ServiceResponse<PageList<CategoryDTO>>> GetAllCategory(OwnerParameter ownerParameters);
+        Task<ServiceResponse<CategoryDTO>> GetCategoryByID(int categoryID);
+        Task<ServiceResponse<CategoryDTO>> CreateNewCategory(CreateCategoryDTO createCategory);
+        Task<ServiceResponse<CategoryDTO>> UpdateCategory(int id, CreateCategoryDTO createCategory);
+        Task<ServiceResponse<CategoryDTO>> DeleteCategory(int id);
     }
 }

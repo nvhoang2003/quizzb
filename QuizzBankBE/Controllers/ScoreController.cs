@@ -54,12 +54,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:DO_QUIZZ").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            _scoreServices.doQuestion(ListQuestionSubmit, accessID);
+            _scoreServices.DoQuestion(ListQuestionSubmit, accessID);
             return Ok();
         }
     }

@@ -30,7 +30,7 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<MultiQuestionDTO>> createNewMultipeQuestion(List<CreateMultiQuestionDTO> createQuestionDTO)
+        public async Task<ServiceResponse<MultiQuestionDTO>> CreateNewMultipeQuestion(List<CreateMultiQuestionDTO> createQuestionDTO)
         {
             var serviceResponse = new ServiceResponse<MultiQuestionDTO>();
 
@@ -42,7 +42,7 @@ namespace QuizzBankBE.Services.QuestionServices
 
             foreach (var item in selectResult)
             {
-                createAnswer(item.Result, item.Id);
+                CreateAnswer(item.Result, item.Id);
             }*/
 
            // await _dataContext.SaveChangesAsync();
@@ -52,7 +52,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<MultiQuestionDTO>> getMultipeQuestionById(int Id)
+        public async Task<ServiceResponse<MultiQuestionDTO>> GetMultipeQuestionById(int Id)
         {
             var serviceResponse = new ServiceResponse<MultiQuestionDTO>();
             var question = await _dataContext.Questions.FirstOrDefaultAsync(c => c.Id == Id && c.QuestionsType == "MultiChoice");
@@ -72,7 +72,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public QuestionAnswer createAnswer(QuestionAnswer answer, int quizBankId)
+        public QuestionAnswer CreateAnswer(QuestionAnswer answer, int quizBankId)
         {
             answer.QuestionId = quizBankId;
 
@@ -81,7 +81,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return answer;
         }
 
-        public async Task<bool> deleteAnswer(int questionId )
+        public async Task<bool> DeleteAnswer(int questionId )
         {
             var dbAnswers = await _dataContext.QuestionAnswers.Where(c => c.QuestionId.Equals(questionId)).ToListAsync();
             foreach (var item in dbAnswers)
@@ -93,7 +93,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return true;
         }
 
-        public async Task<ServiceResponse<MultiQuestionDTO>> deleteMultipeQuestion(int id)
+        public async Task<ServiceResponse<MultiQuestionDTO>> DeleteMultipeQuestion(int id)
         {
             var serviceResponse = new ServiceResponse<MultiQuestionDTO>();
 
@@ -103,7 +103,7 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.Questions.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteAnswer(id);
+            await DeleteAnswer(id);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");

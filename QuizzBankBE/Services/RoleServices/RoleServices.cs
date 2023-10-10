@@ -27,7 +27,7 @@ namespace QuizzBankBE.Services.RoleServices
         {
         }
 
-        public async Task<ServiceResponse<RoleResponseDTO>> createNewRole(CreateRoleDTO createRoleDTO)
+        public async Task<ServiceResponse<RoleResponseDTO>> CreateNewRole(CreateRoleDTO createRoleDTO)
         {
             var serviceResponse = new ServiceResponse<RoleResponseDTO>();
             Role roleSaved = _mapper.Map<Role>(createRoleDTO);
@@ -39,7 +39,7 @@ namespace QuizzBankBE.Services.RoleServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<RoleDTO>>> getAllRole(OwnerParameter ownerParameters)
+        public async Task<ServiceResponse<PageList<RoleDTO>>> GetAllRole(OwnerParameter ownerParameters)
         {
             var serviceResponse = new ServiceResponse<PageList<RoleDTO>>();
             var dbRole= await _dataContext.Roles.ToListAsync();
@@ -53,7 +53,7 @@ namespace QuizzBankBE.Services.RoleServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<RoleDTO>> updateRole(CreateRoleDTO updateRoleDTO, int id)
+        public async Task<ServiceResponse<RoleDTO>> UpdateRole(CreateRoleDTO updateRoleDTO, int id)
         {
             var serviceResponse = new ServiceResponse<RoleDTO>();
             var dbRole = await _dataContext.Roles.FirstOrDefaultAsync(q => q.Id == id);
@@ -79,7 +79,7 @@ namespace QuizzBankBE.Services.RoleServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<RoleDTO>> getRoleByID(int id)
+        public async Task<ServiceResponse<RoleDTO>> GetRoleByID(int id)
         {
             var serviceResponse = new ServiceResponse<RoleDTO>();
             var dbRole = await _dataContext.Roles.ToListAsync();
@@ -95,7 +95,7 @@ namespace QuizzBankBE.Services.RoleServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<RoleDTO>> deleteRole(int id)
+        public async Task<ServiceResponse<RoleDTO>> DeleteRole(int id)
         {
             var serviceResponse = new ServiceResponse<RoleDTO>();
             var dbRole= await _dataContext.Roles.FirstOrDefaultAsync(q => q.Id == id);

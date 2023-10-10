@@ -25,7 +25,7 @@ namespace QuizzBankBE.Services.TagServices
         public TagServicesIpml()
         {
         }
-        public async Task<ServiceResponse<TagResponseDTO>> createNewTag(CreateTagDTO createTagDTO)
+        public async Task<ServiceResponse<TagResponseDTO>> CreateNewTag(CreateTagDTO createTagDTO)
         {
             var serviceResponse = new ServiceResponse<TagResponseDTO>();
             Tag tagSaved = _mapper.Map<Tag>(createTagDTO);
@@ -36,7 +36,7 @@ namespace QuizzBankBE.Services.TagServices
             serviceResponse.updateResponse(200, "Tạo thành công");
             return serviceResponse;
         }
-        public async Task<ServiceResponse<PageList<TagDTO>>> getAllTagByCategoryID(OwnerParameter ownerParameters, int categoryID)
+        public async Task<ServiceResponse<PageList<TagDTO>>> GetAllTagByCategoryID(OwnerParameter ownerParameters, int categoryID)
         {
             var serviceResponse = new ServiceResponse<PageList<TagDTO>>();
             var dbTag = await _dataContext.Tags.ToListAsync();
@@ -51,7 +51,7 @@ namespace QuizzBankBE.Services.TagServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TagDTO>> getTagByID(int tagID)
+        public async Task<ServiceResponse<TagDTO>> GetTagByID(int tagID)
         {
             var serviceResponse = new ServiceResponse<TagDTO>();
             var dbTag = await _dataContext.Tags.ToListAsync();
@@ -67,7 +67,7 @@ namespace QuizzBankBE.Services.TagServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<TagDTO>> updateTag(CreateTagDTO updateTagDTO, int id)
+        public async Task<ServiceResponse<TagDTO>> UpdateTag(CreateTagDTO updateTagDTO, int id)
         {
             var serviceResponse = new ServiceResponse<TagDTO>();
             var dbTag = await _dataContext.Tags.FirstOrDefaultAsync(q => q.Id == id);
@@ -87,7 +87,7 @@ namespace QuizzBankBE.Services.TagServices
             serviceResponse.updateResponse(200, "Update thành công");
             return serviceResponse;
         }
-        public async Task<ServiceResponse<TagDTO>> deleteTag(int id)
+        public async Task<ServiceResponse<TagDTO>> DeleteTag(int id)
         {
             var serviceResponse = new ServiceResponse<TagDTO>();
             var dbTag = await _dataContext.Tags.FirstOrDefaultAsync(q => q.Id == id);

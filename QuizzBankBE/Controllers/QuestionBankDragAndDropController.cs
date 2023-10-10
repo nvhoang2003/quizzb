@@ -38,13 +38,13 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _dragAndDropQuestionServices.createDDQuestionBank(createQuestionDTO);
+            var response = await _dragAndDropQuestionServices.CreateDragDropQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
@@ -55,12 +55,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _dragAndDropQuestionServices.getDDQuestionBankById(Id);
+            var response = await _dragAndDropQuestionServices.GetDragDropQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -79,14 +79,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _dragAndDropQuestionServices.getDDQuestionBankById(id);
+            var updateQuestion = await _dragAndDropQuestionServices.GetDragDropQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _dragAndDropQuestionServices.updateDDQuestionBank(updateQuestionDTO, id);
+            var response = await _dragAndDropQuestionServices.UpdateDragDropQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
@@ -95,14 +95,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _dragAndDropQuestionServices.getDDQuestionBankById(id);
+            var deleteQuestion = await _dragAndDropQuestionServices.GetDragDropQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _dragAndDropQuestionServices.deleteDDQuestionBank(id);
+            var response = await _dragAndDropQuestionServices.DeleteDragDropQuestionBank(id);
             return Ok(response);
         }
     }

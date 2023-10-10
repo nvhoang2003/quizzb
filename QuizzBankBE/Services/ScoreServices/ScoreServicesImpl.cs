@@ -87,7 +87,7 @@ namespace QuizzBankBE.Services.ScoreServices
             return servicesResponse;
         }
 
-        public async Task<ServiceResponse<float>> doQuestion(List<NewQuizResponse> newQuizResponses,int accessId)
+        public async Task<ServiceResponse<float>> DoQuestion(List<NewQuizResponse> newQuizResponses,int accessId)
         {
             var servicesResponse = new ServiceResponse<float>();
 

@@ -28,7 +28,7 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<ShortAnswerQuestionDTO>> createSAQuestion(CreateShortAnswerQuestionDTO createQuestionDTO)
+        public async Task<ServiceResponse<ShortAnswerQuestionDTO>> CreateShortAnswerQuestion(CreateShortAnswerQuestionDTO createQuestionDTO)
         {
             var serviceResponse = new ServiceResponse<ShortAnswerQuestionDTO>();
 
@@ -38,7 +38,7 @@ namespace QuizzBankBE.Services.QuestionServices
 
             foreach (var item in createQuestionDTO.Answers)
             {
-                createAnswer(item, quesSaved.Id);
+                CreateAnswer(item, quesSaved.Id);
             }
 
             await _dataContext.SaveChangesAsync();
@@ -47,7 +47,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<ShortAnswerQuestionDTO>> deleteSAQuestion(int id)
+        public async Task<ServiceResponse<ShortAnswerQuestionDTO>> DeleteShortAnswerQuestion(int id)
         {
             var serviceResponse = new ServiceResponse<ShortAnswerQuestionDTO>();
 
@@ -57,14 +57,14 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.Questions.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteAnswer(id);
+            await DeleteAnswer(id);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<ShortAnswerQuestionDTO>> getSAQuestionById(int id)
+        public async Task<ServiceResponse<ShortAnswerQuestionDTO>> GetShortAnswerQuestionById(int id)
         {
             var serviceResponse = new ServiceResponse<ShortAnswerQuestionDTO>();
             var question = await _dataContext.Questions.FirstOrDefaultAsync(c => c.Id == id && c.QuestionsType == "ShortAnswer");
@@ -84,7 +84,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public QuestionAnswer createAnswer(QuestionAnswerDTO answer, int quizBankId)
+        public QuestionAnswer CreateAnswer(QuestionAnswerDTO answer, int quizBankId)
         {
             answer.QuestionId = quizBankId;
 
@@ -94,7 +94,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return answerSave;
         }
 
-        public async Task<bool> deleteAnswer(int quizBankId)
+        public async Task<bool> DeleteAnswer(int quizBankId)
         {
             var dbAnswers = await _dataContext.QuestionAnswers.Where(c => c.QuestionId.Equals(quizBankId)).ToListAsync();
             foreach (var item in dbAnswers)

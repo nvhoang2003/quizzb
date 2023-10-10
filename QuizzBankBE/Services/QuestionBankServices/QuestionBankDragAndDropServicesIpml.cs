@@ -25,12 +25,12 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _configuration = configuration;
             _qestionBanlListService = questionBankList;
         }
-        public async Task<ServiceResponse<QBankDragAndDropDTO>> createDDQuestionBank(CreateQBankDragAndDropDTO createQuestionBankMatchingDTO)
+        public async Task<ServiceResponse<QBankDragAndDropDTO>> CreateDragDropQuestionBank(CreateQBankDragAndDropDTO createQuestionBankMatchingDTO)
         {
             var serviceResponse = new ServiceResponse<QBankDragAndDropDTO>();
 
             var sortedChoice = createQuestionBankMatchingDTO.Choice.OrderBy(c => c.Position).ToList();
-            updateContent(createQuestionBankMatchingDTO, sortedChoice);
+            UpdateContent(createQuestionBankMatchingDTO, sortedChoice);
 
             QuizBank quesSaved = _mapper.Map<QuizBank>(createQuestionBankMatchingDTO);
             _dataContext.QuizBanks.Add(quesSaved);
@@ -43,14 +43,14 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             await _dataContext.SaveChangesAsync();
 
-            await _qestionBanlListService.createMultiQuestions(new List<int> { quesSaved.Id });
+            await _qestionBanlListService.CreateMultiQuestions(new List<int> { quesSaved.Id });
 
             serviceResponse.updateResponse(200, "Tạo câu hỏi thành công");
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QBankDragAndDropDTO>> deleteDDQuestionBank(int questionBankID)
+        public async Task<ServiceResponse<QBankDragAndDropDTO>> DeleteDragDropQuestionBank(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<QBankDragAndDropDTO>();
 
@@ -60,14 +60,14 @@ namespace QuizzBankBE.Services.QuestionBankServices
             _dataContext.QuizBanks.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteTagAndAnswer(questionBankID);
+            await DeleteTagAndAnswer(questionBankID);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QBankDragAndDropDTO>> getDDQuestionBankById(int questionBankID)
+        public async Task<ServiceResponse<QBankDragAndDropDTO>> GetDragDropQuestionBankById(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<QBankDragAndDropDTO>();
             var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == questionBankID && c.QuestionsType == "DragAndDropIntoText");
@@ -88,16 +88,16 @@ namespace QuizzBankBE.Services.QuestionBankServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QBankDragAndDropDTO>> updateDDQuestionBank(CreateQBankDragAndDropDTO updateQuestionBankMatchingDTO, int questionBankID)
+        public async Task<ServiceResponse<QBankDragAndDropDTO>> UpdateDragDropQuestionBank(CreateQBankDragAndDropDTO updateQuestionBankMatchingDTO, int questionBankID)
         {
             var serviceResponse = new ServiceResponse<QBankDragAndDropDTO>();
             var sortedChoice = updateQuestionBankMatchingDTO.Choice.OrderBy(c => c.Position).ToList();
-            updateContent(updateQuestionBankMatchingDTO, sortedChoice);
+            UpdateContent(updateQuestionBankMatchingDTO, sortedChoice);
 
             var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == questionBankID);
             _mapper.Map(updateQuestionBankMatchingDTO, quesToUpdate);
 
-            await deleteTagAndAnswer(questionBankID);
+            await DeleteTagAndAnswer(questionBankID);
             await _dataContext.SaveChangesAsync();
             foreach (var item in sortedChoice)
             {
@@ -121,7 +121,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             return answerSave;
         }
 
-        public async Task<bool> deleteTagAndAnswer(int quizBankId)
+        public async Task<bool> DeleteTagAndAnswer(int quizBankId)
         {
             var dbAnswers = await _dataContext.QuizbankAnswers.Where(c => c.QuizBankId.Equals(quizBankId)).ToListAsync();
             foreach (var item in dbAnswers)
@@ -140,7 +140,7 @@ namespace QuizzBankBE.Services.QuestionBankServices
             return true;
         }
 
-        public void updateContent(CreateQBankDragAndDropDTO createQuestionBankMatchingDTO, List<Choice> sortedChoice)
+        public void UpdateContent(CreateQBankDragAndDropDTO createQuestionBankMatchingDTO, List<Choice> sortedChoice)
         {
             for (int i = 0; i < sortedChoice.Count; i++)
             {

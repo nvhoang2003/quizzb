@@ -28,7 +28,7 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<MatchQuestionDTO>> createMatchingQuestion(CreateMatchQuestionDTO createQuestionMatchingDTO)
+        public async Task<ServiceResponse<MatchQuestionDTO>> CreateMatchingQuestion(CreateMatchQuestionDTO createQuestionMatchingDTO)
         {
             var serviceResponse = new ServiceResponse<MatchQuestionDTO>();
 
@@ -37,14 +37,14 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.Questions.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            createMatchSubQuestion(createQuestionMatchingDTO.MatchSubQuestion.ToList(), quesSaved.Id);
+            CreateMatchSubQuestion(createQuestionMatchingDTO.MatchSubQuestion.ToList(), quesSaved.Id);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.Message = "Tạo câu hỏi thành công";
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<MatchQuestionDTO>> getMatchSubsQuestionById(int questionID)
+        public async Task<ServiceResponse<MatchQuestionDTO>> GetMatchSubsQuestionById(int questionID)
         {
             var serviceResponse = new ServiceResponse<MatchQuestionDTO>();
             var questionBank = await _dataContext.Questions.FirstOrDefaultAsync(c => c.Id == questionID && c.QuestionsType == "Match");
@@ -65,14 +65,14 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<MatchQuestionDTO>> deleteMatchSubsQuestion(int questionBankID)
+        public async Task<ServiceResponse<MatchQuestionDTO>> DeleteMatchSubsQuestion(int questionBankID)
         {
             var serviceResponse = new ServiceResponse<MatchQuestionDTO>();
 
             var quesSaved = _dataContext.Questions.FirstOrDefault(c => c.Id.Equals(questionBankID));
             quesSaved.IsDeleted = 1;
 
-            await deleteRelationShip(questionBankID);
+            await DeleteRelationShip(questionBankID);
             await _dataContext.SaveChangesAsync();
 
             _dataContext.Questions.Update(quesSaved);
@@ -82,7 +82,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        private List<MatchSubQuestion> createMatchSubQuestion (List<CreateMatchSubQuestionDTO> matchSubQuestionBankDTOs, int questionBankID)
+        private List<MatchSubQuestion> CreateMatchSubQuestion (List<CreateMatchSubQuestionDTO> matchSubQuestionBankDTOs, int questionBankID)
         {
             var matchSubQuestionBanks= _mapper.Map<List<MatchSubQuestion>>(matchSubQuestionBankDTOs);
 
@@ -96,7 +96,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return matchSubQuestionBanks;
         }
 
-        public async Task<bool> deleteRelationShip(int questionBankID)
+        public async Task<bool> DeleteRelationShip(int questionBankID)
         {
             var dbMatchSubs = await _dataContext.MatchSubQuestions.Where(c => c.QuestionId.Equals(questionBankID)).ToListAsync();
             dbMatchSubs.ForEach(e =>

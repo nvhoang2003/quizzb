@@ -38,7 +38,7 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
@@ -48,7 +48,7 @@ namespace QuizzBankBE.Controllers
                 item.AuthorId = userIdLogin;
             }
 
-            var response = await _multiQuestionServices.createNewMultipeQuestion(createQuestionDTO);
+            var response = await _multiQuestionServices.CreateNewMultipeQuestion(createQuestionDTO);
 
             return Ok(response);
         }
@@ -59,12 +59,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUESTION").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multiQuestionServices.getMultipeQuestionById(Id);
+            var response = await _multiQuestionServices.GetMultipeQuestionById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -82,14 +82,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
-            var deleteQuestion = await _multiQuestionServices.getMultipeQuestionById(id);
+            var deleteQuestion = await _multiQuestionServices.GetMultipeQuestionById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _multiQuestionServices.deleteMultipeQuestion(id);
+            var response = await _multiQuestionServices.DeleteMultipeQuestion(id);
             return Ok(response);
         }
     }

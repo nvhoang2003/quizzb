@@ -6,10 +6,10 @@ namespace QuizzBankBE.Services.RoleServices
 {
     public interface IRoleServices
     {
-        Task<ServiceResponse<RoleResponseDTO>> createNewRole(CreateRoleDTO createRoleDTO);
-        Task<ServiceResponse<RoleDTO>> getRoleByID(int id);
-        Task<ServiceResponse<PageList<RoleDTO>>> getAllRole(OwnerParameter ownerParameters);
-        Task<ServiceResponse<RoleDTO>> deleteRole(int id);
-        Task<ServiceResponse<RoleDTO>> updateRole(CreateRoleDTO updateRoleDTO, int id);
+        Task<ServiceResponse<RoleResponseDTO>> CreateNewRole(CreateRoleDTO createRoleDTO);
+        Task<ServiceResponse<RoleDTO>> GetRoleByID(int id);
+        Task<ServiceResponse<PageList<RoleDTO>>> GetAllRole(OwnerParameter ownerParameters);
+        Task<ServiceResponse<RoleDTO>> DeleteRole(int id);
+        Task<ServiceResponse<RoleDTO>> UpdateRole(CreateRoleDTO updateRoleDTO, int id);
     }
 }

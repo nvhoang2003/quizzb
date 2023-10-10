@@ -38,12 +38,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_CATEGORY").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _categoryServices.getAllCategory(ownerParameters);
+            var response = await _categoryServices.GetAllCategory(ownerParameters);
             var metadata = new
             {
                 response.Data.TotalCount,
@@ -63,12 +63,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_CATEGORY").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _categoryServices.getCategoryByID(id);
+            var response = await _categoryServices.GetCategoryByID(id);
             return Ok(response);
         }
 
@@ -79,12 +79,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_CATEGORY").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _categoryServices.createNewCategory(createCategoryDTO);
+            var response = await _categoryServices.CreateNewCategory(createCategoryDTO);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -103,12 +103,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_CATEGORY").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _categoryServices.updateCategory(id, createCategoryDTO);
+            var response = await _categoryServices.UpdateCategory(id, createCategoryDTO);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -126,12 +126,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_CATEGORY").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _categoryServices.deleteCategory(id);
+            var response = await _categoryServices.DeleteCategory(id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

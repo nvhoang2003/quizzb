@@ -43,12 +43,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var courseResponse = await _courseServices.getAllCourse(ownerParameters);
+            var courseResponse = await _courseServices.GetAllCourse(ownerParameters);
 
             var courseResponsePagedList = SettingsPagination(courseResponse);
 
@@ -62,12 +62,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var courseResponse = await _courseServices.getAllCourseByUserID(ownerParameters, userIdLogin);
+            var courseResponse = await _courseServices.GetAllCourseByUserID(ownerParameters, userIdLogin);
 
             var courseResponsePagedList = SettingsPagination(courseResponse);
 
@@ -80,12 +80,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _courseServices.getCourseByCourseID(courseID);
+            var response = await _courseServices.GetCourseByCourseID(courseID);
 
             if (response.Status == false)
             {
@@ -105,12 +105,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _courseServices.createCourse(createCourseDTO, userIdLogin);
+            var response = await _courseServices.CreateCourse(createCourseDTO, userIdLogin);
 
             if (response.Status == false)
             {
@@ -130,12 +130,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _courseServices.updateCourse(updateCourseDTO, courseID);
+            var response = await _courseServices.UpdateCourse(updateCourseDTO, courseID);
 
             if (response.Status == false)
             {
@@ -155,12 +155,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_COURSE").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var checkCourseResponse = await _courseServices.getCourseByCourseID(courseID);
+            var checkCourseResponse = await _courseServices.GetCourseByCourseID(courseID);
 
             if (checkCourseResponse.Status == false)
             {
@@ -171,7 +171,7 @@ namespace QuizzBankBE.Controllers
                 });
             }
 
-            var response = await _courseServices.deleteCourse(courseID, checkCourseResponse.Data);
+            var response = await _courseServices.DeleteCourse(courseID, checkCourseResponse.Data);
 
             if (response.Status == false)
             {

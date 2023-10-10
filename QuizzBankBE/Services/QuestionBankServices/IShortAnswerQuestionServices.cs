@@ -5,12 +5,12 @@ namespace QuizzBankBE.Services.QuestionBankServices
 {
     public interface IShortAnswerQuestionServices
     {
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> createSAQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionBankDTO);
+        Task<ServiceResponse<QuestionBankShortAnswerDTO>> CreateShortAnswerQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionBankDTO);
 
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> getSAQuestionBankById(int id);
+        Task<ServiceResponse<QuestionBankShortAnswerDTO>> GetShortAnswerQuestionBankById(int id);
 
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> updateSAQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionDTO, int id);
+        Task<ServiceResponse<QuestionBankShortAnswerDTO>> UpdateShortAnswerQuestionBank(CreateQuestionBankShortAnswerDTO createQuestionDTO, int id);
 
-        Task<ServiceResponse<QuestionBankShortAnswerDTO>> deleteSAQuestionBank(int id);
+        Task<ServiceResponse<QuestionBankShortAnswerDTO>> DeleteShortAnswerQuestionBank(int id);
     }
 }

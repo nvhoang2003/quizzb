@@ -26,7 +26,7 @@ namespace QuizzBankBE.Services.QuizService
         {
         }
 
-        public async Task<ServiceResponse<QuizAccessDTO>> createQuizzAccess(CreateQuizAccessDTO createAccessDTO)
+        public async Task<ServiceResponse<QuizAccessDTO>> CreateQuizzAccess(CreateQuizAccessDTO createAccessDTO)
         {
             var serviceResponse = new ServiceResponse<QuizAccessDTO>();
             createAccessDTO.Status = "Wait";
@@ -40,7 +40,7 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<QuizAccessDTO>> updateStatus(CreateQuizAccessDTO updateStatusDTO, int id)
+        public async Task<ServiceResponse<QuizAccessDTO>> UpdateStatus(CreateQuizAccessDTO updateStatusDTO, int id)
         {
             var serviceResponse = new ServiceResponse<QuizAccessDTO>();
 

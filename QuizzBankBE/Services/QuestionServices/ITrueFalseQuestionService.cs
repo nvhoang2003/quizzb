@@ -5,9 +5,9 @@ namespace QuizzBankBE.Services.QuestionServices
 {
     public interface ITrueFalseQuestionService
     {
-        Task<ServiceResponse<TrueFalseQuestionDTO>> createNewTrueFalseQuestion(CreateQuestionTrueFalseDTO createQuestionTFDTO);
-        Task<ServiceResponse<TrueFalseQuestionDTO>> getTrueFalseQuestionById(int Id);
-        Task<ServiceResponse<TrueFalseQuestionDTO>> updateTrueFalseQuestion(CreateQuestionTrueFalseDTO updateQbTrueFalseDTO, int id);
-        Task<ServiceResponse<TrueFalseQuestionDTO>> deleteTrueFalseQuestion(int id);
+        Task<ServiceResponse<TrueFalseQuestionDTO>> CreateNewTrueFalseQuestion(CreateQuestionTrueFalseDTO createQuestionTFDTO);
+        Task<ServiceResponse<TrueFalseQuestionDTO>> GetTrueFalseQuestionById(int Id);
+        Task<ServiceResponse<TrueFalseQuestionDTO>> UpdateTrueFalseQuestion(CreateQuestionTrueFalseDTO updateQbTrueFalseDTO, int id);
+        Task<ServiceResponse<TrueFalseQuestionDTO>> DeleteTrueFalseQuestion(int id);
     }
 }

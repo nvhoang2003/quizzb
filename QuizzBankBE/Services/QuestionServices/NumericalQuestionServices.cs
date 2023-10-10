@@ -27,7 +27,7 @@ namespace QuizzBankBE.Services.QuestionServices
         {
         }
 
-        public async Task<ServiceResponse<NumericalQuestionDTO>> createNumericalQuestionBank(CreateNumericalQuestionDTO createQuestionBankDTO)
+        public async Task<ServiceResponse<NumericalQuestionDTO>> CreateNumericalQuestionBank(CreateNumericalQuestionDTO createQuestionBankDTO)
         {
             var serviceResponse = new ServiceResponse<NumericalQuestionDTO>();
 
@@ -35,7 +35,7 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.QuizBanks.Add(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            createAnswer(createQuestionBankDTO, quesSaved.Id);
+            CreateAnswer(createQuestionBankDTO, quesSaved.Id);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Tạo Câu Hỏi thành công");
@@ -43,7 +43,7 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<NumericalQuestionDTO>> getNumericalQuestionBankById(int id)
+        public async Task<ServiceResponse<NumericalQuestionDTO>> GetNumericalQuestionBankById(int id)
         {
             var serviceResponse = new ServiceResponse<NumericalQuestionDTO>();
             var quizBank = await _dataContext.QuizBanks.FirstOrDefaultAsync(c => c.Id == id && c.QuestionsType == "Numerical");
@@ -68,16 +68,16 @@ namespace QuizzBankBE.Services.QuestionServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<NumericalQuestionDTO>> updateNumericalQuestionBank(CreateNumericalQuestionDTO updateQbNumericalDTO, int id)
+        public async Task<ServiceResponse<NumericalQuestionDTO>> UpdateNumericalQuestionBank(CreateNumericalQuestionDTO updateQbNumericalDTO, int id)
         {
             var serviceResponse = new ServiceResponse<NumericalQuestionDTO>();
 
             var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == id);
             _mapper.Map(updateQbNumericalDTO, quesToUpdate);
 
-            await deleteTagAndAnswer(id);
+            await DeleteTagAndAnswer(id);
             await _dataContext.SaveChangesAsync();
-            createAnswer(updateQbNumericalDTO, id);
+            CreateAnswer(updateQbNumericalDTO, id);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Cập nhật câu hỏi thành công");
@@ -86,7 +86,7 @@ namespace QuizzBankBE.Services.QuestionServices
         }
 
 
-        public async Task<ServiceResponse<NumericalQuestionDTO>> deleteNumericalQuestionBank(int id)
+        public async Task<ServiceResponse<NumericalQuestionDTO>> DeleteNumericalQuestionBank(int id)
         {
             var serviceResponse = new ServiceResponse<NumericalQuestionDTO>();
 
@@ -96,14 +96,14 @@ namespace QuizzBankBE.Services.QuestionServices
             _dataContext.QuizBanks.Update(quesSaved);
             await _dataContext.SaveChangesAsync();
 
-            await deleteTagAndAnswer(id);
+            await DeleteTagAndAnswer(id);
             await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xóa câu hỏi thành công");
             return serviceResponse;
         }
 
-        public async Task<bool> deleteTagAndAnswer(int quizBankId)
+        public async Task<bool> DeleteTagAndAnswer(int quizBankId)
         {
             var dbAnswers = await _dataContext.QuizbankAnswers.Where(c => c.QuizBankId.Equals(quizBankId)).ToListAsync();
             foreach (var item in dbAnswers)
@@ -123,7 +123,7 @@ namespace QuizzBankBE.Services.QuestionServices
         }
 
 
-        public QuizbankAnswer createAnswer(CreateNumericalQuestionDTO answer, int quizBankId)
+        public QuizbankAnswer CreateAnswer(CreateNumericalQuestionDTO answer, int quizBankId)
         {
             QuestionBankAnswerDTO rightAnswer = new QuestionBankAnswerDTO(1, answer.RightAnswers.ToString(), quizBankId);
             QuizbankAnswer answerSave = _mapper.Map<QuizbankAnswer>(rightAnswer);

@@ -38,13 +38,13 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
             createQuestionDTO.AuthorId = userIdLogin;
-            var response = await _shortAnswerQuestionServices.createSAQuestionBank(createQuestionDTO);
+            var response = await _shortAnswerQuestionServices.CreateShortAnswerQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
@@ -55,12 +55,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _shortAnswerQuestionServices.getSAQuestionBankById(Id);
+            var response = await _shortAnswerQuestionServices.GetShortAnswerQuestionBankById(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -79,14 +79,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var updateQuestion = await _shortAnswerQuestionServices.getSAQuestionBankById(id);
+            var updateQuestion = await _shortAnswerQuestionServices.GetShortAnswerQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || updateQuestion.Data?.AuthorId != userIdLogin)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _shortAnswerQuestionServices.updateSAQuestionBank(updateQuestionDTO, id);
+            var response = await _shortAnswerQuestionServices.UpdateShortAnswerQuestionBank(updateQuestionDTO, id);
             return Ok(response);
         }
 
@@ -95,14 +95,14 @@ namespace QuizzBankBE.Controllers
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
-            var deleteQuestion = await _shortAnswerQuestionServices.getSAQuestionBankById(id);
+            var deleteQuestion = await _shortAnswerQuestionServices.GetShortAnswerQuestionBankById(id);
 
-            if (!CheckPermission.check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.AuthorId)
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _shortAnswerQuestionServices.deleteSAQuestionBank(id);
+            var response = await _shortAnswerQuestionServices.DeleteShortAnswerQuestionBank(id);
             return Ok(response);
         }
     }

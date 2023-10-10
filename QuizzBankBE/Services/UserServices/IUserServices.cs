@@ -7,12 +7,12 @@ namespace QuizzBankBE.Services.UserServices
 {
     public interface IUserServices
     {
-        Task<ServiceResponse<PageList<UserDTO>>> getAllUsers(OwnerParameter ownerParameters);
-        Task<ServiceResponse<UserDTO>> getUserByUserID(int id);
-        Task<ServiceResponse<UserDTO>> createUsers(CreateUserDTO createUserDTO);
-        Task<ServiceResponse<UpdateUserDTO>> updateUser(UpdateUserDTO updateDTO, int id);
-        Task<ServiceResponse<UpdateUserDTO>> adminUpdateUser(CreateUserDTO updateDTO, int id);
-        Task<ServiceResponse<UpdateUserDTO>> updatePwd(UpdatePwdDTO updateDTO);
-        Task<ServiceResponse<UpdateUserDTO>> setActive(int isActive, int id);
+        Task<ServiceResponse<PageList<UserDTO>>> GetAllUsers(OwnerParameter ownerParameters);
+        Task<ServiceResponse<UserDTO>> GetUserByUserID(int id);
+        Task<ServiceResponse<UserDTO>> CreateUsers(CreateUserDTO createUserDTO);
+        Task<ServiceResponse<UpdateUserDTO>> UpdateUser(UpdateUserDTO updateDTO, int id);
+        Task<ServiceResponse<UpdateUserDTO>> AdminUpdateUser(CreateUserDTO updateDTO, int id);
+        Task<ServiceResponse<UpdateUserDTO>> UpdatePassword(UpdatePwdDTO updateDTO);
+        Task<ServiceResponse<UpdateUserDTO>> SetActive(int isActive, int id);
     }
 }

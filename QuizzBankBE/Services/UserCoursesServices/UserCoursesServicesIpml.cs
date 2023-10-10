@@ -23,7 +23,7 @@ namespace QuizzBankBE.Services.UserCoursesServices
             _jwtProvider = jwtProvider;
             _configuration = configuration;
         }
-        public async Task<ServiceResponse<UserCourseDTO>> addListUserIntoCourse(IEnumerable<UserCourseDTO> createUserCourse)
+        public async Task<ServiceResponse<UserCourseDTO>> AddListUserIntoCourse(IEnumerable<UserCourseDTO> createUserCourse)
         {
             var serviceResponse = new ServiceResponse<UserCourseDTO>();
             IEnumerable<UserCourse> userCourses = _mapper.Map<IEnumerable<UserCourse>>(createUserCourse);
@@ -35,7 +35,7 @@ namespace QuizzBankBE.Services.UserCoursesServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<UserDTO>>> getListUserInCourse(OwnerParameter ownerParameters, int courseId)
+        public async Task<ServiceResponse<PageList<UserDTO>>> GetListUserInCourse(OwnerParameter ownerParameters, int courseId)
         {
             var serviceResponse = new ServiceResponse<PageList<UserDTO>>();
 
@@ -54,7 +54,7 @@ namespace QuizzBankBE.Services.UserCoursesServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UserCourseDTO>> removeUserFromCourses(int userId, int coursesId)
+        public async Task<ServiceResponse<UserCourseDTO>> RemoveUserFromCourses(int userId, int coursesId)
         {
             var serviceResponse = new ServiceResponse<UserCourseDTO>();
             var userCourse = _dataContext.UserCourses.FirstOrDefaultAsync(q => q.UserId == userId && q.CoursesId == coursesId).Result;

@@ -42,12 +42,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_LIST_USER").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var users = await _userServices.getAllUsers(ownerParameters);
+            var users = await _userServices.GetAllUsers(ownerParameters);
             var metadata = new
             {
                 users.Data.TotalCount,
@@ -68,7 +68,7 @@ namespace QuizzBankBE.Controllers
         [FromBody] CreateUserDTO createUserDTO)
         {
             createUserDTO.RoleId = 3;
-            var response = await _userServices.createUsers(createUserDTO);
+            var response = await _userServices.CreateUsers(createUserDTO);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -88,11 +88,11 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_LIST_USER").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
-            var response = await _userServices.createUsers(createUserDTO);
+            var response = await _userServices.CreateUsers(createUserDTO);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails
@@ -108,11 +108,11 @@ namespace QuizzBankBE.Controllers
         [HttpGet("getUserById/{id}")]
         public async Task<ActionResult<UserDTO>> getUserById(int id)
         {
-            var response = await _userServices.getUserByUserID(id);
+            var response = await _userServices.GetUserByUserID(id);
             return Ok(response);
         }
 
-        [HttpPut("updateUser/{id}")]
+        [HttpPut("UpdateUser/{id}")]
         public async Task<ActionResult<ServiceResponse<UserDTO>>> updateUser(
         [FromBody] UpdateUserDTO updateUserDTO, int id)
         {
@@ -122,7 +122,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _userServices.updateUser(updateUserDTO, id);
+            var response = await _userServices.UpdateUser(updateUserDTO, id);
             return Ok(response);
         }
 
@@ -137,23 +137,23 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _userServices.updatePwd(updatePwdDTO);
+            var response = await _userServices.UpdatePassword(updatePwdDTO);
             return Ok(response);
         }
 
-        [HttpPut("adminUpdateUser/{id}")]
+        [HttpPut("AdminUpdateUser/{id}")]
         public async Task<ActionResult<ServiceResponse<UserDTO>>> adminUpdateUser(
 [FromBody] CreateUserDTO updateUserDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_LIST_USER").Value;
 
-            if (!CheckPermission.check(userIdLogin, permissionName))
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _userServices.adminUpdateUser(updateUserDTO, id);
+            var response = await _userServices.AdminUpdateUser(updateUserDTO, id);
             return Ok(response);
         }
     }
