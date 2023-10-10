@@ -22,7 +22,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
 
     }
 
-    public class CreateTrueFalseQuestionDTO : BaseQuestionBankDTO
+    public class CreateTrueFalseQuestionDTO : BaseCreateQuestionBankDTO
     {
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 

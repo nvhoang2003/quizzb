@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.QuestionBankDTOs
 {
-    public class CreateQuestionBankMatchingDTO : BaseQuestionBankDTO
+    public class CreateQuestionBankMatchingDTO : BaseCreateQuestionBankDTO
     {
         [RegularExpression("^Match$", ErrorMessage = "The Question Type must be equal to 'Match'")]
         public override string Questionstype { get; set; }

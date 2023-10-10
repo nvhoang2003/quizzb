@@ -42,12 +42,13 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic)
+        public async Task<ServiceResponse<PageList<QuizDTO>>> getAllQuiz(OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic, int? courseId)
         {
             var serviceResponse = new ServiceResponse<PageList<QuizDTO>>();
             var dbQuiz = await _dataContext.Quizzes.ToListAsync();
             var quizDTO = dbQuiz.Where(q =>(name == null || q.Name.Contains(name)) && 
             (timeStart == null || timeEnd == null || (q.TimeOpen >= timeStart && q.TimeOpen <= timeEnd && q.TimeClose >= timeStart && q.TimeClose <= timeEnd)) &&
+            (courseId == null || q.CourseId == courseId) &&
             (isPublic == null || q.IsPublic == Convert.ToSByte(isPublic) ))
             .Select(u => _mapper.Map<QuizDTO>(u)).ToList();
 

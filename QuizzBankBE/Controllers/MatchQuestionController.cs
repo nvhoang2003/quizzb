@@ -18,6 +18,8 @@ namespace QuizzBankBE.Controllers
     [Produces("application/json")]
     public class MatchQuestionController : ControllerBase
     {
+
+        private readonly IQuestionServices _questionServices;
         private readonly IMatchingQuestionServices _matchQuestionServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
@@ -45,6 +47,8 @@ namespace QuizzBankBE.Controllers
 
             createQuestionDTO.AuthorId = userIdLogin;
             var response = await _matchQuestionServices.createMatchingQuestion(createQuestionDTO);
+
+            var abv = _questionServices.GetQuestionById(1)
 
             return Ok(response);
         }

@@ -32,7 +32,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? authorName, string? questionType, string? tag, DateTime? startDate, DateTime? endDate)
+        public async Task<ServiceResponse<PageList<ListQuestionBank>>> getListQuestionBank(OwnerParameter ownerParameters, int userLoginId, int? categoryId, string? name, string? authorName, string? questionType, string? tag, DateTime? startDate, DateTime? endDate, bool? isPublic)
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestionBank>>();
 
@@ -50,6 +50,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
                         (name == null || c.Name.Contains(name)) &&
                         (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
                         (questionType == null || c.QuestionsType == questionType) &&
+                        (isPublic == null || c.IsPublic == Convert.ToSByte(isPublic)) &&
                         (startDate == null || endDate == null || (c.CreateDate >= startDate && c.CreateDate <= endDate))).
                 ToListAsync();
 
