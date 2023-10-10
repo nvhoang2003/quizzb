@@ -37,7 +37,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("getListQuestionBank")]
         public async Task<ActionResult<ServiceResponse<PageList<ListQuestionBank>>>> getListQuestionBank(
-            [FromQuery] OwnerParameter ownerParameters, int? categoryId, string? name, string? author, string? questionType, string? tags, DateTime? startDate, DateTime? endDate )
+            [FromQuery] OwnerParameter ownerParameters, int? categoryId, string? name, string? author, string? questionType, string? tags, DateTime? startDate, DateTime? endDate, bool? isPublic )
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZ_BANK").Value;
@@ -47,7 +47,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionListServices.getListQuestionBank(ownerParameters, userIdLogin, categoryId, name, author,  questionType, tags, startDate, endDate);
+            var response = await _questionListServices.getListQuestionBank(ownerParameters, userIdLogin, categoryId, name, author,  questionType, tags, startDate, endDate, isPublic);
             
             var metadata = new
             {

@@ -14,7 +14,8 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         public List<Tag> Tags { get; set; }
     }
 
-    public class CreateNumericalQuestionDTO : BaseQuestionBankDTO {
+    public class CreateNumericalQuestionDTO : BaseCreateQuestionBankDTO
+    {
 
         public List<QuestionBankAnswerDTO> Answers { get; set; }
 

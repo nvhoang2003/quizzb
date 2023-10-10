@@ -38,7 +38,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("getListAllQuizz")]
         public async Task<ActionResult<ServiceResponse<PageList<QuizDTO>>>> getListQuizz(
-        [FromQuery] OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic)
+        [FromQuery] OwnerParameter ownerParameters, string? name, DateTime? timeStart, DateTime? timeEnd, bool? isPublic, int? courseId)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZZ").Value;
@@ -48,7 +48,7 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _quizServices.getAllQuiz(ownerParameters, name, timeStart, timeEnd, isPublic);
+            var response = await _quizServices.getAllQuiz(ownerParameters, name, timeStart, timeEnd, isPublic, courseId);
             var metadata = new
             {
                 response.Data.TotalCount,
