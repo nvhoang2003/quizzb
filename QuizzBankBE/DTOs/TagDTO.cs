@@ -39,6 +39,14 @@ namespace QuizzBankBE.DTOs
         public int CategoryId { get; set; }
     }
 
+    public class CreateBaseTagDTO
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+
+        public int CategoryId { get; set; }
+    }
+
     public class TagResponseDTO
     {
         public string Status { get; set; }
