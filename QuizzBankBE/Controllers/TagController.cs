@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -24,17 +25,20 @@ namespace QuizzBankBE.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
-        public TagsController(ITagServices tagServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
+        public static IMapper _mapper;
+
+        public TagsController(ITagServices tagServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration, IMapper mapper)
         {
             _tagServices = tagServices;
             _httpContextAccessor = httpContextAccessor;
             _dataContext = dataContext;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         [HttpPost("CreateNewTag")]
         public async Task<ActionResult<ServiceResponse<TagResponseDTO>>> createNewTag(
-        [FromBody] CreateTagDTO createTagDTO)
+        [FromBody] CreateBaseTagDTO createTagDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_TAG").Value;
@@ -44,8 +48,21 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            var response = await _tagServices.CreateNewTag(createTagDTO);
-            return Ok(response);
+            string nameDTO = "CreateTagDTO";
+            Type dtoType = Type.GetType(nameDTO);
+
+            CreateTagDTO tag = _mapper.Map<CreateTagDTO>(createTagDTO);
+            //object tag = _mapper.Map(createTagDTO, createTagDTO.GetType(), dtoType);
+            TryValidateModel(tag);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //var response = await _tagServices.CreateNewTag(tag);
+            //return Ok(response);
+            return Ok();
         }
 
         [HttpGet("getListAllTagByCategoryID")]
