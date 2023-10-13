@@ -131,7 +131,7 @@ namespace QuizzBankBE
             CreateMap<MatchSubQuestion, MatchSubQuestionBank>().ReverseMap();
             CreateMap<CreateTagDTO, CreateBaseTagDTO>().ReverseMap();
             CreateMap<CreateQuestionBankDTO, QuizBank>().ReverseMap();
-            CreateMap<CreateQuestionBankAnswerDTO, QuizbankAnswer>().ReverseMap()
+            CreateMap<CreateQuestionBankAnswerDTO, QuizbankAnswer>().ReverseMap();
             CreateMap<CreateMatchSubQuestionBank, MatchSubQuestionBank>().ReverseMap();
             CreateMap<QuestionBankResponseDTO, QuizBank>().ReverseMap();
         }
