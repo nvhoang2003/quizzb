@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Crypto;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
@@ -79,6 +80,13 @@ namespace QuizzBankBE.Services.QuestionBankServices
                         })
                         .FirstOrDefault();
 
+            if(quesResponse == null)
+            {
+                serviceResponse.updateResponse(404, "Không tồn tại!");
+
+                return serviceResponse;
+            }
+
             quesResponse = _mapper.Map<QuestionBankResponseDTO>(ques.Question);
             quesResponse.QuizbankAnswers = _mapper.Map<List<CreateQuestionBankAnswerDTO>>(ques.Answers.Distinct());
             quesResponse.MatchSubQuestionBanks = _mapper.Map<List<CreateMatchSubQuestionBank>>(ques.MatchAnswers.Distinct());
@@ -145,49 +153,39 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             var quesResponse = new QuestionBankResponseDTO();
 
-            var ques = (from q in _dataContext.QuizBanks
-                        join qa in _dataContext.QuizbankAnswers on q.Id equals qa.QuizBankId into qaGroup
-                        from qa in qaGroup.DefaultIfEmpty()
-                        join mq in _dataContext.MatchSubQuestionBanks on q.Id equals mq.QuestionBankId into mqGroup
-                        from mq in mqGroup.DefaultIfEmpty()
-                        join qt in _dataContext.QbTags on q.Id equals qt.QbId into qtGroup
-                        from qt in qtGroup.DefaultIfEmpty()
-                        where q.Id == id
-                        select new
-                        {
-                            Question = q,
-                            Answer = qa,
-                            MatchAnswer = mq,
-                            Tag = qt
-                        }).GroupBy(i => i.Question).Select(g => new
-                        {
-                            Question = g.Key,
-                            Answers = g.Select(i => i.Answer),
-                            MatchAnswers = g.Select(i => i.MatchAnswer),
-                            Tags = g.Select(i => i.Tag)
-                        })
-                        .FirstOrDefault();
+            var qbList = await _dataContext.QuizBanks
+                .Include(i => i.QuizbankAnswers)
+                .Include(i => i.MatchSubQuestionBanks)
+                .Include(i => i.QbTags)
+                .Where(c => c.Id == id)
+                .ToListAsync();
 
-            ques.Question.IsDeleted = 1;
-            _dataContext.QuizBanks.Update(ques.Question);
-
-            foreach (var item in ques.Answers)
+            foreach (var qb in qbList)
             {
-                item.IsDeleted = 1;
+                qb.IsDeleted = 1;
+                if (qb.QuizbankAnswers!=null)
+                {
+                    foreach (var it in qb.QuizbankAnswers) {
+                        it.IsDeleted = 1;
+                    }
+                }
+                if (qb.MatchSubQuestionBanks != null)
+                {
+                    foreach (var it in qb.MatchSubQuestionBanks)
+                    {
+                        it.IsDeleted = 1;
+                    }
+                }
+                if (qb.QbTags != null)
+                {
+                    foreach (var it in qb.QbTags)
+                    {
+                        it.IsDeleted = 1;
+                    }
+                }
             }
-            _dataContext.QuizbankAnswers.UpdateRange(ques.Answers);
-
-            foreach (var item in ques.MatchAnswers)
-            {
-                item.IsDeleted = 1;
-            }
-            _dataContext.MatchSubQuestionBanks.UpdateRange(ques.MatchAnswers);
-
-            foreach (var item in ques.Tags)
-            {
-                item.IsDeleted = 1;
-            }
-            _dataContext.QbTags.UpdateRange(ques.Tags);
+         
+            await _dataContext.SaveChangesAsync();
 
             serviceResponse.updateResponse(200, "Xoá câu hỏi thành công");
 

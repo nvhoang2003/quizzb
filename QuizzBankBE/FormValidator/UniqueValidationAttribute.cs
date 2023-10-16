@@ -1,4 +1,4 @@
-﻿using QuizzBankBE.DataAccessLayer.Data;
+﻿ using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DataAccessLayer.DataObject;
 using System.ComponentModel.DataAnnotations;
 

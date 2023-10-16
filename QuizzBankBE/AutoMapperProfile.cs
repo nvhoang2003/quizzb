@@ -53,7 +53,6 @@ namespace QuizzBankBE
             CreateMap<CategoryDTO, Category>();
             CreateMap<CreateCategoryDTO, Category>();
             CreateMap<CategoryDTO,CreateCategoryDTO>();
-            CreateMap<CreateQuestionBankMultipeChoiceDTO, QuizBank>();
             CreateMap<Permission, PermissionDTO>();
             CreateMap<PermissionDTO, PermissionDTO>();
             CreateMap<RolePermissionDTO, RolePermission>();
@@ -62,38 +61,7 @@ namespace QuizzBankBE
             CreateMap<RolePermission, CreateRolePermissionDTO>();
             CreateMap<CreateRolePermissionDTO, RolePermission>();
             CreateMap<CreateRolePermissionDTO, RolePermissionDTO>();
-            CreateMap<QuizBank, QuestionBankMultipeChoiceResponseDTO>();
-            CreateMap<QuestionBankAnswerDTO, QuizbankAnswer>();
-            CreateMap<QuizbankAnswer, QuestionBankAnswerDTO >();
             CreateMap<QbTagDTO, QbTag>();
-            CreateMap<CreateQuestionBankShortAnswerDTO, QuizBank>();
-            CreateMap<QuizBank, QuestionBankShortAnswerDTO>();
-            CreateMap<QuizBank, QuestionBankMatchingResponseDTO>();
-            CreateMap<QuizBank, CreateQuestionBankMatchingDTO>();
-            CreateMap<QuestionBankMatchingResponseDTO, QuizBank>();
-            CreateMap<CreateQuestionBankMatchingDTO, QuizBank>();
-            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankDTO>();
-            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankDTO>().ReverseMap();
-            CreateMap<MatchSubQuestionBank, CreateMatchSubQuestionBankDTO>();
-            CreateMap<MatchSubQuestionBank, CreateMatchSubQuestionBankDTO>().ReverseMap();
-            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankResponseDTO>();
-            CreateMap<MatchSubQuestionBank, MatchSubQuestionBankResponseDTO>().ReverseMap();
-            CreateMap<QuizBank, TrueFalseQuestionBankDTO>();
-            CreateMap<TrueFalseQuestionBankDTO,QuizBank>();
-            CreateMap<QuestionBankAnswerDTO,CreateTrueFalseQuestionDTO>();
-            CreateMap<QuizBank, CreateTrueFalseQuestionDTO>();
-            CreateMap<CreateTrueFalseQuestionDTO, QuizBank>();
-            CreateMap<NumericalQuestionDTO, BaseQuestionBankDTO>();
-            CreateMap<BaseQuestionBankDTO, NumericalQuestionDTO>();
-            CreateMap<CreateNumericalQuestionDTO, BaseQuestionBankDTO>();
-            CreateMap<BaseQuestionBankDTO, CreateNumericalQuestionDTO>();
-            CreateMap<QuizBank, CreateNumericalQuestionDTO>();
-            CreateMap<CreateNumericalQuestionDTO, QuizBank>();
-            CreateMap<NumericalQuestionDTO, QuizBank>();
-            CreateMap<QuizBank, NumericalQuestionDTO>();
-            CreateMap<CreateQBankDragAndDropDTO, QuizBank>();
-            CreateMap<QuizBank, CreateQBankDragAndDropDTO>();
-            CreateMap<QuizBank, QBankDragAndDropDTO>();
             CreateMap<QuizAccess, CreateQuizAccessDTO>();
             CreateMap<CreateQuizAccessDTO, QuizAccess>();
             CreateMap<QuizAccess, BaseQuizAccessDTO>();
@@ -105,20 +73,8 @@ namespace QuizzBankBE
             CreateMap<CreateQuizAccessDTO, BaseQuizAccessDTO>();
             CreateMap<BaseQuizAccessDTO, CreateQuizAccessDTO>();
             CreateMap<CreateQuizAccessDTO, QuizAccessDTO>();
-            CreateMap<QuizAccessDTO,CreateQuizAccessDTO>();
-            CreateMap<CreateDragAndDropDTO, Question>().ReverseMap();
-            CreateMap<QuestionAnswer, QuestionAnswerDTO>().ReverseMap();
-            CreateMap<DragAndDropQuestionDTO, Question>().ReverseMap();
-            CreateMap<TrueFalseQuestionDTO, Question>().ReverseMap();
-            CreateMap<CreateQuestionTrueFalseDTO, Question>().ReverseMap();
-            CreateMap<MatchQuestionDTO, Question>().ReverseMap();
-            CreateMap<CreateMatchQuestionDTO, Question>().ReverseMap();
+            CreateMap<QuizAccessDTO, CreateQuizAccessDTO>();
             CreateMap<MatchSubQuestionResponseDTO, MatchSubQuestion>().ReverseMap();
-            CreateMap<CreateMatchSubQuestionDTO, MatchSubQuestion>().ReverseMap();
-            CreateMap<CreateMultiQuestionDTO, Question>().ReverseMap();
-            CreateMap<MultiQuestionDTO, Question>().ReverseMap();
-            CreateMap<CreateShortAnswerQuestionDTO, Question>().ReverseMap();
-            CreateMap<ShortAnswerQuestionDTO, Question>().ReverseMap();
             CreateMap<ListQuestionBank, QuizBank>().ReverseMap();
             CreateMap<ListQuestion, Question>().ReverseMap();
             CreateMap<Do1QuizResponseDTO, QuizResponse>().ReverseMap();
@@ -134,6 +90,8 @@ namespace QuizzBankBE
             CreateMap<CreateQuestionBankAnswerDTO, QuizbankAnswer>().ReverseMap();
             CreateMap<CreateMatchSubQuestionBank, MatchSubQuestionBank>().ReverseMap();
             CreateMap<QuestionBankResponseDTO, QuizBank>().ReverseMap();
+            CreateMap<QuestionAnswerResponseDTO, QuestionAnswer>().ReverseMap();
+            CreateMap<Question, QuestionResponseDTO>().ReverseMap();
         }
     }
 }

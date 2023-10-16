@@ -1,120 +1,99 @@
-﻿//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Cors;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using MySqlX.XDevAPI.Common;
-//using Newtonsoft.Json;
-//using QuizzBankBE.DataAccessLayer.Data;
-//using QuizzBankBE.DataAccessLayer.DataObject;
-//using QuizzBankBE.DTOs;
-//using QuizzBankBE.FormValidator;
-//using QuizzBankBE.Model;
-//using QuizzBankBE.Model.Pagination;
-//using QuizzBankBE.Services.AuthServices;
-//using QuizzBankBE.Services.QuestionServices;
-//using System.Data;
-//using System.Security.Claims;
-//using System.Text.Json;
-//using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI.Common;
+using Newtonsoft.Json;
+using QuizzBankBE.DataAccessLayer.Data;
+using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.DTOs;
+using QuizzBankBE.DTOs.QuestionDTOs;
+using QuizzBankBE.FormValidator;
+using QuizzBankBE.Model;
+using QuizzBankBE.Model.Pagination;
+using QuizzBankBE.Services.AuthServices;
+using QuizzBankBE.Services.ListQuestionServices;
+using QuizzBankBE.Services.QuestionServices;
+using QuizzBankBE.Utility;
+using System.Data;
+using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-//namespace QuizzBankBE.Controllers
-//{
-//    //[Authorize]
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    [EnableCors("AllowAll")]
-//    [Produces("application/json")]
- 
-//    // Lam Phan Quyen Sau khi Xu li hoan tat QuestionCategories
-//    public class QuestionController : ControllerBase
-//    {
-//        private readonly IQuestionServices _questionServices;
-//        private readonly IHttpContextAccessor _httpContextAccessor;
-//        private readonly DataContext _dataContext;
-//        private readonly IConfiguration _configuration;
+namespace QuizzBankBE.Controllers
+{
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    [EnableCors("AllowAll")]
+    [Produces("application/json")]
 
-//        public QuestionController(IQuestionServices questionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration)
-//        {
-//            _questionServices = questionServices;
-//            _httpContextAccessor = httpContextAccessor;
-//            _dataContext = dataContext;
-//            _configuration = configuration;
-//        }
+    // Lam Phan Quyen Sau khi Xu li hoan tat QuestionCategories
+    public class QuestionController : ControllerBase
+    {
+        private readonly IQuestionBankList _questionListServices;
+        private readonly IQuestionService _questionService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly DataContext _dataContext;
+        private readonly IConfiguration _configuration;
 
-//        [HttpPost("CreateNewQuestion")]
-//        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> createNewQuestionn(
-//        [FromBody] CreateQuestionDTO createQuestionDTO)
-//        {
-//            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-//            if (userIdLogin == null)
-//            {
-//                return new StatusCodeResult(401);
-//            }
+        public QuestionController(IQuestionBankList questionServices, IHttpContextAccessor httpContextAccessor, DataContext dataContext, IConfiguration configuration, IQuestionService questionService)
+        {
+            _questionListServices = questionServices;
+            _httpContextAccessor = httpContextAccessor;
+            _dataContext = dataContext;
+            _configuration = configuration;
+            _questionService = questionService;
+        }
 
-//            createQuestionDTO.SetUserMutation(userIdLogin, userIdLogin);
-//            var response = await _questionServices.createNewQuestion(createQuestionDTO);
 
-//            return Ok(response);
-//        }
+        [HttpPost("AddMultiQuestions")]
+        public async Task<ActionResult<ServiceResponse<Boolean>>> addMultiQuestion(List<int> ids)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
 
-//        [HttpGet("getListQuestions")]
-//        public async Task<ActionResult<ServiceResponse<QuestionCategoryDTO>>> getListQuestions(
-//        [FromQuery] OwnerParameter ownerParameters, int categoryId)
-//        {
-//            var response = await _questionServices.getListQuestion(ownerParameters, categoryId);
-//           /* var metadata = new
-//            {
-//                response.Data.TotalCount,
-//                response.Data.PageSize,
-//                response.Data.CurrentPage,
-//                response.Data.TotalPages,
-//                response.Data.HasNext,
-//                response.Data.HasPrevious
-//            };*/
-//            //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            if (!CheckPermission.Check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
-//            return Ok(response);
-//        }
+            var response = await _questionListServices.CreateMultiQuestions(ids);
 
-//        [HttpGet("getQuestionById/{id}")]
-//        public async Task<ActionResult<PageList<QuestionBankEntryResponseDTO>>> getQuestionById(int id)
-//        {
-//            var response = await _questionServices.getQuestionById(id);
-//            return Ok(response);
-//        }
+            return Ok(response);
+        }
 
-//        [HttpPut("updateQuestion/{id}")]
-//        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> updateQuestion(
-//        [FromBody] CreateQuestionDTO createQuestionDTO, int id)
-//        {
-//            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        [HttpGet("GetQuestionById/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> GetQuestionById(int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:READ_QUESTION").Value;
 
-//            //if (userId == null)
-//            //{
-//            //    return new StatusCodeResult(401);
-//            //}
-//            var response = await _questionServices.updateQuestion(createQuestionDTO, id);
+            if (!CheckPermission.Check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
 
-//            return Ok(response);
-//        }
+            var response = await _questionService.GetQuestionById(id);
 
-//        [HttpDelete("{id}")]
-//        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> deleteQuestion( int id)
-//        {
-//            //var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(response);
+        }
 
-//            var response = await _questionServices.deleteQuestion(id);
-//            if (response.Status == false)
-//            {
-//                return BadRequest(new ProblemDetails
-//                {
-//                    Status = response.StatusCode,
-//                    Title = response.Message
-//                });
-//            }
+        [HttpDelete("DeleteQuestion/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuestionResponseDTO>>> deleteQuestionBank(int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUESTION").Value;
+            var deleteQuestion = await _questionService.GetQuestionById(id);
 
-//            return Ok(response);
-//        }
-//    }
-//}
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != deleteQuestion.Data?.CreateBy)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _questionService.DeleteQuestion(id);
+            return Ok(response);
+        }
+    }
+}
