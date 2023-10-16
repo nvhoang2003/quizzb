@@ -117,12 +117,12 @@ namespace QuizzBankBE.Controllers
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
             var delQuestion = await _questionBankServices.GetQuestionBankById(Id);
-            if (!CheckPermission.Check(userIdLogin, permissionName) || (delQuestion.Data?.AuthorId != userIdLogin && CheckPermission.IsAdmin(userIdLogin)))
+            if (!CheckPermission.Check(userIdLogin, permissionName) || (delQuestion.Data?.AuthorId != userIdLogin && !CheckPermission.IsAdmin(userIdLogin)))
             {
                 return new StatusCodeResult(403);
             }
 
-            var response = await _questionBankServices.GetQuestionBankById(Id);
+            var response = await _questionBankServices.DeleteQuestionBank(Id);
             if (response.Status == false)
             {
                 return BadRequest(new ProblemDetails

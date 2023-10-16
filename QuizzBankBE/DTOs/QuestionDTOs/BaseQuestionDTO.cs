@@ -21,7 +21,7 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
 
         [Required]
         [Range(0, 100, ErrorMessage = "Default Mark must be between 0 and 100.")]
-        public float DefaultMark { get; set; }
+        public float? DefaultMark { get; set; }
 
         public sbyte IsShuffle { get; set; }
     }

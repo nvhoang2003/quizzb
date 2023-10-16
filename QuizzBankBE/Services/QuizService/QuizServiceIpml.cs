@@ -180,10 +180,11 @@ namespace QuizzBankBE.Services.QuizService
                               join qm in _dataContext.MatchSubQuestions on ques.Id equals qm.QuestionId into qmGroup
                               from qmg in qmGroup.DefaultIfEmpty()
                               where qi.Id == id
-                              select new { qi, ques, qag, qmg }
-                          ).AsEnumerable().GroupBy(i => new { i.qi, i.ques }).Distinct().Select(i => new
+                              select new { qi,qq, ques, qag, qmg }
+                          ).AsEnumerable().GroupBy(i => new { i.qi, i.ques, i.qq }).Distinct().Select(i => new
                           {
                               Question = _mapper.Map<GeneralQuestionResultDTO>(i.Key.ques),
+                              Point = i.Key.qq.Point,
                               QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerResultDTO>(qa.qag)).ToList(),
                               MatchSubQuestion = i.Select(qm => _mapper.Map<MatchSubQuestionResponseDTO>(qm.qmg)).ToList()
                           });
@@ -196,6 +197,7 @@ namespace QuizzBankBE.Services.QuizService
 
             foreach(var item in quizResult)
             {
+                item.Question.DefaultMark = item.Point;
                 quizResponseForTest.questionReults.Add(item);
             }
 

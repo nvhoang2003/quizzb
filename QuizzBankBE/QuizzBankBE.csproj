@@ -35,4 +35,8 @@
 		<None Remove="Utility\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="DTOs\QuestionDTOs\" />
+	</ItemGroup>
+
 </Project>
