@@ -38,6 +38,8 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<CreateQuestionBankDTO>>> createNewQuestionBank(
                [FromBody] CreateQuestionBankDTO createQuestionDTO)
         {
+            var response = new ServiceResponse<CreateQuestionBankDTO>();
+
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
@@ -48,11 +50,12 @@ namespace QuizzBankBE.Controllers
 
             createQuestionDTO.AuthorId = userIdLogin;
             var errors = await _questionBankValidate.CheckValidate(createQuestionDTO);
-            if(errors.Data.Count() > 0)
+            if (errors.Status == false)
             {
                 return BadRequest(errors);
             }
-            var response = await _questionBankServices.CreateQuestionBank(createQuestionDTO);
+
+            response = await _questionBankServices.CreateQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
@@ -101,7 +104,7 @@ namespace QuizzBankBE.Controllers
             updateQuestionDTO.AuthorId = updateQuestion.Data?.AuthorId;
 
             var errors = await _questionBankValidate.CheckValidate(updateQuestionDTO);
-            if (errors.Data?.Count() > 0)
+            if (errors.Status == false)
             {
                 return BadRequest(errors);
             }
