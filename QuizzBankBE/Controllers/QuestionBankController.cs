@@ -38,8 +38,6 @@ namespace QuizzBankBE.Controllers
         public async Task<ActionResult<ServiceResponse<CreateQuestionBankDTO>>> createNewQuestionBank(
                [FromBody] CreateQuestionBankDTO createQuestionDTO)
         {
-            var response = new ServiceResponse<CreateQuestionBankDTO>();
-
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;
 
@@ -55,7 +53,7 @@ namespace QuizzBankBE.Controllers
                 return BadRequest(errors);
             }
 
-            response = await _questionBankServices.CreateQuestionBank(createQuestionDTO);
+            var response = await _questionBankServices.CreateQuestionBank(createQuestionDTO);
 
             return Ok(response);
         }
