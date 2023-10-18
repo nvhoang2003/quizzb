@@ -46,6 +46,12 @@ namespace QuizzBankBE.Services.QuestionBankServices
             Dictionary<string, string> myDict = result as Dictionary<string, string>;
             response.Data = myDict;
 
+            if(myDict.Count > 0)
+            {
+                response.Status = false;
+                response.StatusCode = 400;
+            }
+
             return response;
         }
 

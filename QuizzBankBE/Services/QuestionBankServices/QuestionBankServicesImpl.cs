@@ -46,6 +46,9 @@ namespace QuizzBankBE.Services.QuestionBankServices
             await _dataContext.SaveChangesAsync();
 
             await _qestionBanlListService.CreateMultiQuestions(new List<int> { quesSaved.Id });
+
+            serviceResponse.updateResponse(200, "Tạo Thành Công");
+
             return serviceResponse;
         }
 
