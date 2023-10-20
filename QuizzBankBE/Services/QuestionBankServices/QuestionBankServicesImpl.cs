@@ -58,42 +58,23 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
             var quesResponse = new QuestionBankResponseDTO();
 
-            var ques = (from q in _dataContext.QuizBanks
-                        join qa in _dataContext.QuizbankAnswers on q.Id equals qa.QuizBankId into qaGroup
-                        from qa in qaGroup.DefaultIfEmpty()
-                        join mq in _dataContext.MatchSubQuestionBanks on q.Id equals mq.QuestionBankId into mqGroup
-                        from mq in mqGroup.DefaultIfEmpty()
-                        join qt in _dataContext.QbTags on q.Id equals qt.QbId into qtGroup
-                        from qt in qtGroup.DefaultIfEmpty()
-                        join t in _dataContext.Tags on qt.TagId equals t.Id into tGroup
-                        from t in tGroup.DefaultIfEmpty()
-                        where q.Id == id
-                        select new
-                        {
-                            Question = q,
-                            Answer = qa,
-                            MatchAnswer = mq,
-                            Tag = t
-                        }).GroupBy(i => i.Question).Select(g => new
-                        {
-                            Question = g.Key,
-                            Answers = g.Select(i => i.Answer),
-                            MatchAnswers = g.Select(i => i.MatchAnswer),
-                            Tags = g.Select(i => i.Tag)
-                        })
-                        .FirstOrDefault();
+            var ques = await _dataContext.QuizBanks
+               .Include(i => i.QuizbankAnswers)
+               .Include(i => i.MatchSubQuestionBanks)
+               .Include(i => i.QbTags)
+               .ThenInclude(i => i.Tag)
+               .Where(c => c.Id == id)
+               .FirstOrDefaultAsync();
 
-            if(quesResponse == null)
+            if (ques == null)
             {
                 serviceResponse.updateResponse(404, "Không tồn tại!");
 
                 return serviceResponse;
             }
 
-            quesResponse = _mapper.Map<QuestionBankResponseDTO>(ques.Question);
-            quesResponse.QuizbankAnswers = _mapper.Map<List<CreateQuestionBankAnswerDTO>>(ques.Answers.Distinct());
-            quesResponse.MatchSubQuestionBanks = _mapper.Map<List<CreateMatchSubQuestionBank>>(ques.MatchAnswers.Distinct());
-            quesResponse.Tags = _mapper.Map<List<TagDTO>>(ques.Tags.Distinct());
+            quesResponse = _mapper.Map<QuestionBankResponseDTO>(ques);
+            quesResponse.Tags = _mapper.Map<List<TagDTO>>(ques.QbTags.Select(q => q.Tag).ToList().Distinct());
 
             serviceResponse.Data = quesResponse;
 
@@ -141,13 +122,13 @@ namespace QuizzBankBE.Services.QuestionBankServices
 
         public void GenerateAnswerTrueFalseQuestion(CreateQuestionBankDTO createQuestionBankDTO)
         {
-            CreateQuestionBankAnswerDTO rightAnswer = new CreateQuestionBankAnswerDTO();
-            CreateQuestionBankAnswerDTO wrongtAnswer = new CreateQuestionBankAnswerDTO();
-            rightAnswer.Content = createQuestionBankDTO?.RightAnswer?.ToString();
-            rightAnswer.Fraction = 1;
-            wrongtAnswer.Content = createQuestionBankDTO.RightAnswer == true ? "False" : "True";
-            wrongtAnswer.Fraction = 0;
-            createQuestionBankDTO.QuizbankAnswers = new List<CreateQuestionBankAnswerDTO> { rightAnswer, wrongtAnswer };
+            CreateQuestionBankAnswerDTO trueAnswer = new CreateQuestionBankAnswerDTO();
+            CreateQuestionBankAnswerDTO falseAnswer = new CreateQuestionBankAnswerDTO();
+            trueAnswer.Content = "Đúng";
+            trueAnswer.Fraction = createQuestionBankDTO.RightAnswer == true ? 1 : 0;
+            falseAnswer.Content = "Sai";
+            falseAnswer.Fraction = createQuestionBankDTO.RightAnswer == false ? 1 : 0;
+            createQuestionBankDTO.QuizbankAnswers = new List<CreateQuestionBankAnswerDTO> { trueAnswer, falseAnswer };
         }
 
         public async Task<ServiceResponse<CreateQuestionBankDTO>> DeleteQuestionBank(int id)
