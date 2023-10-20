@@ -32,7 +32,9 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public string QuestionsType { get; set; }
         public string Name { get; set; }
         public string AuthorName { get; set; }
+        public List<TagDTO> Tags { get; set; }
         public float DefaultMark { get; set; }
+        public string CategoryName { get; set; }
     }
 
     public class GeneralQuestionResultDTO : BaseQuestionDTO

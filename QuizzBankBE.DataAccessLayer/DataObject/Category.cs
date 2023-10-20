@@ -22,6 +22,8 @@ public partial class Category : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+
     public virtual ICollection<QuizBank> QuizBanks { get; set; } = new List<QuizBank>();
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();

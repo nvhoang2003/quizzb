@@ -104,6 +104,16 @@ namespace QuizzBankBE.Services.QuestionBankServices
         {
             var serviceResponse = new ServiceResponse<CreateQuestionBankDTO>();
 
+            var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == questionBankID);
+            _mapper.Map(updateQuestionBankDTO, quesToUpdate);
+
+            if (quesToUpdate == null)
+            {
+                serviceResponse.updateResponse(404, "Không tồn tại!");
+
+                return serviceResponse;
+            }
+
             if (updateQuestionBankDTO.Questionstype == "TrueFalse")
             {
                 GenerateAnswerTrueFalseQuestion(updateQuestionBankDTO);
@@ -113,10 +123,10 @@ namespace QuizzBankBE.Services.QuestionBankServices
                 UpdateContentDragAndDropQuestion(updateQuestionBankDTO);
             }
 
-            var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == questionBankID);
-            _mapper.Map(updateQuestionBankDTO, quesToUpdate);
-
             await _dataContext.SaveChangesAsync();
+
+            await _qestionBanlListService.CreateMultiQuestions(new List<int> { questionBankID });
+
 
             serviceResponse.updateResponse(200, "Cập nhật câu hỏi thành công");
 
@@ -162,6 +172,13 @@ namespace QuizzBankBE.Services.QuestionBankServices
                 .Include(i => i.QbTags)
                 .Where(c => c.Id == id)
                 .ToListAsync();
+
+            if (qbList.Count == 0)
+            {
+                serviceResponse.updateResponse(404, "Không tồn tại!");
+
+                return serviceResponse;
+            }
 
             foreach (var qb in qbList)
             {
