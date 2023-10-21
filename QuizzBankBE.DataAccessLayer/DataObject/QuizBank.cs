@@ -36,9 +36,13 @@ public partial class QuizBank : IAuditedEntityBase
 
     public float? DefaultMark { get; set; }
 
+    public int? FileId { get; set; }
+
     public virtual User? Author { get; set; }
 
     public virtual Category Category { get; set; } = null!;
+
+    public virtual SystemFile? SystemFile { get; set; }
 
     public virtual ICollection<MatchSubQuestionBank> MatchSubQuestionBanks { get; set; } = new List<MatchSubQuestionBank>();
 

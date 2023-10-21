@@ -26,5 +26,9 @@ public partial class QuizbankAnswer : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
+    public int? FileId { get; set; }
+
+    public virtual SystemFile? SystemFile { get; set; }
+
     public virtual QuizBank? QuizBank { get; set; }
 }

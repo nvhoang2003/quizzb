@@ -19,6 +19,8 @@ public partial class QuizzbContext : DbContext
 
     public virtual DbSet<Course> Courses { get; set; }
 
+    public virtual DbSet<SystemFile> SystemFiles { get; set; }
+
     public virtual DbSet<MatchSubQuestion> MatchSubQuestions { get; set; }
 
     public virtual DbSet<MatchSubQuestionBank> MatchSubQuestionBanks { get; set; }
@@ -47,6 +49,8 @@ public partial class QuizzbContext : DbContext
 
     public virtual DbSet<RolePermission> RolePermissions { get; set; }
 
+    public virtual DbSet<Subject> Subjects { get; set; }
+
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -57,7 +61,7 @@ public partial class QuizzbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySQL("    server=103.161.178.66;port=3306;user=lmms;password=sa@123;database=quizzb");
+        => optionsBuilder.UseMySQL("    server=103.161.178.66;port=3306;user=lmms;password=LmmS@123;database=quizzb");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -114,11 +118,40 @@ public partial class QuizzbContext : DbContext
                 .HasColumnName("updateDate");
         });
 
+        modelBuilder.Entity<SystemFile>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("system_files");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CreateBy).HasColumnName("createBy");
+            entity.Property(e => e.CreateDate)
+                .HasColumnType("date")
+                .HasColumnName("createDate");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.NameFile)
+                .HasMaxLength(255)
+                .HasColumnName("nameFile");
+            entity.Property(e => e.PathFile)
+                .HasMaxLength(255)
+                .HasColumnName("pathFile");
+            entity.Property(e => e.TypeFile)
+                .HasMaxLength(45)
+                .HasColumnName("typeFile");
+            entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
+            entity.Property(e => e.UpdateDate)
+                .HasColumnType("date")
+                .HasColumnName("updateDate");
+        });
+
         modelBuilder.Entity<MatchSubQuestion>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("match_sub_questions");
+
+            entity.HasIndex(e => e.FileId, "fk_matchsub_question_file_idx");
 
             entity.HasIndex(e => e.QuestionId, "fk_matchsub_question_idx");
 
@@ -130,6 +163,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.CreateDate)
                 .HasColumnType("date")
                 .HasColumnName("createDate");
+            entity.Property(e => e.FileId).HasColumnName("fileId");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.QuestionId).HasColumnName("questionId");
             entity.Property(e => e.QuestionText)
@@ -139,6 +173,10 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
                 .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.SystemFile).WithMany(p => p.MatchSubQuestions)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("fk_matchsub_question_file");
 
             entity.HasOne(d => d.Question).WithMany(p => p.MatchSubQuestions)
                 .HasForeignKey(d => d.QuestionId)
@@ -151,6 +189,8 @@ public partial class QuizzbContext : DbContext
 
             entity.ToTable("match_sub_question_banks");
 
+            entity.HasIndex(e => e.FileId, "fk_matchsub_file_idx");
+
             entity.HasIndex(e => e.QuestionBankId, "fk_matchsub_questionbank_idx");
 
             entity.Property(e => e.Id).HasColumnName("ID");
@@ -161,6 +201,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.CreateDate)
                 .HasColumnType("date")
                 .HasColumnName("createDate");
+            entity.Property(e => e.FileId).HasColumnName("fileId");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.QuestionBankId).HasColumnName("questionBankId");
             entity.Property(e => e.QuestionText)
@@ -170,6 +211,10 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
                 .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.SystemFile).WithMany(p => p.MatchSubQuestionBanks)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("fk_matchsub_file");
 
             entity.HasOne(d => d.QuestionBank).WithMany(p => p.MatchSubQuestionBanks)
                 .HasForeignKey(d => d.QuestionBankId)
@@ -206,7 +251,9 @@ public partial class QuizzbContext : DbContext
 
             entity.ToTable("qb_tags");
 
-            entity.HasIndex(e => e.QbId, "fk_qb_tags_idx");
+            entity.HasIndex(e => e.QuizBankId, "fk_qb_tags_idx");
+
+            entity.HasIndex(e => e.QuestionId, "fk_question_tags_idx");
 
             entity.HasIndex(e => e.TagId, "fk_tag_qb_idx");
 
@@ -216,15 +263,20 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("createDate");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-            entity.Property(e => e.QbId).HasColumnName("qbId");
+            entity.Property(e => e.QuestionId).HasColumnName("questionId");
+            entity.Property(e => e.QuizBankId).HasColumnName("quizBankId");
             entity.Property(e => e.TagId).HasColumnName("tagId");
             entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
                 .HasColumnName("updateDate");
 
-            entity.HasOne(d => d.Qb).WithMany(p => p.QbTags)
-                .HasForeignKey(d => d.QbId)
+            entity.HasOne(d => d.Question).WithMany(p => p.QbTags)
+                .HasForeignKey(d => d.QuestionId)
+                .HasConstraintName("fk_question_tags");
+
+            entity.HasOne(d => d.QuizBank).WithMany(p => p.QbTags)
+                .HasForeignKey(d => d.QuizBankId)
                 .HasConstraintName("fk_qb_tags");
 
             entity.HasOne(d => d.Tag).WithMany(p => p.QbTags)
@@ -238,10 +290,15 @@ public partial class QuizzbContext : DbContext
 
             entity.ToTable("questions");
 
+            entity.HasIndex(e => e.CategoryId, "fk_question_category_idx");
+
+            entity.HasIndex(e => e.FileId, "fk_question_file_idx");
+
             entity.HasIndex(e => e.AuthorId, "fk_user_question_idx");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.AuthorId).HasColumnName("authorId");
+            entity.Property(e => e.CategoryId).HasColumnName("categoryId");
             entity.Property(e => e.Content)
                 .HasColumnType("mediumtext")
                 .HasColumnName("content");
@@ -250,6 +307,7 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("createDate");
             entity.Property(e => e.DefaultMark).HasColumnName("defaultMark");
+            entity.Property(e => e.FileId).HasColumnName("fileId");
             entity.Property(e => e.GeneralFeedback)
                 .HasColumnType("mediumtext")
                 .HasColumnName("generalFeedback");
@@ -269,6 +327,15 @@ public partial class QuizzbContext : DbContext
             entity.HasOne(d => d.Author).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.AuthorId)
                 .HasConstraintName("fk_user_question");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_question_category");
+
+            entity.HasOne(d => d.SystemFile).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("fk_question_file");
         });
 
         modelBuilder.Entity<QuestionAnswer>(entity =>
@@ -276,6 +343,8 @@ public partial class QuizzbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("question_answer");
+
+            entity.HasIndex(e => e.FileId, "fk_question_answer_file_idx");
 
             entity.HasIndex(e => e.QuestionId, "fk_question_answer_idx");
 
@@ -290,6 +359,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.Feedback)
                 .HasMaxLength(255)
                 .HasColumnName("feedback");
+            entity.Property(e => e.FileId).HasColumnName("fileId");
             entity.Property(e => e.Fraction).HasColumnName("fraction");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.QuestionId).HasColumnName("questionId");
@@ -297,6 +367,10 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
                 .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.SystemFile).WithMany(p => p.QuestionAnswers)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("fk_question_answer_file");
 
             entity.HasOne(d => d.Question).WithMany(p => p.QuestionAnswers)
                 .HasForeignKey(d => d.QuestionId)
@@ -389,7 +463,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.QuizId).HasColumnName("quizId");
             entity.Property(e => e.Status)
                 .HasMaxLength(45)
-                .HasDefaultValueSql("'wait'")
+                .HasDefaultValueSql("'Wait'")
                 .HasColumnName("status");
             entity.Property(e => e.TimeStartQuiz)
                 .HasColumnType("datetime")
@@ -421,6 +495,8 @@ public partial class QuizzbContext : DbContext
 
             entity.HasIndex(e => e.CategoryId, "fk_qb_category_idx");
 
+            entity.HasIndex(e => e.FileId, "fk_qb_file_idx");
+
             entity.HasIndex(e => e.AuthorId, "fk_qb_user_idx");
 
             entity.Property(e => e.Id).HasColumnName("ID");
@@ -434,6 +510,7 @@ public partial class QuizzbContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("createDate");
             entity.Property(e => e.DefaultMark).HasColumnName("defaultMark");
+            entity.Property(e => e.FileId).HasColumnName("fileId");
             entity.Property(e => e.GeneralFeedback)
                 .HasColumnType("mediumtext")
                 .HasColumnName("generalFeedback");
@@ -461,6 +538,10 @@ public partial class QuizzbContext : DbContext
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_qb_category");
+
+            entity.HasOne(d => d.SystemFile).WithMany(p => p.QuizBanks)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("fk_qb_file");
         });
 
         modelBuilder.Entity<QuizQuestion>(entity =>
@@ -510,9 +591,7 @@ public partial class QuizzbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.AccessId).HasColumnName("accessId");
-            entity.Property(e => e.Answer)
-                .HasColumnType("json")
-                .HasColumnName("answer");
+            entity.Property(e => e.Answer).HasColumnName("answer");
             entity.Property(e => e.CreateBy).HasColumnName("createBy");
             entity.Property(e => e.CreateDate)
                 .HasColumnType("date")
@@ -544,6 +623,8 @@ public partial class QuizzbContext : DbContext
 
             entity.ToTable("quizbank_answers");
 
+            entity.HasIndex(e => e.FileId, "fk_quizbank_answer_file_idx");
+
             entity.HasIndex(e => e.QuizBankId, "fk_quizbank_answer_idx");
 
             entity.Property(e => e.Id).HasColumnName("ID");
@@ -557,6 +638,7 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.Feedback)
                 .HasMaxLength(255)
                 .HasColumnName("feedback");
+            entity.Property(e => e.FileId).HasColumnName("fileId");
             entity.Property(e => e.Fraction).HasColumnName("fraction");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.QuizBankId).HasColumnName("quizBankId");
@@ -564,6 +646,10 @@ public partial class QuizzbContext : DbContext
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
                 .HasColumnName("updateDate");
+
+            entity.HasOne(d => d.SystemFile).WithMany(p => p.QuizbankAnswers)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("fk_quizbank_answer_file");
 
             entity.HasOne(d => d.QuizBank).WithMany(p => p.QuizbankAnswers)
                 .HasForeignKey(d => d.QuizBankId)
@@ -627,6 +713,18 @@ public partial class QuizzbContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("fk_role_permission");
+        });
+
+        modelBuilder.Entity<Subject>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("subject");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.SubjectName)
+                .HasMaxLength(100)
+                .HasColumnName("subject_name");
         });
 
         modelBuilder.Entity<Tag>(entity =>

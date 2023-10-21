@@ -32,9 +32,19 @@ public partial class Question : IAuditedEntityBase
 
     public float? DefaultMark { get; set; }
 
+    public int CategoryId { get; set; }
+
+    public int? FileId { get; set; }
+
     public virtual User? Author { get; set; }
 
+    public virtual Category Category { get; set; } = null!;
+
+    public virtual SystemFile? SystemFile { get; set; }
+
     public virtual ICollection<MatchSubQuestion> MatchSubQuestions { get; set; } = new List<MatchSubQuestion>();
+
+    public virtual ICollection<QbTag> QbTags { get; set; } = new List<QbTag>();
 
     public virtual ICollection<QuestionAnswer> QuestionAnswers { get; set; } = new List<QuestionAnswer>();
 

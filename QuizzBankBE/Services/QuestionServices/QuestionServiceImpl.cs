@@ -61,24 +61,14 @@ namespace QuizzBankBE.Services.QuestionServices
 
             var quesResponse = new QuestionResponseDTO();
 
-            var ques = (from q in _dataContext.Questions
-                        join qa in _dataContext.QuestionAnswers on q.Id equals qa.QuestionId into qaGroup
-                        from qa in qaGroup.DefaultIfEmpty()
-                        join mq in _dataContext.MatchSubQuestions on q.Id equals mq.QuestionId into mqGroup
-                        from mq in mqGroup.DefaultIfEmpty()
-                        where q.Id == id
-                        select new
-                        {
-                            Question = q,
-                            Answer = qa,
-                            MatchAnswer = mq
-                        }).GroupBy(i => i.Question).Select(g => new
-                        {
-                            Question = g.Key,
-                            Answers = g.Select(i => i.Answer),
-                            MatchAnswers = g.Select(i => i.MatchAnswer),
-                        })
-                        .FirstOrDefault();
+            var ques = await _dataContext.Questions
+               .Include(i => i.QuestionAnswers)
+               .ThenInclude(i => i.SystemFile)
+               .Include(i => i.MatchSubQuestions)
+               .ThenInclude(i => i.SystemFile)
+               .Include(i => i.SystemFile)
+               .Where(c => c.Id == id)
+               .FirstOrDefaultAsync();
 
             if (ques == null)
             {
@@ -87,9 +77,34 @@ namespace QuizzBankBE.Services.QuestionServices
                 return serviceResponse;
             }
 
-            quesResponse = _mapper.Map<QuestionResponseDTO>(ques.Question);
-            quesResponse.QuestionAnswers = _mapper.Map<List<QuestionAnswerResponseDTO>>(ques.Answers.Distinct());
-            quesResponse.MatchSubQuestions = _mapper.Map<List<MatchSubQuestionResponseDTO>>(ques.MatchAnswers.Distinct());
+            quesResponse = _mapper.Map<QuestionResponseDTO>(ques);
+
+            if (quesResponse.SystemFile?.NameFile != null)
+            {
+                quesResponse.ImageUrl = _configuration["LinkShowImage"] + quesResponse.SystemFile.NameFile;
+            }
+
+
+            if (quesResponse.QuestionsType == "Match")
+            {
+                foreach (var item in quesResponse.MatchSubQuestions)
+                {
+                    if (item.SystemFile?.NameFile != null)
+                    {
+                        item.ImageUrl = _configuration["LinkShowImage"] + item.SystemFile.NameFile;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in quesResponse.QuestionAnswers)
+                {
+                    if (item.SystemFile?.NameFile != null)
+                    {
+                        item.ImageUrl = _configuration["LinkShowImage"] + item.SystemFile.NameFile;
+                    }
+                }
+            }
 
             serviceResponse.Data = quesResponse;
 

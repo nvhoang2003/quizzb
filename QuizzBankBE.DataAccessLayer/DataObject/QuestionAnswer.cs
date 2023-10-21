@@ -26,5 +26,9 @@ public partial class QuestionAnswer : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
+    public int? FileId { get; set; }
+
+    public virtual SystemFile? SystemFile { get; set; }
+
     public virtual Question? Question { get; set; }
 }

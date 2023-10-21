@@ -36,7 +36,7 @@ namespace QuizzBankBE.Services.ListQuestionServices
         {
             var serviceResponse = new ServiceResponse<PageList<ListQuestionBank>>();
 
-            var listTag = tag == null ? new List<string>() : tag.Split(", ").
+            var listTag = tag == null ? new List<string>() : tag.Split(",").
                 Select(x => x.TrimStart()).
                 ToList();
 
@@ -52,35 +52,33 @@ namespace QuizzBankBE.Services.ListQuestionServices
                         (questionType == null || c.QuestionsType == questionType) &&
                         (isPublic == null || c.IsPublic == Convert.ToSByte(isPublic)) &&
                         (startDate == null || endDate == null || (c.CreateDate >= startDate && c.CreateDate <= endDate))).
+                Include(q => q.Category).
+                Include(q => q.Author).
+                Include(q => q.QbTags).
+                ThenInclude(q => q.Tag).
                 ToListAsync();
 
-            var quizBankList = dbQuizBanks.Select(u => _mapper.Map<ListQuestionBank>(u)).ToList();
-
             var listAfterSearch = new List<ListQuestionBank>();
-
-            foreach (var item in quizBankList)
+            ListQuestionBank listQb = new ListQuestionBank();
+            foreach (var item in dbQuizBanks)
             {
-                var quizBank = dbQuizBanks.First(c => c.Id == item.Id);
-                item.AuthorName = await _dataContext.Users.Where(c => c.Id == quizBank.CreateBy).Select(c => c.FirstName + " " + c.LastName).FirstOrDefaultAsync();
+                listQb = _mapper.Map<ListQuestionBank>(item);
 
-                item.CategoryName = await _dataContext.Categories.Where(c => c.Id == quizBank.CategoryId).Select(c => c.Name).FirstOrDefaultAsync();
+                listQb.AuthorName = item?.Author?.FirstName + " " + item?.Author?.LastName;
+                listQb.CategoryName = item?.Category?.Name;
 
-                var dbTags = (from q in _dataContext.QuizBanks
-                                join qt in _dataContext.QbTags on q.Id equals qt.QbId
-                                join t in _dataContext.Tags on qt.TagId equals t.Id
-                                where q.Id == item.Id
-                                select t).Distinct().ToList();
+                var dbTags = item.QbTags.Select(q => q.Tag);
 
                 var listTagName = dbTags.Select(c => c.Name).ToList();
 
                 HashSet<string> listTagNameHashet = new HashSet<string>(listTagName);
 
-                item.Tags = _mapper.Map<List<TagDTO>>(dbTags);
+                listQb.Tags = _mapper.Map<List<TagDTO>>(dbTags);
 
 
                 if (inputHashet.IsSubsetOf(listTagNameHashet))
                 {
-                    listAfterSearch.Add(item);
+                    listAfterSearch.Add(listQb);
                 }
             }
 
@@ -92,28 +90,55 @@ namespace QuizzBankBE.Services.ListQuestionServices
             return serviceResponse;
         }
 
-            public async Task<ServiceResponse<PageList<ListQuestion>>> GetListQuestion(OwnerParameter ownerParameters, int userLoginId, string? name, string? authorName, string? questionType, DateTime? startDate, DateTime? endDate)
+            public async Task<ServiceResponse<PageList<ListQuestion>>> GetListQuestion(OwnerParameter ownerParameters, int userLoginId, string? name, string? authorName, int? categoryId, string? tags, string? questionType, DateTime? startDate, DateTime? endDate)
         {
+            var listTag = tags == null ? new List<string>() : tags.Split(",").
+               Select(x => x.TrimStart()).
+               ToList();
+            HashSet<string> inputHashet = new HashSet<string>(listTag);
+
             var serviceResponse = new ServiceResponse<PageList<ListQuestion>>();
             var dbQuestions = await _dataContext.Questions.
                  Where(c => (c.CreateBy == userLoginId) &&
                         (name == null || c.Name == name) &&
+                        (categoryId == null || c.CategoryId == categoryId) &&
                         (authorName == null || (c.Author.FirstName + " " + c.Author.LastName).Contains(authorName)) &&
                         (questionType == null || c.QuestionsType == questionType) &&
                         (startDate == null || endDate == null || (c.CreateDate >= startDate && c.CreateDate <= endDate))).
+                Include(q => q.Category).
+                Include(q => q.Author).
+                Include(q => q.QbTags).
+                ThenInclude(q => q.Tag).
                 ToListAsync();
 
-            var questionList = dbQuestions.Select(u => _mapper.Map<ListQuestion>(u)).ToList();
+            //var questionList = dbQuestions.Select(u => _mapper.Map<ListQuestion>(u)).ToList();
+            var listAfterSearch = new List<ListQuestion>();
+            ListQuestion listQb = new ListQuestion();
 
-            foreach (var item in questionList)
+            foreach (var item in dbQuestions)
             {
-                var quizBank = dbQuestions.First(c => c.Id == item.Id);
-                var author = await _dataContext.Users.FirstOrDefaultAsync(c => c.Id == quizBank.AuthorId);
-                item.AuthorName = author.FirstName + author.LastName;
+                listQb = _mapper.Map<ListQuestion>(item);
+
+                listQb.AuthorName = item?.Author?.FirstName + " " + item?.Author?.LastName;
+                listQb.CategoryName = item?.Category?.Name;
+
+                var dbTags = item.QbTags.Select(q => q.Tag);
+
+                var listTagName = dbTags.Select(c => c.Name).ToList();
+
+                HashSet<string> listTagNameHashet = new HashSet<string>(listTagName);
+
+                listQb.Tags = _mapper.Map<List<TagDTO>>(dbTags);
+
+
+                if (inputHashet.IsSubsetOf(listTagNameHashet))
+                {
+                    listAfterSearch.Add(listQb);
+                }
             }
 
             serviceResponse.Data = PageList<ListQuestion>.ToPageList(
-            questionList.AsEnumerable(),
+            listAfterSearch.AsEnumerable(),
 
             ownerParameters.pageIndex,
             ownerParameters.pageSize);

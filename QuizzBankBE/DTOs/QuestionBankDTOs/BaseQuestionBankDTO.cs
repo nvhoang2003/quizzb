@@ -51,7 +51,7 @@ namespace QuizzBankBE.DTOs.QuestionBankDTOs
         public void addTags(int questionBankID, DataContext _dataContext, IMapper _mapper)
         {
             var tags = (from q in _dataContext.QuizBanks
-                        join qt in _dataContext.QbTags on q.Id equals qt.QbId
+                        join qt in _dataContext.QbTags on q.Id equals qt.QuizBankId
                         join t in _dataContext.Tags on qt.TagId equals t.Id
                         where q.Id == questionBankID
                         select t).Distinct().ToList();

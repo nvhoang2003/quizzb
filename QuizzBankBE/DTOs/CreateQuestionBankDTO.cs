@@ -43,6 +43,8 @@ namespace QuizzBankBE.DTOs
 
         public virtual ICollection<QbTagDTO> QbTags { get; set; }
 
+        public IFormFile? ImageFile { get; set; }
+
         public enum QuestionType
         {
             MultiChoice,
@@ -51,6 +53,8 @@ namespace QuizzBankBE.DTOs
             ShortAnswer,
             DragAndDropIntoText,
         }
+
+        public int? FileId { get; set; }
     }
 
     public class QuestionBankResponseDTO
@@ -79,6 +83,8 @@ namespace QuizzBankBE.DTOs
         public ICollection<CreateMatchSubQuestionBank>? MatchSubQuestionBanks { get; set; }
 
         public virtual ICollection<TagDTO> Tags { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 
     public class CreateQuestionBankAnswerDTO
@@ -99,6 +105,10 @@ namespace QuizzBankBE.DTOs
 
         public int? QuizBankId { get; set; }
         public int? QuestionId { get; set; }
+        public IFormFile? ImageFile { get; set; }
+        public int? FileId { get; set; }
+        public string? ImageUrl { get; set; }
+        public SystemFileResponseDTO? SystemFile { get; set; }
     }
 
     public class CreateMatchSubQuestionBank
@@ -110,5 +120,12 @@ namespace QuizzBankBE.DTOs
         public string? QuestionText { get; set; }
 
         public string? AnswerText { get; set; }
+
+        public IFormFile? ImageFile { get; set; }
+
+        public int? FileId { get; set; }
+        public string? ImageUrl { get; set; }
+        public SystemFileResponseDTO? SystemFile { get; set; }
+
     }
 }

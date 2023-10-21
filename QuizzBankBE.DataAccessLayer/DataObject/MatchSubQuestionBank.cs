@@ -24,5 +24,9 @@ public partial class MatchSubQuestionBank : IAuditedEntityBase
 
     public string? AnswerText { get; set; }
 
+    public int? FileId { get; set; }
+
+    public virtual SystemFile? SystemFile { get; set; }
+
     public virtual QuizBank? QuestionBank { get; set; }
 }

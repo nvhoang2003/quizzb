@@ -2,7 +2,8 @@
 {
     public class QbTagDTO
     {
-        public int QbId { get; set; }
+        public int? QbId { get; set; }
+        public int? QuizBankId { get; set; }
         public int TagId { get; set; }
     }
 }

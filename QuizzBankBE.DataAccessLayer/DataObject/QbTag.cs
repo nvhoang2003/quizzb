@@ -8,7 +8,7 @@ public partial class QbTag : IAuditedEntityBase
 {
     public int Id { get; set; }
 
-    public int? QbId { get; set; }
+    public int? QuizBankId { get; set; }
 
     public int? TagId { get; set; }
 
@@ -22,7 +22,11 @@ public partial class QbTag : IAuditedEntityBase
 
     public int IsDeleted { get; set; }
 
-    public virtual QuizBank? Qb { get; set; }
+    public int? QuestionId { get; set; }
+
+    public virtual Question? Question { get; set; }
+
+    public virtual QuizBank? QuizBank { get; set; }
 
     public virtual Tag? Tag { get; set; }
 }

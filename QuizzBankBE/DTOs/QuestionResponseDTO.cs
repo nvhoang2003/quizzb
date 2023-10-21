@@ -25,6 +25,8 @@ namespace QuizzBankBE.DTOs
         public virtual ICollection<MatchSubQuestionResponseDTO> MatchSubQuestions { get; set; }
 
         public virtual ICollection<QuestionAnswerResponseDTO> QuestionAnswers { get; set; }
+        public SystemFileResponseDTO? SystemFile { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
     public class MatchSubQuestionResponseDTO
@@ -36,6 +38,8 @@ namespace QuizzBankBE.DTOs
         public string? QuestionText { get; set; }
 
         public string? AnswerText { get; set; }
+        public SystemFileResponseDTO? SystemFile { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
     public class QuestionAnswerResponseDTO
@@ -49,6 +53,10 @@ namespace QuizzBankBE.DTOs
         public float Fraction { get; set; }
 
         public string? Feedback { get; set; }
+
+        public SystemFileResponseDTO? SystemFile { get; set; }
+        public string? ImageUrl { get; set; }
+
     }
 
     public class QuestionAnswerResultDTO
