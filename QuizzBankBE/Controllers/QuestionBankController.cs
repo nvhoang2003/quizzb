@@ -36,7 +36,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpPost("CreateNewQuesstion")]
         public async Task<ActionResult<ServiceResponse<CreateQuestionBankDTO>>> createNewQuestionBank(
-               [FromBody] CreateQuestionBankDTO createQuestionDTO)
+               [FromForm] CreateQuestionBankDTO createQuestionDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:WRITE_QUIZ_BANK").Value;

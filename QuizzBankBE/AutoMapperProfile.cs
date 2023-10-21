@@ -92,6 +92,7 @@ namespace QuizzBankBE
             CreateMap<QuestionBankResponseDTO, QuizBank>().ReverseMap();
             CreateMap<QuestionAnswerResponseDTO, QuestionAnswer>().ReverseMap();
             CreateMap<Question, QuestionResponseDTO>().ReverseMap();
+            CreateMap<SystemFile, SystemFileResponseDTO>().ReverseMap();
         }
     }
 }

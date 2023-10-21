@@ -67,7 +67,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("getListAllTagByCategoryID")]
         public async Task<ActionResult<ServiceResponse<PageList<TagDTO>>>> GetListTagByCategoryID(
-        [FromQuery] OwnerParameter ownerParameters, int categoryID)
+        [FromQuery] OwnerParameter ownerParameters, int? categoryID)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_TAG").Value;

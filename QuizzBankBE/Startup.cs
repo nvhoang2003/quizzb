@@ -27,6 +27,7 @@ using QuizzBankBE.Services.ListQuestionServices;
 using QuizzBankBE.Services.ScoreServices;
 using QuizzBankBE.Services.UserCoursesServices;
 using QuizzBankBE.Services.QuizzResponse;
+using Microsoft.Extensions.FileProviders;
 //using QuizzBankBE.Services.QuestionServices;
 //using QuizzBankBE.Services.CourseServices;
 //using QuizzBankBE.Services.KeywordServices;
@@ -184,7 +185,13 @@ namespace QuizzBankBE
                     const int cacheExpirationInSeconds = 60 * 60 * 24 * 30; //a month
                     ctx.Context.Response.Headers[HeaderNames.CacheControl] =
                     "public,max-age=" + cacheExpirationInSeconds;
-                }
+                },
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Assets/Image")),
+                RequestPath = "/Images"
             });
 
             app.UseAuthentication();

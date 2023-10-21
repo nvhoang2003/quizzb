@@ -131,7 +131,7 @@ namespace QuizzBankBE.DataAccessLayer.Data
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("files");
+            entity.ToTable("system_files");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.CreateBy).HasColumnName("createBy");

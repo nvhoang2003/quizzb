@@ -36,12 +36,12 @@ namespace QuizzBankBE.Services.TagServices
             serviceResponse.updateResponse(200, "Tạo thành công");
             return serviceResponse;
         }
-        public async Task<ServiceResponse<PageList<TagDTO>>> GetAllTagByCategoryID(OwnerParameter ownerParameters, int categoryID)
+        public async Task<ServiceResponse<PageList<TagDTO>>> GetAllTagByCategoryID(OwnerParameter ownerParameters, int? categoryID)
         {
             var serviceResponse = new ServiceResponse<PageList<TagDTO>>();
             var dbTag = await _dataContext.Tags.ToListAsync();
 
-            var tagDTO = dbTag.Select(u => _mapper.Map<TagDTO>(u)).Where(c => c.CategoryId.Equals(categoryID)).ToList();
+            var tagDTO = dbTag.Select(u => _mapper.Map<TagDTO>(u)).Where(c => (categoryID == null || c.CategoryId.Equals(categoryID))).ToList();
 
             serviceResponse.Data = PageList<TagDTO>.ToPageList(
             tagDTO.AsEnumerable<TagDTO>(),
