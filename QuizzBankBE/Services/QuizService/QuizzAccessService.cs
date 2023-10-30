@@ -5,6 +5,8 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
+using QuizzBankBE.Model.Pagination;
+using System.Linq;
 
 namespace QuizzBankBE.Services.QuizService
 {
@@ -49,6 +51,25 @@ namespace QuizzBankBE.Services.QuizService
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Cập nhật status thành công");
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<PageList<QuizAccessDTO>>> getListQuizzAccess(OwnerParameter ownerParameters, int? courseId, int? studentId)
+        {
+            var serviceResponse = new ServiceResponse<PageList<QuizAccessDTO>>();
+
+            var dbQuizAccess = _dataContext.QuizAccesses.
+                    Include(q => q.Quiz).
+                    ThenInclude(qa => qa.Course).
+                    Where(q => (courseId == null || q.Quiz.CourseId == courseId) && (studentId == null || q.UserId == studentId)).ToList();
+
+            var quizAccessResponse = _mapper.Map<List<QuizAccessDTO>>(dbQuizAccess);
+            serviceResponse.Data = PageList<QuizAccessDTO>.ToPageList(
+            quizAccessResponse.AsEnumerable<QuizAccessDTO>(),
+            ownerParameters.pageIndex,
+            ownerParameters.pageSize);
+            serviceResponse.Status = true;
 
             return serviceResponse;
         }

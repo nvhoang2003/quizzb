@@ -119,7 +119,6 @@ namespace QuizzBankBE.Services.QuestionBankServices
             var serviceResponse = new ServiceResponse<CreateQuestionBankDTO>();
 
             var quesToUpdate = _dataContext.QuizBanks.FirstOrDefault(c => c.Id == questionBankID);
-            _mapper.Map(updateQuestionBankDTO, quesToUpdate);
 
             if (quesToUpdate == null)
             {
@@ -136,6 +135,10 @@ namespace QuizzBankBE.Services.QuestionBankServices
             {
                 UpdateContentDragAndDropQuestion(updateQuestionBankDTO);
             }
+
+            await UploadImage(updateQuestionBankDTO);
+
+            _mapper.Map(updateQuestionBankDTO, quesToUpdate);
 
             await _dataContext.SaveChangesAsync();
 
@@ -178,22 +181,31 @@ namespace QuizzBankBE.Services.QuestionBankServices
         {
             if (createQuestionBankDTO.ImageFile != null && createQuestionBankDTO.ImageFile.Length > 0)
             {
-
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + createQuestionBankDTO.ImageFile.FileName;
-                var filePath = Path.Combine(_configuration["ImageURL"], uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                try
                 {
-                    await createQuestionBankDTO.ImageFile.CopyToAsync(stream);
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + createQuestionBankDTO.ImageFile.FileName;
+                    var filePath = Path.Combine(_configuration["ImageURL"], uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await createQuestionBankDTO.ImageFile.CopyToAsync(stream);
+                    }
+
+                    var image = new SystemFile
+                    {
+                        NameFile = uniqueFileName,
+                    };
+                    _dataContext.SystemFiles.Add(image);
+                    await _dataContext.SaveChangesAsync();
+                    createQuestionBankDTO.FileId = image.Id;
                 }
-
-                var image = new SystemFile
+                catch (Exception ex)
                 {
-                    NameFile = uniqueFileName,
-                };
-                _dataContext.SystemFiles.Add(image);
-                await _dataContext.SaveChangesAsync();
-                createQuestionBankDTO.FileId = image.Id;
+                    // Ghi log khi có lỗi 500
+                    string logMessage = $"Error 500 occurred: {ex.Message}";
+
+                    throw; // Ném lại ngoại lệ để IIS xử lý và trả về lỗi 500 cho client.
+                }
             }
 
             if(createQuestionBankDTO.Questionstype == "Match")

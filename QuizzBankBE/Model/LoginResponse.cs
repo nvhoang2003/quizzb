@@ -15,5 +15,7 @@ namespace QuizzBankBE.Model
         public string Message { get; set; } = string.Empty;
 
         public int UserId { get; set; }
+        
+        public string RoleName { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuizzBankBE.DataAccessLayer.Data;
 using QuizzBankBE.DTOs;
 using QuizzBankBE.Model;
+using QuizzBankBE.Model.Pagination;
 using QuizzBankBE.Services.QuizService;
 using QuizzBankBE.Utility;
 using System.Security.Claims;
@@ -39,12 +40,12 @@ namespace QuizzBankBE.Controllers
         [FromBody] CreateQuizAccessDTO createQuizDTO)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
+            //var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
 
-            if (!CheckPermission.Check(userIdLogin, permissionName))
-            {
-                return new StatusCodeResult(403);
-            }
+            //if (!CheckPermission.Check(userIdLogin, permissionName))
+            //{
+            //    return new StatusCodeResult(403);
+            //}
 
             var response = await _quizAccessService.CreateQuizzAccess(createQuizDTO);
 
@@ -57,14 +58,31 @@ namespace QuizzBankBE.Controllers
               [FromBody] CreateQuizAccessDTO updateQuestionDTO, int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
+            //var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
 
-            if (!CheckPermission.Check(userIdLogin, permissionName))
-            {
-                return new StatusCodeResult(403);
-            }
+            //if (!CheckPermission.Check(userIdLogin, permissionName))
+            //{
+            //    return new StatusCodeResult(403);
+            //}
 
             var response = await _quizAccessService.UpdateStatus(updateQuestionDTO, id);
+            return Ok(response);
+        }
+
+        [HttpGet("GetListQuizzAccess")]
+        public async Task<ActionResult<ServiceResponse<PageList<QuizAccessDTO>>>> getListQizzAccess(
+       [FromQuery] OwnerParameter ownerParameters, int? courseId, int? studentId)
+        {
+            //var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            //var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
+
+            //if (!CheckPermission.Check(userIdLogin, permissionName))
+            //{
+            //    return new StatusCodeResult(403);
+            //}
+
+            var response = await _quizAccessService.getListQuizzAccess(ownerParameters, courseId, studentId);
+
             return Ok(response);
         }
 

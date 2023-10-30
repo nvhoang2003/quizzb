@@ -9,6 +9,8 @@ namespace QuizzBankBE.DTOs
         public int Id { get; set; }
         public string Status { get; set; } = null!;
 
+        public QuizDTO Quiz { get; set; }
+
         public DateTime? CreateDate { get; set; }
 
         public DateTime? UpdateDate { get; set; }
