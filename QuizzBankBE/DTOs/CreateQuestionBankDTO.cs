@@ -41,7 +41,7 @@ namespace QuizzBankBE.DTOs
 
         public ICollection<CreateMatchSubQuestionBank>? MatchSubQuestionBanks { get; set; }
 
-        public virtual ICollection<QbTagDTO> QbTags { get; set; }
+        public virtual ICollection<QbTagDTO>? QbTags { get; set; }
 
         public IFormFile? ImageFile { get; set; }
 
@@ -125,6 +125,7 @@ namespace QuizzBankBE.DTOs
 
         public int? FileId { get; set; }
         public string? ImageUrl { get; set; }
+
         public SystemFileResponseDTO? SystemFile { get; set; }
 
     }

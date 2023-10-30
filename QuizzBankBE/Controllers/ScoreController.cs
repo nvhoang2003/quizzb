@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,9 +48,9 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }      
 
-        [HttpPost("SubmitQuizz/{accessID}")]
-        public async Task<ActionResult<ServiceResponse<bool>>> SubmitTheQuiz(
-            [FromBody] List<NewQuizResponse> ListQuestionSubmit, int accessID)
+        [HttpPost("SubmitQuizz")]
+        public async Task<ActionResult<ServiceResponse<ResultQuizDTO>>> SubmitTheQuiz(
+            [FromBody] QuizSubmmitDTO ListQuestionSubmit)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:DO_QUIZZ").Value;
@@ -59,8 +60,18 @@ namespace QuizzBankBE.Controllers
                 return new StatusCodeResult(403);
             }
 
-            _scoreServices.DoQuestion(ListQuestionSubmit, accessID);
-            return Ok();
+            var response = await _scoreServices.DoQuestion(ListQuestionSubmit);
+
+            if (response.Status == false)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = response.StatusCode,
+                    Title = response.Message
+                });
+            }
+
+            return Ok(response);
         }
     }
 }

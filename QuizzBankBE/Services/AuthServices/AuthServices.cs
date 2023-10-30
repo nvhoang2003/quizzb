@@ -46,7 +46,7 @@ namespace QuizzBankBE.Services.AuthServices
         public async Task<LoginResponse> Login(LoginForm loginForm)
         {
             var serviceResponse = new LoginResponse();
-            var user = await _dataContext.Users.FirstOrDefaultAsync(x => x.UserName == loginForm.username);
+            var user = await _dataContext.Users.Include(u => u.Role).FirstOrDefaultAsync(x => x.UserName == loginForm.username);
             if (user != null && VerifyPassword(loginForm.password, user.Password))
             {
                 serviceResponse.Status = true;
@@ -56,6 +56,7 @@ namespace QuizzBankBE.Services.AuthServices
                 serviceResponse.Message = "Đăng nhập thành công!";
                 serviceResponse.accessToken = token;
                 serviceResponse.UserId = user.Id;
+                serviceResponse.RoleName = user.Role.Name;
                 return serviceResponse;
             }
             else

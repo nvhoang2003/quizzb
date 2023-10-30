@@ -6,11 +6,6 @@ using System.Text.Json;
 
 namespace QuizzBankBE.DTOs
 {
-    public enum AnswerStatus
-    {
-        Right,
-        Wrong
-    }
     public class AllQuizzResponseDTO
     {
         public UserDTO userDoQuizz { get; set; }
@@ -46,18 +41,41 @@ namespace QuizzBankBE.DTOs
         public JsonElement AnswerToJson { get; set; }
     }
 
-    public class NewQuizResponse
+    public class QuizSubmmitDTO
     {
-        public float? Mark { get; set; }
+        [Required]
+        [IdExistValidation<QuizAccess>("Id")]
+        public int AccessId { get; set; }
 
         [Required]
-        [EnumDataType(typeof(AnswerStatus))] 
-        public string? Status { get; set; }
+        [IdExistValidation<Quiz>("Id")]
+        public int QuizId { get; set; }
 
+        public List<OneQuestionSubmitDTO>? listQuestionSubmit { get; set; } = new List<OneQuestionSubmitDTO>();
+    }
+
+    public class OneQuestionSubmitDTO
+    {
         [Required]
         [IdExistValidation<Question>("Id")]
         public int? QuestionId { get; set; }
 
-        public string? Answer { get; set; }
+        [Required]
+        public string QuestionType { get; set; }
+
+        public List<int>? IdAnswerChoosen { get; set; }
+
+        public string? ShortAnswerChoosen { get; set; }
+
+        public List<MatchSubQuestionChoosenDTO>? MatchSubQuestionChoosen { get; set; }
+    }
+
+    public class MatchSubQuestionChoosenDTO
+    {
+        [Required]
+        public string AnswerText { get; set; }
+
+        [Required]
+        public string QuestionText { get; set; }
     }
 }

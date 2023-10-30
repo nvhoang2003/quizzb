@@ -148,7 +148,9 @@ namespace QuizzBankBE.Services.QuestionBankServices
             }
             else
             {
-                MatchCollection matches = regex.Matches(createQuestionBankDTO.Content);
+                string pattern = @"\[\[(\d+)\]\]";
+
+                MatchCollection matches = Regex.Matches(createQuestionBankDTO.Content, pattern);
                 foreach (Match match in matches)
                 {
                     int positionNeedCheck = int.Parse(match.Groups[1].Value);

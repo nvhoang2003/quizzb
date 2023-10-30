@@ -166,39 +166,38 @@ namespace QuizzBankBE.Services.QuizService
             ServiceResponse<QuizResponseForTest> serviceResponse = new ServiceResponse<QuizResponseForTest>();
             QuizResponseForTest quizResponseForTest = new QuizResponseForTest();
             
-            var dbQuiz = await _dataContext.Quizzes.ToListAsync();
+            var dbQuiz = await _dataContext.Questions.
+                Include(q => q.SystemFile).
+                Include(q => q.MatchSubQuestions).
+                Include(q => q.QuestionAnswers).
+                Include(q => q.QuizQuestions).
+                ThenInclude(q => q.Quizz).
+                ThenInclude(q => q.Course).
+                Where(q => q.QuizQuestions.Any(q => q.QuizzId == id)).
+                ToListAsync();
 
-            quizResponseForTest.quiz = dbQuiz.Where(c => c.Id == id).Select(u => _mapper.Map<QuizDTO>(u)).FirstOrDefault();
-            quizResponseForTest.userName = userName;
-            quizResponseForTest.courseName = _dataContext.Courses.Where(c => c.Id == quizResponseForTest.quiz.Courseid).Select(c => c.FullName).FirstOrDefaultAsync().Result;
-
-            var quizResult = (from qi in _dataContext.Quizzes
-                              join qq in _dataContext.QuizQuestions on qi.Id equals qq.QuizzId
-                              join ques in _dataContext.Questions on qq.QuestionId equals ques.Id
-                              join qa in _dataContext.QuestionAnswers on ques.Id equals qa.QuestionId into qaGroup
-                              from qag in qaGroup.DefaultIfEmpty()
-                              join qm in _dataContext.MatchSubQuestions on ques.Id equals qm.QuestionId into qmGroup
-                              from qmg in qmGroup.DefaultIfEmpty()
-                              where qi.Id == id
-                              select new { qi,qq, ques, qag, qmg }
-                          ).AsEnumerable().GroupBy(i => new { i.qi, i.ques, i.qq }).Distinct().Select(i => new
-                          {
-                              Question = _mapper.Map<GeneralQuestionResultDTO>(i.Key.ques),
-                              Point = i.Key.qq.Point,
-                              QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerResultDTO>(qa.qag)).ToList(),
-                              MatchSubQuestion = i.Select(qm => _mapper.Map<MatchSubQuestionResponseDTO>(qm.qmg)).ToList()
-                          });
-
-            if (quizResult == null)
+            if (dbQuiz.Count == 0 || dbQuiz == null)
             {
                 serviceResponse.updateResponse(400, "không tồn tại");
                 return serviceResponse;
             }
 
-            foreach(var item in quizResult)
+            quizResponseForTest.quiz = _mapper.Map<QuizDTO>(dbQuiz.First().QuizQuestions.First().Quizz);
+            quizResponseForTest.userName = userName;
+            quizResponseForTest.courseName = dbQuiz.First().QuizQuestions.First().Quizz.Course.FullName;
+
+           
+            foreach(var item in dbQuiz)
             {
-                item.Question.DefaultMark = item.Point;
-                quizResponseForTest.questionReults.Add(item);
+                item.DefaultMark = item.QuizQuestions.First().Point;
+
+                var quesResponse = _mapper.Map<QuestionResponseDTO>(item);
+
+                if (item.SystemFile?.NameFile != null)
+                {
+                    quesResponse.ImageUrl = _configuration["LinkShowImage"] + item.SystemFile.NameFile;
+                }
+                quizResponseForTest.questionReults.Add(quesResponse);
             }
 
             serviceResponse.Data = quizResponseForTest;
