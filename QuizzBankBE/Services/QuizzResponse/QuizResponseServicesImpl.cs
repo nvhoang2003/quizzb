@@ -1,17 +1,12 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using QuizzBankBE.DataAccessLayer.Data;
-using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs;
-using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.JWT;
 using QuizzBankBE.Model;
 using QuizzBankBE.Model.Pagination;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using Newtonsoft.Json;
+
 
 namespace QuizzBankBE.Services.QuizzResponse
 {
@@ -35,73 +30,74 @@ namespace QuizzBankBE.Services.QuizzResponse
             var servicesResponse = new ServiceResponse<AllQuizzResponseDTO>();
             var doQuizResponseDTO = new AllQuizzResponseDTO();
 
-            doQuizResponseDTO = (from a in _dataContext.QuizAccesses
-                                   join u in _dataContext.Users on a.UserId equals u.Id
-                                   join q in _dataContext.Quizzes on a.QuizId equals q.Id
-                                   join c in _dataContext.Courses on q.CourseId equals c.Id
-                                   where a.Id == accessID
-                                   select new AllQuizzResponseDTO
-                                   {
-                                       quizzAccess = _mapper.Map<QuizAccessDTO>(a),
-                                       userDoQuizz = _mapper.Map<UserDTO>(u),
-                                       quiz = _mapper.Map<QuizDTO>(q),
-                                       course = _mapper.Map<CourseDTO>(c)
-                                   }).FirstOrDefault();
+            var quizID = await _dataContext.QuizAccesses.Where(q => q.Id == accessID).Select(q => q.QuizId).FirstOrDefaultAsync();
 
-            var quizResult = (from qr in _dataContext.QuizResponses
-                              join ques in _dataContext.Questions on qr.QuestionId equals ques.Id
-                              join qa in _dataContext.QuestionAnswers on ques.Id equals qa.QuestionId into qaGroup
-                              from qag in qaGroup.DefaultIfEmpty()
-                              join qm in _dataContext.MatchSubQuestions on ques.Id equals qm.QuestionId into qmGroup
-                              from qmg in qmGroup.DefaultIfEmpty()
-                              where qr.AccessId == accessID
-                              select new { qr, ques, qag, qmg }
-                             ).AsEnumerable().GroupBy(i => new { i.qr, i.ques }).Distinct().Select(i => new
-                             {
-                                 QuizzResponse = _mapper.Map<Do1QuizResponseDTO>(i.Key.qr),
-                                 Question = _mapper.Map<GeneralQuestionResultDTO>(i.Key.ques),
-                                 QuestionAnswer = i.Select(qa => _mapper.Map<QuestionAnswerResultDTO>(qa.qag)).ToList(),
-                                 MatchSubQuestion = i.Select(qm => _mapper.Map<MatchSubQuestionResponseDTO>(qm.qmg)).ToList()
-                             });
+            var dbQuestion = await _dataContext.Questions.
+                Include(q => q.SystemFile).
+                Include(q => q.MatchSubQuestions).
+                Include(q => q.QuestionAnswers).
+                Include(q => q.QuizQuestions).
+                    ThenInclude(qq => qq.Quizz).
+                Include(q => q.QuizResponses).
+                    ThenInclude(q => q.Access).
+                        ThenInclude(q => q.Quiz).
+                            ThenInclude(q => q.Course).
+                Include(q => q.QuizResponses).
+                    ThenInclude(q => q.Access).
+                        ThenInclude(q => q.User).
+                Where(q => q.QuizQuestions.Any(qq => qq.QuizzId == quizID)).
+                Distinct().
+                ToListAsync();
 
-            foreach (var item in quizResult)
+            if(dbQuestion.Count == 0)
             {
-                item.QuizzResponse.AnswerToJson = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(item.QuizzResponse?.Answer);
-                JArray arrayQuestionResponse = new JArray();
-                if (item.QuizzResponse.AnswerToJson.ValueKind == JsonValueKind.Array)
+                servicesResponse.updateResponse(400, "không tồn tại");
+                return servicesResponse;
+            }
+
+            doQuizResponseDTO.userDoQuizz = _mapper.Map<UserDTO>(dbQuestion?.First().QuizResponses.First().Access?.User);
+
+            doQuizResponseDTO.course = _mapper.Map<CourseDTO>(dbQuestion?.First().QuizResponses.First().Access?.Quiz?.Course);
+
+            doQuizResponseDTO.quizzAccess = _mapper.Map<QuizAccessDTO>(dbQuestion?.First().QuizResponses.First().Access);
+
+            doQuizResponseDTO.quiz = _mapper.Map<QuizDTO>(dbQuestion?.First().QuizResponses.First().Access?.Quiz);
+
+            foreach (var item in dbQuestion)
+            {
+                QuestionResultDTO questionResult = new QuestionResultDTO();
+
+                questionResult.question = _mapper.Map<QuestionResponseDTO>(item);
+
+                if (item.SystemFile?.NameFile != null)
                 {
-                    arrayQuestionResponse = JArray.Parse(item.QuizzResponse?.Answer);
+                    questionResult.question.ImageUrl = _configuration["LinkShowImage"] + item.SystemFile.NameFile;
                 }
-                else
+
+                switch (item.QuestionsType)
                 {
-                    arrayQuestionResponse.Add(item.QuizzResponse?.Answer);
+                    case "MultiChoice":
+                        questionResult.IdAnswerChoosen = JsonConvert.DeserializeObject<List<int>>(item.QuizResponses.FirstOrDefault()?.Answer == null ? "" : item.QuizResponses.FirstOrDefault()?.Answer);
+                        break;
+
+                    case "Match":
+                        questionResult.MatchSubQuestionChoosen = JsonConvert.DeserializeObject<List<MatchSubQuestionChoosenDTO>>(item.QuizResponses.FirstOrDefault()?.Answer == null ? "": item.QuizResponses.FirstOrDefault()?.Answer);
+                        break;
+
+                    case "ShortAnswer":
+                        questionResult.ShortAnswerChoosen = JsonConvert.DeserializeObject<string>(item.QuizResponses.FirstOrDefault()?.Answer == null ? "" : item.QuizResponses.FirstOrDefault()?.Answer);
+                        break;
+
+                    case "TrueFalse":
+                        questionResult.IdAnswerChoosen = JsonConvert.DeserializeObject<List<int>>(item.QuizResponses.FirstOrDefault()?.Answer == null ? "" : item.QuizResponses.FirstOrDefault()?.Answer);
+                        break;
+
+                    default:
+                        break;
                 }
-                List<int> answerChosenId = new List<int>();
-                foreach (var oneRes in arrayQuestionResponse)
-                {
-                    if (oneRes.Type == JTokenType.Object)
-                    {
-                        var idToken = oneRes["id"];
-                        // ... tiếp tục xử lý
-                        if (idToken != null)
-                        {
-                            int id = idToken.ToObject<int>();
-                            answerChosenId.Add(id);
-                        }
-                    }
-                    //var idToken = oneRes["id"];
-                    //if (idToken != null)
-                    //{
-                    //    int id = idToken.ToObject<int>();
-                    //    answerChosenId.Add(id);
-                    //}
-                }
-                foreach(var answer in item.QuestionAnswer)
-                {
-                    answer.isChosen = answerChosenId.Contains(answer.Id) ? true : false;
-                }
-                doQuizResponseDTO.questionReults.Add(item);
-                doQuizResponseDTO.totalPoint += item.QuizzResponse.Mark;
+
+                doQuizResponseDTO.totalPoint += item.QuizResponses.FirstOrDefault()?.Mark == null ? 0 : item.QuizResponses.FirstOrDefault()?.Mark ;
+                doQuizResponseDTO.questionReults.Add(questionResult);
             }
 
             doQuizResponseDTO.status = doQuizResponseDTO.totalPoint >= doQuizResponseDTO.quiz.PointToPass ? "Pass" : "Failed";

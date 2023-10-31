@@ -15,12 +15,18 @@ namespace QuizzBankBE.DTOs
         public float? totalPoint { get; set; } = 0;
         public string status { get; set; }
 
-        public List<object> questionReults { get; set; } = new List<object>();
+        public List<QuestionResultDTO> questionReults { get; set; } = new List<QuestionResultDTO>();
     }
 
     public class QuestionResultDTO
     {
-        public object[] question { get; set; }
+        public QuestionResponseDTO question { get; set; }
+
+        public List<int>? IdAnswerChoosen { get; set; }
+
+        public string? ShortAnswerChoosen { get; set; }
+
+        public List<MatchSubQuestionChoosenDTO>? MatchSubQuestionChoosen { get; set; }
     }
 
     public class Do1QuizResponseDTO

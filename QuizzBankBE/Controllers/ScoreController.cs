@@ -40,14 +40,6 @@ namespace QuizzBankBE.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("{accessID}")]
-        public async Task<ActionResult<ServiceResponse<float>>> GetScore(int accessID)
-        {
-            var response = await _scoreServices.GetScore(accessID);
-
-            return Ok(response);
-        }      
-
         [HttpPost("SubmitQuizz")]
         public async Task<ActionResult<ServiceResponse<ResultQuizDTO>>> SubmitTheQuiz(
             [FromBody] QuizSubmmitDTO ListQuestionSubmit)
