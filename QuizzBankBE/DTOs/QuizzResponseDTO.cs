@@ -18,6 +18,23 @@ namespace QuizzBankBE.DTOs
         public List<QuestionResultDTO> questionReults { get; set; } = new List<QuestionResultDTO>();
     }
 
+    public class QuizResponseDetailDTO
+    {
+        public string UserName { get; set; }
+        public string CourseName{ get; set; }
+
+        public string QuizName { get; set; }
+
+        public float? PointToPass { get; set; }
+        public float? MaxPoint { get; set; }
+
+        public float? TotalPoint { get; set; }
+        public sbyte? isPublic { get; set; }
+        public string? status { get; set; }
+        public DateTime? TimeStartQuiz { get; set; }
+        public List<QuestionResultDTO> questionReults { get; set; } = new List<QuestionResultDTO>();
+    }
+
     public class QuestionResultDTO
     {
         public QuestionResponseDTO question { get; set; }
@@ -27,6 +44,9 @@ namespace QuizzBankBE.DTOs
         public string? ShortAnswerChoosen { get; set; }
 
         public List<MatchSubQuestionChoosenDTO>? MatchSubQuestionChoosen { get; set; }
+        public float? Mark { get; set; }
+
+        public string? Status { get; set; }
     }
 
     public class Do1QuizResponseDTO
@@ -78,10 +98,8 @@ namespace QuizzBankBE.DTOs
 
     public class MatchSubQuestionChoosenDTO
     {
-        [Required]
-        public string AnswerText { get; set; }
+        public string? AnswerText { get; set; }
 
-        [Required]
-        public string QuestionText { get; set; }
+        public string? QuestionText { get; set; }
     }
 }

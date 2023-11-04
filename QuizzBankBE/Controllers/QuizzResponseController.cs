@@ -82,7 +82,7 @@ namespace QuizzBankBE.Controllers
         }
 
         [HttpGet("getQuizzResponse/{id}")]
-        public async Task<ActionResult<AllQuizzResponseDTO>> GetQuizzResponse(int id)
+        public async Task<ActionResult<QuizResponseDetailDTO>> GetQuizzResponse(int id)
         {
             var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var permissionName = _configuration.GetSection("Permission:READ_QUIZZ_RESPONSE").Value;

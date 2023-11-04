@@ -71,7 +71,7 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("GetListQuizzAccess")]
         public async Task<ActionResult<ServiceResponse<PageList<QuizAccessDTO>>>> getListQizzAccess(
-       [FromQuery] OwnerParameter ownerParameters, int? courseId, int? studentId)
+       [FromQuery] OwnerParameter ownerParameters, int? courseId, int? studentId, string? status)
         {
             //var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             //var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
@@ -81,7 +81,7 @@ namespace QuizzBankBE.Controllers
             //    return new StatusCodeResult(403);
             //}
 
-            var response = await _quizAccessService.getListQuizzAccess(ownerParameters, courseId, studentId);
+            var response = await _quizAccessService.getListQuizzAccess(ownerParameters, courseId, studentId, status);
 
             return Ok(response);
         }

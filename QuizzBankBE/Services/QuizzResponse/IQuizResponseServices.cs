@@ -8,7 +8,7 @@ namespace QuizzBankBE.Services.QuizzResponse
 {
     public interface IQuizResponseServices
     {
-        Task<ServiceResponse<AllQuizzResponseDTO>> GetResponseDetail(int accessID);
+        Task<ServiceResponse<QuizResponseDetailDTO>> GetResponseDetail(int accessID);
 
         Task<ServiceResponse<PageList<AllQuizzResponseDTO>>> GetListResponseForDoQuiz(OwnerParameter ownerParameter, int userIdLogin, int? quizId, int? courseId, DateTime? timeStart, DateTime? timeEnd);
 

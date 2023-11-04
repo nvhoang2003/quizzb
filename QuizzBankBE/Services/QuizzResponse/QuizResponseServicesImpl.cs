@@ -25,10 +25,10 @@ namespace QuizzBankBE.Services.QuizzResponse
             _configuration = configuration;
         }
 
-        public async Task<ServiceResponse<AllQuizzResponseDTO>> GetResponseDetail(int accessID)
+        public async Task<ServiceResponse<QuizResponseDetailDTO>> GetResponseDetail(int accessID)
         {
-            var servicesResponse = new ServiceResponse<AllQuizzResponseDTO>();
-            var doQuizResponseDTO = new AllQuizzResponseDTO();
+            var servicesResponse = new ServiceResponse<QuizResponseDetailDTO>();
+            var doQuizResponseDTO = new QuizResponseDetailDTO();
 
             var quizID = await _dataContext.QuizAccesses.Where(q => q.Id == accessID).Select(q => q.QuizId).FirstOrDefaultAsync();
 
@@ -38,11 +38,11 @@ namespace QuizzBankBE.Services.QuizzResponse
                 Include(q => q.QuestionAnswers).
                 Include(q => q.QuizQuestions).
                     ThenInclude(qq => qq.Quizz).
-                Include(q => q.QuizResponses).
+                Include(q => q.QuizResponses.Where(qr => qr.AccessId == accessID)).
                     ThenInclude(q => q.Access).
                         ThenInclude(q => q.Quiz).
                             ThenInclude(q => q.Course).
-                Include(q => q.QuizResponses).
+                Include(q => q.QuizResponses.Where(qr => qr.AccessId == accessID)).
                     ThenInclude(q => q.Access).
                         ThenInclude(q => q.User).
                 Where(q => q.QuizQuestions.Any(qq => qq.QuizzId == quizID)).
@@ -55,13 +55,17 @@ namespace QuizzBankBE.Services.QuizzResponse
                 return servicesResponse;
             }
 
-            doQuizResponseDTO.userDoQuizz = _mapper.Map<UserDTO>(dbQuestion?.First().QuizResponses.First().Access?.User);
+            var access = dbQuestion.Where(q => q.QuizResponses.Count > 0)?.FirstOrDefault()?.QuizResponses.FirstOrDefault()?.Access;
+            var quizz = dbQuestion?.FirstOrDefault()?.QuizQuestions.FirstOrDefault()?.Quizz;
 
-            doQuizResponseDTO.course = _mapper.Map<CourseDTO>(dbQuestion?.First().QuizResponses.First().Access?.Quiz?.Course);
+            doQuizResponseDTO.UserName = access?.User?.FirstName + " " + access?.User?.LastName;
+            doQuizResponseDTO.CourseName = access?.Quiz?.Course?.FullName;
+            doQuizResponseDTO.QuizName = quizz?.Name;
+            doQuizResponseDTO.PointToPass = quizz?.PointToPass;
+            doQuizResponseDTO.MaxPoint = quizz?.MaxPoint;
+            doQuizResponseDTO.isPublic = quizz?.IsPublic;
+            doQuizResponseDTO.TotalPoint = 0;
 
-            doQuizResponseDTO.quizzAccess = _mapper.Map<QuizAccessDTO>(dbQuestion?.First().QuizResponses.First().Access);
-
-            doQuizResponseDTO.quiz = _mapper.Map<QuizDTO>(dbQuestion?.First().QuizResponses.First().Access?.Quiz);
 
             foreach (var item in dbQuestion)
             {
@@ -95,12 +99,14 @@ namespace QuizzBankBE.Services.QuizzResponse
                     default:
                         break;
                 }
+                questionResult.Mark = item.QuizResponses.FirstOrDefault()?.Mark;
+                questionResult.Status = item.QuizResponses.FirstOrDefault()?.Status;
 
-                doQuizResponseDTO.totalPoint += item.QuizResponses.FirstOrDefault()?.Mark == null ? 0 : item.QuizResponses.FirstOrDefault()?.Mark ;
+                doQuizResponseDTO.TotalPoint += item.QuizResponses.FirstOrDefault()?.Mark == null ? 0 : item.QuizResponses.FirstOrDefault()?.Mark ;
                 doQuizResponseDTO.questionReults.Add(questionResult);
             }
 
-            doQuizResponseDTO.status = doQuizResponseDTO.totalPoint >= doQuizResponseDTO.quiz.PointToPass ? "Pass" : "Failed";
+            doQuizResponseDTO.status = doQuizResponseDTO.TotalPoint >= doQuizResponseDTO.PointToPass ? "Pass" : "Failed";
 
             servicesResponse.Data = doQuizResponseDTO;
             servicesResponse.Message = "OK";

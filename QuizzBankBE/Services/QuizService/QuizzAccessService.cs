@@ -31,7 +31,6 @@ namespace QuizzBankBE.Services.QuizService
         public async Task<ServiceResponse<QuizAccessDTO>> CreateQuizzAccess(CreateQuizAccessDTO createAccessDTO)
         {
             var serviceResponse = new ServiceResponse<QuizAccessDTO>();
-            createAccessDTO.Status = "Wait";
 
             QuizAccess quizSaved = _mapper.Map<QuizAccess>(createAccessDTO);
 
@@ -55,14 +54,14 @@ namespace QuizzBankBE.Services.QuizService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PageList<QuizAccessDTO>>> getListQuizzAccess(OwnerParameter ownerParameters, int? courseId, int? studentId)
+        public async Task<ServiceResponse<PageList<QuizAccessDTO>>> getListQuizzAccess(OwnerParameter ownerParameters, int? courseId, int? studentId, string? status)
         {
             var serviceResponse = new ServiceResponse<PageList<QuizAccessDTO>>();
 
             var dbQuizAccess = _dataContext.QuizAccesses.
                     Include(q => q.Quiz).
                     ThenInclude(qa => qa.Course).
-                    Where(q => (courseId == null || q.Quiz.CourseId == courseId) && (studentId == null || q.UserId == studentId)).ToList();
+                    Where(q => (courseId == null || q.Quiz.CourseId == courseId) && (studentId == null || q.UserId == studentId) && (status == null || q.Status == status)).ToList();
 
             var quizAccessResponse = _mapper.Map<List<QuizAccessDTO>>(dbQuizAccess);
             serviceResponse.Data = PageList<QuizAccessDTO>.ToPageList(

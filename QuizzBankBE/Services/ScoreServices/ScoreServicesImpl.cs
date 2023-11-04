@@ -173,18 +173,21 @@ namespace QuizzBankBE.Services.ScoreServices
             }
 
             var question = data.questionReults.Where(qr => qr.Id == item.QuestionId).First();
-            string status = "Right";
             float? point = question.QuestionAnswers.Where(q => q.Content == item.ShortAnswerChoosen).FirstOrDefault()?.Fraction;
-
-            if (point < 1)
-            {
-                status = "Wrong";
-            }
 
             var quizResponse = new QuizResponse();
             quizResponse.QuestionId = item.QuestionId;
             quizResponse.Mark = point * question.DefaultMark;
-            quizResponse.Status = status;
+
+            if (point == 1)
+            {
+                quizResponse.Status = "Right";
+            }
+            else
+            {
+                quizResponse.Status = "Wrong";
+            }
+
             quizResponse.Answer = JsonConvert.SerializeObject(item.ShortAnswerChoosen);
 
             quizResponses.Add(quizResponse);
