@@ -1,10 +1,12 @@
-﻿using QuizzBankBE.FormValidator;
+﻿using QuizzBankBE.DataAccessLayer.DataObject;
+using QuizzBankBE.FormValidator;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs.BaseDTO
 {
     public abstract class BaseQuizDTO
     {
+        [IdExistValidation<Course>("Id")]
         public int Courseid { get; set; }
 
         [Required(ErrorMessage = "Please enter course name")]

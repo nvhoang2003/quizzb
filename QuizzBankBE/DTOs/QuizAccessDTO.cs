@@ -15,6 +15,8 @@ namespace QuizzBankBE.DTOs
 
         public DateTime? UpdateDate { get; set; }
 
+        public UserDTO User { get; set; }
+
     }
 
     public class CreateQuizAccessDTO : BaseQuizAccessDTO

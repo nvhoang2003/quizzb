@@ -160,7 +160,7 @@ namespace QuizzBankBE.Controllers
 
             var quizAccess = await _dataContext.QuizAccesses.Where(q => q.Id == accessId).FirstOrDefaultAsync();
 
-            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != quizAccess.UserId)
+            if (!CheckPermission.Check(userIdLogin, permissionName) || userIdLogin != quizAccess.UserId || quizAccess.Status == "Done")
             {
                 return new StatusCodeResult(403);
             }

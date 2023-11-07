@@ -79,6 +79,7 @@ namespace QuizzBankBE.Services.ScoreServices
             var dbQuizAccess = _dataContext.QuizAccesses.Where(q => q.Id == newQuizResponses.AccessId).First();
 
             dbQuizAccess.Status = "Done";
+            dbQuizAccess.TimeEndQuiz = DateTime.UtcNow;
             _dataContext.QuizAccesses.Update(dbQuizAccess);
 
             await _dataContext.SaveChangesAsync();

@@ -7,7 +7,7 @@ namespace QuizzBankBE.Services.UserServices
 {
     public interface IUserServices
     {
-        Task<ServiceResponse<PageList<UserDTO>>> GetAllUsers(OwnerParameter ownerParameters);
+        Task<ServiceResponse<PageList<UserDTO>>> GetAllUsers(OwnerParameter ownerParameters, int? courseId, int? roleId);
         Task<ServiceResponse<UserDTO>> GetUserByUserID(int id);
         Task<ServiceResponse<UserDTO>> CreateUsers(CreateUserDTO createUserDTO);
         Task<ServiceResponse<UpdateUserDTO>> UpdateUser(UpdateUserDTO updateDTO, int id);
