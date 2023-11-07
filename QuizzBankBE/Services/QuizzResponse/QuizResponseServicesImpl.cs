@@ -49,7 +49,8 @@ namespace QuizzBankBE.Services.QuizzResponse
                 Distinct().
                 ToListAsync();
 
-            if(dbQuestion.Count == 0)
+
+            if (dbQuestion.Count == 0)
             {
                 servicesResponse.updateResponse(400, "không tồn tại");
                 return servicesResponse;
@@ -66,6 +67,16 @@ namespace QuizzBankBE.Services.QuizzResponse
             doQuizResponseDTO.isPublic = quizz?.IsPublic;
             doQuizResponseDTO.TotalPoint = 0;
 
+            if(access?.TimeEndQuiz != null && access?.TimeStartQuiz != null)
+            {
+                TimeSpan diff = access.TimeEndQuiz.Value.Subtract(access.TimeStartQuiz.Value);
+                doQuizResponseDTO.DiffTime = diff.ToString("mm\\:ss");
+            }
+            else
+            {
+                doQuizResponseDTO.DiffTime = "--:--";
+            }
+            
 
             foreach (var item in dbQuestion)
             {

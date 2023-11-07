@@ -22,11 +22,16 @@ namespace QuizzBankBE.Services.UserServices
             _configuration = configuration;
         }
 
-        public async Task<ServiceResponse<PageList<UserDTO>>> GetAllUsers(OwnerParameter ownerParameters)
+        public async Task<ServiceResponse<PageList<UserDTO>>> GetAllUsers(OwnerParameter ownerParameters, int? courseId, int? roleId)
         {
             var serviceResponse = new ServiceResponse<PageList<UserDTO>>();
             var userDTOs = new List<UserDTO>();
-            var dbUsers = await _dataContext.Users.ToListAsync();
+            var dbUsers = await _dataContext.Users.
+                Include(u => u.UserCourses).
+                    ThenInclude(uc => uc.Courses).
+                Where(u => (courseId == null || u.UserCourses.Any(uc => uc.CoursesId == courseId)) &&
+                (roleId == null || u.RoleId == roleId)).
+                ToListAsync();
 
             userDTOs = dbUsers.Select(u => _mapper.Map<UserDTO>(u)).ToList();
 

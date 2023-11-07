@@ -27,7 +27,7 @@ namespace QuizzBankBE.DTOs
 
         public float? PointToPass { get; set; }
         public float? MaxPoint { get; set; }
-
+        public string DiffTime { get; set; }
         public float? TotalPoint { get; set; }
         public sbyte? isPublic { get; set; }
         public string? status { get; set; }

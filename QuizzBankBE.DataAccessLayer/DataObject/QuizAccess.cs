@@ -16,6 +16,8 @@ public partial class QuizAccess : IAuditedEntityBase
 
     public DateTime? TimeStartQuiz { get; set; }
 
+    public DateTime? TimeEndQuiz { get; set; }
+
     public string Status { get; set; } = null!;
 
     public int? CreateBy { get; set; }

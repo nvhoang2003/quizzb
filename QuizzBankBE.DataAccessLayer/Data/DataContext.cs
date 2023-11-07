@@ -64,6 +64,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
     public virtual DbSet<UserCourse> UserCourses { get; set; }
 
+    public virtual DbSet<Ranking> Ranking { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySQL("    server=103.161.178.66;port=3306;user=lmms;password=KhongSharePass@123;database=quizzb");
@@ -491,6 +493,9 @@ namespace QuizzBankBE.DataAccessLayer.Data
             entity.Property(e => e.TimeStartQuiz)
                 .HasColumnType("datetime")
                 .HasColumnName("timeStartQuiz");
+            entity.Property(e => e.TimeEndQuiz)
+              .HasColumnType("datetime")
+              .HasColumnName("timeEndQuiz");
             entity.Property(e => e.UpdateBy).HasColumnName("updateBy");
             entity.Property(e => e.UpdateDate)
                 .HasColumnType("date")
@@ -919,6 +924,8 @@ namespace QuizzBankBE.DataAccessLayer.Data
 
                     entity.HasQueryFilter(e => e.IsDeleted != 1);
         });
+
+            modelBuilder.Entity<Ranking>().HasNoKey();
 
         OnModelCreatingPartial(modelBuilder);
     }

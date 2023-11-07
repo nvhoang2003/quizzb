@@ -14,6 +14,7 @@ namespace QuizzBankBE.DTOs
         public bool IsValid { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public CourseDTO? Course { get; set; }
     }
     public class QuizResponseDTO
     {

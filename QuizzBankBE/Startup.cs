@@ -28,6 +28,7 @@ using QuizzBankBE.Services.ScoreServices;
 using QuizzBankBE.Services.UserCoursesServices;
 using QuizzBankBE.Services.QuizzResponse;
 using Microsoft.Extensions.FileProviders;
+using QuizzBankBE.Services.RankingServices;
 //using QuizzBankBE.Services.QuestionServices;
 //using QuizzBankBE.Services.CourseServices;
 //using QuizzBankBE.Services.KeywordServices;
@@ -59,7 +60,7 @@ namespace QuizzBankBE
             services.AddControllers();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthServices, AuthServices>();
-            //services.AddScoped<IQuestionServices, QuestionServicesIpml>();
+            services.AddScoped<IRankingServices, RankingServicesImpl>();
             services.AddScoped<ICourseServices, CourseServicesIpml>();
             services.AddScoped<IRoleServices, RoleServices>();
             services.AddScoped<IQuizService, QuizServiceIpml>();
