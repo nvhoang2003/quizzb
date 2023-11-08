@@ -5,6 +5,6 @@ namespace QuizzBankBE.Services.RankingServices
 {
     public interface IRankingServices
     {
-        Task<ServiceResponse<RankingDTO>> GetRanking(int quizId);
+        Task<ServiceResponse<RankingDTO>> GetRanking(OwnerParameter ownerParameters, int quizId);
     }
 }

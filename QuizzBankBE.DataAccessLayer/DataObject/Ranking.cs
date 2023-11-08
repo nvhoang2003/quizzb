@@ -8,6 +8,7 @@ namespace QuizzBankBE.DataAccessLayer.DataObject
 {
     public partial class Ranking
     {
+        public int? UserId { get; set; }
         public string? FullName { get; set; }
         public float? TotalPoint { get; set; }
         public int? TotalTime { get; set; }

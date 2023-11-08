@@ -2,7 +2,7 @@
 {
     public class RankingDTO
     {
-        public int YourRank { get; set; }
+        public OneDetailRankingDTO? YourRank { get; set; }
         public List<OneDetailRankingDTO> ListRanking { get; set; } = new List<OneDetailRankingDTO>();
     }
 

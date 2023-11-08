@@ -34,9 +34,9 @@ namespace QuizzBankBE.Controllers
 
         [HttpGet("GetRanking/{id}")]
         public async Task<ActionResult<ServiceResponse<RankingDTO>>> getAllUsers(
-          int id)
+          [FromQuery] OwnerParameter ownerParameters, int id)
         {           
-            var serviceResponse = await _rankingServices.GetRanking(id);
+            var serviceResponse = await _rankingServices.GetRanking(ownerParameters, id);
             
             if(serviceResponse.Status == false)
             {

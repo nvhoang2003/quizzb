@@ -27,12 +27,14 @@ namespace QuizzBankBE.Services.RankingServices
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<ServiceResponse<RankingDTO>> GetRanking(int quizId)
+        public async Task<ServiceResponse<RankingDTO>> GetRanking(OwnerParameter ownerParameters, int quizId)
         {
             var servicesResponse = new ServiceResponse<RankingDTO>();
 
             var isPermiss = await CheckReadRankingPermission(quizId);
 
+            var userIdLogin = int.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            
             if (isPermiss == false)
             {
                 servicesResponse.Status = false;
@@ -40,7 +42,7 @@ namespace QuizzBankBE.Services.RankingServices
                 return servicesResponse;
             }
 
-            string sql = @"select concat(u.firstName , ' ' , u.lastName) as fullName, sum(qr.mark) as totalPoint, TIMESTAMPDIFF(SECOND ,qa.timeStartQuiz, qa.timeEndQuiz) as totalTime from quizzb.quiz_accesses as qa 
+            string sql = @"select u.ID as userId ,concat(u.firstName , ' ' , u.lastName) as fullName, sum(qr.mark) as totalPoint, TIMESTAMPDIFF(SECOND ,qa.timeStartQuiz, qa.timeEndQuiz) as totalTime from quizzb.quiz_accesses as qa 
 	                left join quizzb.users as u on qa.userId = u.ID
                     inner join quizzb.quiz_responses as qr on qa.ID = qr.accessId
                     where qa.quizId = " + quizId + @" and qa.isDeleted != 1
@@ -50,16 +52,21 @@ namespace QuizzBankBE.Services.RankingServices
             var listRanking = await _dataContext.Set<Ranking>().FromSqlRaw(sql).ToListAsync();
 
             var rankingResponse = new RankingDTO();
-            rankingResponse.YourRank = 1;
+            rankingResponse.YourRank = null;
 
             foreach(var item in listRanking)
             {
                 var oneRanking = new OneDetailRankingDTO();
-
+               
                 oneRanking.Rank = listRanking.IndexOf(item) + 1;
                 oneRanking.Score = item.TotalPoint;
                 oneRanking.StudentName = item.FullName;
-                oneRanking.TimeDoQuiz = $"{item.TotalTime / 60} - {item.TotalTime % 60}";
+                oneRanking.TimeDoQuiz = $"{item.TotalTime / 60} m - {item.TotalTime % 60} s";
+
+                if (userIdLogin == item.UserId)
+                {
+                    rankingResponse.YourRank = oneRanking;
+                }
 
                 rankingResponse.ListRanking.Add(oneRanking);
             }
@@ -73,11 +80,11 @@ namespace QuizzBankBE.Services.RankingServices
         {
             var userIdLogin = int.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-            var user = await _dataContext.Users.Where(q => q.Id == userIdLogin).Include(q => q.Role).Include(u => u.Quizzes).FirstOrDefaultAsync();
+            var user = await _dataContext.Users.Include(q => q.Role).Include(u => u.QuizAccessUsers).Where(q => q.Id == userIdLogin).FirstOrDefaultAsync();
 
             if(user.Role.Name == "student")
             {
-                if(!user.Quizzes.Select(q => q.Id).ToList().Contains(quizzId))
+                if(!user.QuizAccessUsers.Select(q => q.QuizId).ToList().Contains(quizzId))
                 {
                     return false;
                 }
