@@ -2,6 +2,8 @@
 {
     public class RankingDTO
     {
+        public int? CourseId { get; set; }
+        public string? QuizName { get; set; }
         public OneDetailRankingDTO? YourRank { get; set; }
         public List<OneDetailRankingDTO> ListRanking { get; set; } = new List<OneDetailRankingDTO>();
     }

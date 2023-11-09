@@ -74,6 +74,19 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
+        [HttpGet("GetListExamForStudent")]
+
+        public async Task<ActionResult<ServiceResponse<List<QuizAccessDTO>>>> GetListExamForStudent(
+      [FromQuery] int? courseId, string? status, bool? isPublic)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var user = await _dataContext.Users.Where(q => q.Id == userIdLogin).FirstAsync();
+
+            var response = await _quizAccessService.GetListExam(courseId, userIdLogin, status, isPublic);
+
+            return Ok(response);
+        }
+
         [HttpGet("GetListQuizzAccess")]
         public async Task<ActionResult<ServiceResponse<PageList<QuizAccessDTO>>>> getListQizzAccess(
        [FromQuery] OwnerParameter ownerParameters, int? courseId, string? studentName, string? status, bool? isPublic)

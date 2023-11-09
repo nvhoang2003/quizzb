@@ -75,6 +75,13 @@ namespace QuizzBankBE.Services.QuizService
             }
 
             var quesToUpdate = _dataContext.QuizAccesses.FirstOrDefault(c => c.Id == id);
+
+            if(quesToUpdate.Status != "Wait")
+            {
+                serviceResponse.updateResponse(400, "Bạn không thể cập nhật vì học sinh đã làm xong bài kiểm tra!");
+                return serviceResponse;
+            }
+
             _mapper.Map(updateStatusDTO, quesToUpdate);
 
             await _dataContext.SaveChangesAsync();
@@ -148,12 +155,36 @@ namespace QuizzBankBE.Services.QuizService
                 return serviceResponse;
             }
 
+            if (quizAccess.Status != "Wait")
+            {
+                serviceResponse.updateResponse(400, "Bạn không thể cập nhật vì học sinh đã làm xong bài kiểm tra!");
+                return serviceResponse;
+            }
+
             quizAccess.IsDeleted = 1;
             _dataContext.QuizAccesses.Update(quizAccess);
             _dataContext.SaveChangesAsync();
 
             serviceResponse.Status = true;
             serviceResponse.updateResponse(200, "Xóa thành công");
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<QuizAccessDTO>>> GetListExam(int? courseId, int? studentId, string? status, bool? isPublic)
+        {
+            var serviceResponse = new ServiceResponse<List<QuizAccessDTO>>();
+
+            var dbQuizAccess = _dataContext.QuizAccesses.
+                    Include(q => q.Quiz).
+                    ThenInclude(qa => qa.Course).
+                    Include(q => q.User).
+                    Where(q => (courseId == null || q.Quiz.CourseId == courseId) && (studentId == null || q.UserId == studentId) && (status == null || q.Status == status) && (isPublic == null || q.Quiz.IsPublic == Convert.ToSByte(isPublic))).ToList();
+
+            var quizAccessResponse = _mapper.Map<List<QuizAccessDTO>>(dbQuizAccess);
+
+            serviceResponse.Data = quizAccessResponse;
+            serviceResponse.Status = true;
 
             return serviceResponse;
         }

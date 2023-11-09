@@ -31,6 +31,7 @@ namespace QuizzBankBE.DTOs.QuestionDTOs
         public int Id { get; set; }
         public string QuestionsType { get; set; }
         public string Name { get; set; }
+        public string? Content { get; set; }
         public string AuthorName { get; set; }
         public List<TagDTO> Tags { get; set; }
         public float DefaultMark { get; set; }

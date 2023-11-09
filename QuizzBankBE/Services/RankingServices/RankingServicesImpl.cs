@@ -42,6 +42,15 @@ namespace QuizzBankBE.Services.RankingServices
                 return servicesResponse;
             }
 
+            var quiz = await _dataContext.Quizzes.Include(q => q.Course).Where(q => q.Id == quizId).FirstOrDefaultAsync();
+
+            if(quiz == null)
+            {
+                servicesResponse.Status = false;
+                servicesResponse.updateResponse(404, "Đề Không Tồn Tại!");
+                return servicesResponse;
+            }
+
             string sql = @"select u.ID as userId ,concat(u.firstName , ' ' , u.lastName) as fullName, sum(qr.mark) as totalPoint, TIMESTAMPDIFF(SECOND ,qa.timeStartQuiz, qa.timeEndQuiz) as totalTime from quizzb.quiz_accesses as qa 
 	                left join quizzb.users as u on qa.userId = u.ID
                     inner join quizzb.quiz_responses as qr on qa.ID = qr.accessId
@@ -52,6 +61,9 @@ namespace QuizzBankBE.Services.RankingServices
             var listRanking = await _dataContext.Set<Ranking>().FromSqlRaw(sql).ToListAsync();
 
             var rankingResponse = new RankingDTO();
+
+            rankingResponse.CourseId = quiz?.Course?.Id;
+            rankingResponse.QuizName = quiz.Name;
             rankingResponse.YourRank = null;
 
             foreach(var item in listRanking)
@@ -61,7 +73,7 @@ namespace QuizzBankBE.Services.RankingServices
                 oneRanking.Rank = listRanking.IndexOf(item) + 1;
                 oneRanking.Score = item.TotalPoint;
                 oneRanking.StudentName = item.FullName;
-                oneRanking.TimeDoQuiz = $"{item.TotalTime / 60} m - {item.TotalTime % 60} s";
+                oneRanking.TimeDoQuiz = $"{item.TotalTime / 60} phút {item.TotalTime % 60} giây";
 
                 if (userIdLogin == item.UserId)
                 {

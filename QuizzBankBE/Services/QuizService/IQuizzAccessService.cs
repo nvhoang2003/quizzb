@@ -10,5 +10,6 @@ namespace QuizzBankBE.Services.QuizService
         Task<ServiceResponse<QuizAccessDTO>> UpdateStatus(CreateQuizAccessDTO updateStatusDTO, int id);
         Task<ServiceResponse<PageList<QuizAccessDTO>>> GetListQuizzAccess(OwnerParameter ownerParameters, int? courseId, string? studentName, string? status, bool? isPublic);
         Task<ServiceResponse<QuizAccessDTO>> DeleteQuizAccess(int id);
+        Task<ServiceResponse<List<QuizAccessDTO>>> GetListExam(int? courseId, int? studentId, string? status, bool? isPublic);
     }
 }

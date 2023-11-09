@@ -33,7 +33,7 @@ namespace QuizzBankBE.Controllers
 
 
         [HttpGet("GetRanking/{id}")]
-        public async Task<ActionResult<ServiceResponse<RankingDTO>>> getAllUsers(
+        public async Task<ActionResult<ServiceResponse<RankingDTO>>> GetRanking(
           [FromQuery] OwnerParameter ownerParameters, int id)
         {           
             var serviceResponse = await _rankingServices.GetRanking(ownerParameters, id);

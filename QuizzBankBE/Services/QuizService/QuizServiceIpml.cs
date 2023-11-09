@@ -38,7 +38,11 @@ namespace QuizzBankBE.Services.QuizService
 
             _dataContext.Quizzes.Add(quizSaved);
             await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<QuizResponseDTO>(quizSaved);
+
             serviceResponse.updateResponse(200, "Tạo thành công");
+            
             return serviceResponse;
         }
 
@@ -68,11 +72,17 @@ namespace QuizzBankBE.Services.QuizService
         public async Task<ServiceResponse<QuizResponseDTO>> UpdateQuizz(CreateQuizDTO updateQuizDTO, int id)
         {
             var serviceResponse = new ServiceResponse<QuizResponseDTO>();
-            var dbQuiz = await _dataContext.Quizzes.FirstOrDefaultAsync(q => q.Id == id);
+            var dbQuiz = await _dataContext.Quizzes.Include(q => q.QuizAccesses).FirstOrDefaultAsync(q => q.Id == id);
 
             if (dbQuiz == null)
             {
-                serviceResponse.updateResponse(400, "quizz không tồn tại");
+                serviceResponse.updateResponse(404, "Đề không tồn tại");
+                return serviceResponse;
+            }
+
+            if(dbQuiz.QuizAccesses.Any(q => q.Status != "Wait"))
+            {
+                serviceResponse.updateResponse(404, "Đề này đã có học sinh làm rồi!");
                 return serviceResponse;
             }
 
@@ -89,10 +99,17 @@ namespace QuizzBankBE.Services.QuizService
         public async Task<ServiceResponse<QuizDTO>> DeleteQuizz(int id)
         {
             var serviceResponse = new ServiceResponse<QuizDTO>();
-            var dbQuiz = await _dataContext.Quizzes.FirstOrDefaultAsync(q => q.Id == id);
+            var dbQuiz = await _dataContext.Quizzes.Include(q => q.QuizAccesses).FirstOrDefaultAsync(q => q.Id == id);
+
             if (dbQuiz == null)
             {
-                serviceResponse.updateResponse(400, "Quizz không tồn tại");
+                serviceResponse.updateResponse(404, "Đề không tồn tại");
+                return serviceResponse;
+            }
+
+            if (dbQuiz.QuizAccesses.Any(q => q.Status != "Wait"))
+            {
+                serviceResponse.updateResponse(404, "Đề này đã có học sinh làm rồi!");
                 return serviceResponse;
             }
 
@@ -140,22 +157,17 @@ namespace QuizzBankBE.Services.QuizService
         {
             ServiceResponse<QuizDetailResponseDTO> serviceResponse = new ServiceResponse<QuizDetailResponseDTO>();
 
-            var quizDbDetail = (from qi in _dataContext.Quizzes
-                                join qq in _dataContext.QuizQuestions on qi.Id equals qq.QuizzId
-                                join qe in _dataContext.Questions on qq.QuestionId equals qe.Id
-                                where qi.Id == id
-                                select new { qi,qe }
-                                ).ToList();
+            var quizDbDetail = await _dataContext.Quizzes.Include(q => q.QuizQuestions).ThenInclude(qq => qq.Question).Where(q => q.Id == id).FirstOrDefaultAsync();
 
-            QuizDetailResponseDTO quizDetail = _mapper.Map<QuizDetailResponseDTO>(quizDbDetail.First().qi);
+            QuizDetailResponseDTO quizDetail = _mapper.Map<QuizDetailResponseDTO>(quizDbDetail);
 
             if (quizDetail == null)
             {
-                serviceResponse.updateResponse(400, "không tồn tại");
+                serviceResponse.updateResponse(404, "không tồn tại");
                 return serviceResponse;
             }
 
-            quizDetail.listQuestion = _mapper.Map<List<ListQuestion>>(quizDbDetail.Select(c => c.qe).ToList());
+            quizDetail.listQuestion = _mapper.Map<List<ListQuestion>>(quizDbDetail?.QuizQuestions.Select(qq => qq.Question).ToList());
 
             serviceResponse.Data = quizDetail;
             return serviceResponse;

@@ -16,13 +16,11 @@ namespace QuizzBankBE.DTOs
         public DateTime? UpdateDate { get; set; }
         public CourseDTO? Course { get; set; }
     }
-    public class QuizResponseDTO
+    public class QuizResponseDTO : BaseQuizDTO
     {
-        public int IdquizVersions { get; set; }
-        public virtual QuizDTO quiz { get; set; }
-        public string Status { get; set; }
-        public int Version { get; set; }
-        public int? IsDeleted { get; set; }
+        public int ID { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
     }
 
     public class QuizDetailResponseDTO : BaseQuizDTO
