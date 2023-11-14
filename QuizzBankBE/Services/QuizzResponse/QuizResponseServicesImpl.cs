@@ -36,7 +36,7 @@ namespace QuizzBankBE.Services.QuizzResponse
                 Include(q => q.SystemFile).
                 Include(q => q.MatchSubQuestions).
                 Include(q => q.QuestionAnswers).
-                Include(q => q.QuizQuestions).
+                Include(q => q.QuizQuestions.Where(q => q.QuizzId == quizID)).
                     ThenInclude(qq => qq.Quizz).
                 Include(q => q.QuizResponses.Where(qr => qr.AccessId == accessID)).
                     ThenInclude(q => q.Access).

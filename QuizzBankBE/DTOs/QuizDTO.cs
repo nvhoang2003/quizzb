@@ -3,7 +3,6 @@ using QuizzBankBE.DataAccessLayer.DataObject;
 using QuizzBankBE.DTOs.BaseDTO;
 using QuizzBankBE.DTOs.QuestionDTOs;
 using QuizzBankBE.FormValidator;
-using ServiceStack.DataAnnotations;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizzBankBE.DTOs
@@ -34,6 +33,17 @@ namespace QuizzBankBE.DTOs
     }
     public class CreateQuizDTO : BaseQuizDTO
     {
+    }
+
+    public class UpdateQuizPointDTO
+    {
+        [Required(ErrorMessage = "Please enter Point to Pass")]
+        [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
+        public float PointToPass { get; set; }
+
+        [Required(ErrorMessage = "Please enter Max Point")]
+        [RegularExpression(@"^[0-9]*(?:\.[0-9]*)?$", ErrorMessage = ".0")]
+        public float MaxPoint { get; set; }
     }
 
     public class CreateQuizQuestionDTO

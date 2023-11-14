@@ -95,7 +95,7 @@ namespace QuizzBankBE.Controllers
             var permissionName = _configuration.GetSection("Permission:READ_LIST_STUDENT_DO_QUIZZ").Value;
             var user = await _dataContext.Users.Where(q => q.Id == userIdLogin).FirstAsync();
 
-            if (!CheckPermission.Check(userIdLogin, permissionName) && userIdLogin != 2)
+            if (!CheckPermission.Check(userIdLogin, permissionName))
             {
                 return new StatusCodeResult(403);
             }

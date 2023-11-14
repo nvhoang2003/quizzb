@@ -113,6 +113,23 @@ namespace QuizzBankBE.Controllers
             return Ok(response);
         }
 
+        [HttpPut("updateQuizPoint/{id}")]
+        public async Task<ActionResult<ServiceResponse<QuizDTO>>> updateQuizPoint(
+       [FromBody] UpdateQuizPointDTO updateQuizDTO, int id)
+        {
+            var userIdLogin = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var permissionName = _configuration.GetSection("Permission:WRITE_QUIZZ").Value;
+
+            if (!CheckPermission.Check(userIdLogin, permissionName))
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var response = await _quizServices.UpdateQuizPoint(updateQuizDTO, id);
+
+            return Ok(response);
+        }
+
         [HttpDelete("deleteQuiz/{id}")]
         public async Task<ActionResult<ServiceResponse<QuizDTO>>> deleteQuiz(int id)
         {

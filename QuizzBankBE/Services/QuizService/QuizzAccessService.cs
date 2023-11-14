@@ -37,7 +37,7 @@ namespace QuizzBankBE.Services.QuizService
         {
             var serviceResponse = new ServiceResponse<QuizAccessDTO>();
 
-            if(_dataContext.QuizAccesses.Any(q => q.UserId == createAccessDTO.UserId && q.QuizId == createAccessDTO.QuizId))
+            if(_dataContext.QuizAccesses.Any(q => q.UserId == createAccessDTO.UserId && q.QuizId == createAccessDTO.QuizId && q.Quiz.IsPublic == 0))
             {
                 serviceResponse.Message = "Học sinh đã được chọn làm đề này. Vui lòng không thao tác lại";
                 serviceResponse.StatusCode = 400;
@@ -68,25 +68,13 @@ namespace QuizzBankBE.Services.QuizService
 
             var isPermiss = await CheckMutationQuizzAccessPermission(updateStatusDTO);
 
-            if (isPermiss.Data == false)
-            {
-                serviceResponse.updateResponse(403, "Bạn không có quyền!");
-                return serviceResponse;
-            }
+                var quesToUpdate = _dataContext.QuizAccesses.FirstOrDefault(c => c.Id == id);
 
-            var quesToUpdate = _dataContext.QuizAccesses.FirstOrDefault(c => c.Id == id);
-
-            if(quesToUpdate.Status != "Wait")
-            {
-                serviceResponse.updateResponse(400, "Bạn không thể cập nhật vì học sinh đã làm xong bài kiểm tra!");
-                return serviceResponse;
-            }
-
-            _mapper.Map(updateStatusDTO, quesToUpdate);
+                _mapper.Map(updateStatusDTO, quesToUpdate);
 
             await _dataContext.SaveChangesAsync();
             serviceResponse.updateResponse(200, "Cập nhật status thành công");
-
+            serviceResponse.Data = _mapper.Map<QuizAccessDTO>(quesToUpdate);
             return serviceResponse;
         }
 

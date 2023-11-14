@@ -182,7 +182,7 @@ namespace QuizzBankBE.Services.QuizService
                 Include(q => q.SystemFile).
                 Include(q => q.MatchSubQuestions).
                 Include(q => q.QuestionAnswers).
-                Include(q => q.QuizQuestions).
+                Include(q => q.QuizQuestions.Where(q => q.QuizzId == id)).
                 ThenInclude(q => q.Quizz).
                 ThenInclude(q => q.Course).
                 Where(q => q.QuizQuestions.Any(q => q.QuizzId == id)).
@@ -213,6 +213,41 @@ namespace QuizzBankBE.Services.QuizService
             }
 
             serviceResponse.Data = quizResponseForTest;
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<QuizResponseDTO>> UpdateQuizPoint(UpdateQuizPointDTO updateQuizDTO, int id)
+        {
+            var serviceResponse = new ServiceResponse<QuizResponseDTO>();
+            var dbQuiz = await _dataContext.Quizzes.Include(q => q.QuizAccesses).FirstOrDefaultAsync(q => q.Id == id);
+
+            if(updateQuizDTO.MaxPoint <= updateQuizDTO.PointToPass)
+            {
+                serviceResponse.updateResponse(400, "Điểm tối đa phải lớn hơn điểm đạt");
+                return serviceResponse;
+            }
+
+            if (dbQuiz == null)
+            {
+                serviceResponse.updateResponse(404, "Đề không tồn tại");
+                return serviceResponse;
+            }
+
+            if (dbQuiz.QuizAccesses.Any(q => q.Status != "Wait"))
+            {
+                serviceResponse.updateResponse(404, "Đề này đã có học sinh làm rồi!");
+                return serviceResponse;
+            }
+
+            dbQuiz.MaxPoint = updateQuizDTO.MaxPoint;
+            dbQuiz.PointToPass = updateQuizDTO.PointToPass;
+
+            _dataContext.Quizzes.Update(dbQuiz);
+            await _dataContext.SaveChangesAsync();
+
+            serviceResponse.Message = "Update thành công";
+            serviceResponse.Data = _mapper.Map<QuizResponseDTO>(dbQuiz);
 
             return serviceResponse;
         }
